@@ -1,6 +1,6 @@
-baseURL: "https://examplesite.com/"
-title: carlos Nunez
-paginate: 5
+baseURL: "https://andmecarlos.com/"
+title: Carlos Nunez
+paginate: 10
 theme: hugo-PaperMod
 
 enableRobotsTXT: true
@@ -60,10 +60,10 @@ params:
   profileMode:
     enabled: true # needs to be explicitly set
     title: Carlos Nunez
-    subtitle: "Computer Programer 💾"
+    subtitle: "Computer Programer"
     imageUrl: "https://i.ibb.co/KFJCzLq/profile.jpg"
-    imageWidth: 120
-    imageHeight: 120
+    imageWidth: 150
+    imageHeight: 150
     imageTitle: Carlos Nunez
  
     buttons:
@@ -84,6 +84,8 @@ params:
       url: "https://stackoverflow.com"
     - name: github
       url: "https://github.com/"
+    -name: Integram
+      url: "https://integram/andmecarlos"
 
   analytics:
     google:
