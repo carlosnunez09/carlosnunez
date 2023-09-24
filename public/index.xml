@@ -10,19 +10,18 @@
       <link>https://examplesite.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language><atom:link href="https://examplesite.com/index.xml" rel="self" type="application/rss+xml" />
-    
+    <language>en</language>
+    <lastBuildDate>Sun, 24 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://examplesite.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>My Exciting JavaScript Page</title>
-      <link>https://examplesite.com/posts/post/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>About you</title>
+      <link>https://examplesite.com/posts/aboutme/</link>
+      <pubDate>Sun, 24 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://examplesite.com/posts/post/</guid>
-      <description>My Exciting JavaScript Page This is some content on the page.
-Change Color
-{{- define &amp;ldquo;page-script&amp;rdquo; -}}
-{{- end -}}</description>
+      <guid>https://examplesite.com/posts/aboutme/</guid>
+      <description>example</description>
     </item>
+    
+    
     
   </channel>
 </rss>
