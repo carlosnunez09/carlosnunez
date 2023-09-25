@@ -61,7 +61,7 @@ params:
     enabled: true # needs to be explicitly set
     title: Carlos Nunez
     subtitle: "Computer Programer"
-    imageUrl: "https://i.ibb.co/KFJCzLq/profile.jpg"
+    imageUrl: "Profile.jpg"
     imageWidth: 150
     imageHeight: 150
     imageTitle: Carlos Nunez
