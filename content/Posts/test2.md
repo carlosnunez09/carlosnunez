@@ -3,6 +3,10 @@ title: Cool writing exmple
 date: 2023-09-25
 ---
 
+space
+ 
+
+
 {{< rawhtml >}}
 <!DOCTYPE html>
 <html lang="en">
@@ -52,42 +56,46 @@ date: 2023-09-25
     "ਹੈਲੋ (Punjabi)",
     "ជំរាបសួរ (Khmer)"
 ];
+const textElement = document.querySelector(".handwriting-text");
+const containerElement = document.querySelector(".handwriting-container");
 
-        const textElement = document.querySelector(".handwriting-text");
+let currentSentenceIndex = 0;
 
-        let currentSentenceIndex = 0;
+// Set initial height to match container's height
+textElement.style.height = containerElement.clientHeight + "px";
 
-        function writeSentence() {
-            const currentSentence = sentences[currentSentenceIndex];
-            let characterIndex = 0;
+function writeSentence() {
+    const currentSentence = sentences[currentSentenceIndex];
+    let characterIndex = 0;
 
-            function typeCharacter() {
-                textElement.textContent += currentSentence[characterIndex];
-                characterIndex++;
+    function typeCharacter() {
+        textElement.textContent += currentSentence[characterIndex];
+        characterIndex++;
 
-                if (characterIndex < currentSentence.length) {
-                    setTimeout(typeCharacter, 50);
-                } else {
-                    setTimeout(deleteSentence, 2000);
-                }
-            }
-
-            typeCharacter();
+        if (characterIndex < currentSentence.length) {
+            setTimeout(typeCharacter, 50);
+        } else {
+            setTimeout(deleteSentence, 2000);
         }
+    }
 
-        function deleteSentence() {
-            let text = textElement.textContent;
-            textElement.textContent = text.slice(0, -1);
+    typeCharacter();
+}
 
-            if (text.length > 0) {
-                setTimeout(deleteSentence, 30);
-            } else {
-                currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
-                setTimeout(writeSentence, 500);
-            }
-        }
+function deleteSentence() {
+    let text = textElement.textContent;
+    textElement.textContent = text.slice(0, -1);
 
-        writeSentence();
+    if (text.length > 0) {
+        setTimeout(deleteSentence, 30);
+    } else {
+        currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
+        textElement.style.height = containerElement.clientHeight + "px"; // Maintain original container height
+        setTimeout(writeSentence, 500);
+    }
+}
+
+writeSentence();
     </script>
 
 </form>
@@ -98,3 +106,7 @@ date: 2023-09-25
 </html>
 
 {{< /rawhtml >}}
+
+
+
+
