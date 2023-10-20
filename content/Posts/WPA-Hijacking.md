@@ -1,5 +1,5 @@
 ---
-title: "WPA Hikacking"
+title: "WPA hijacking"
 date: 2023-10-20
 
 author: "me"
