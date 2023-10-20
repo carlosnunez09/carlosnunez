@@ -1,108 +1,15 @@
 ---
-title: Cool writing exmple
+title: terms
 date: 2023-09-25
 ---
-
-space
- 
 
 
 {{< rawhtml >}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handwriting Animation</title>
-    
-</head>
-<body>
-    <div class="handwriting-container">
-        <div class="handwriting-text"></div>
-    </div>
-    <script>
-        const sentences = [
-    "Hello (English)",
-    "Bonjour (French)",
-    "Hola (Spanish)",
-    "Ciao (Italian)",
-    "Guten Tag (German)",
-    "Olá (Portuguese)",
-    "Konnichiwa (Japanese)",
-    "Namaste (Hindi)",
-    "Salam (Arabic)",
-    "Zdravo (Serbian)",
-    "Aloha (Hawaiian)",
-    "Hej (Swedish)",
-    "Merhaba (Turkish)",
-    "Saluton (Esperanto)",
-    "Kamusta (Filipino)",
-    "Nǐ hǎo (Chinese)",
-    "你好 (Chinese Simplified)",
-    "Annyeonghaseyo (Korean)",
-    "Ahoj (Czech)",
-    "Halo (Indonesian)",
-    "Sawubona (Zulu)",
-    "Բարև (Armenian)",
-    "გამარჯობა (Georgian)",
-    "Γειά σας (Greek)",
-    "שלום (Hebrew)",
-    "नमस्ते (Nepali)",
-    "Привет (Russian)",
-    "مرحبا (Urdu)",
-    "வணக்கம் (Tamil)",
-    "ಹಲೋ (Kannada)",
-    "สวัสดี (Thai)",
-    "ਹੈਲੋ (Punjabi)",
-    "ជំរាបសួរ (Khmer)"
-];
-const textElement = document.querySelector(".handwriting-text");
-const containerElement = document.querySelector(".handwriting-container");
-
-let currentSentenceIndex = 0;
-
-// Set initial height to match container's height
-textElement.style.height = containerElement.clientHeight + "px";
-
-function writeSentence() {
-    const currentSentence = sentences[currentSentenceIndex];
-    let characterIndex = 0;
-
-    function typeCharacter() {
-        textElement.textContent += currentSentence[characterIndex];
-        characterIndex++;
-
-        if (characterIndex < currentSentence.length) {
-            setTimeout(typeCharacter, 50);
-        } else {
-            setTimeout(deleteSentence, 2000);
-        }
-    }
-
-    typeCharacter();
-}
-
-function deleteSentence() {
-    let text = textElement.textContent;
-    textElement.textContent = text.slice(0, -1);
-
-    if (text.length > 0) {
-        setTimeout(deleteSentence, 30);
-    } else {
-        currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
-        textElement.style.height = containerElement.clientHeight + "px"; // Maintain original container height
-        setTimeout(writeSentence, 500);
-    }
-}
-
-writeSentence();
-    </script>
-
-</form>
-</body>
-
-
 <style>
+
   [data-custom-class='body'], [data-custom-class='body'] * {
           background: transparent !important;
         }
@@ -158,10 +65,12 @@ word-break: break-word !important;
       <div style="color: #595959;font-size: 14px;font-family: Arial;padding-top:16px;">
       This cookie policy was created using Termly's <a style="color: rgb(48, 48, 241) !important;" href="https://termly.io/products/cookie-consent-manager/">Cookie Consent Manager</a>.
       </div>
+
+
+      </body>
+
+    </head>
+
 </html>
 
 {{< /rawhtml >}}
-
-
-
-
