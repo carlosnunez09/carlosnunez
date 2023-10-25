@@ -1,5 +1,5 @@
 ---
-title: "WPA hijacking"
+title: "WPA Highjacking (For Educational Purposes Only)"
 date: 2023-10-20
 
 author: "me"
