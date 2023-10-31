@@ -1,10 +1,10 @@
 ---
-title: "WPA hijacking"
+title: "WPA Highjacking (For Educational Purposes Only)"
 date: 2023-10-20
 
 author: "me"
 tag: "hacking"
-draft: true
+draft: false 
 ---
 
 In this post im going to be exploring and illustrating the process of WPA hijacking
