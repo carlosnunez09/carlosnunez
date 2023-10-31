@@ -67,13 +67,30 @@ Note your wireless interface's name (usually starts with "wlan"). If you see you
 ```bash
 sudo iwconfig
 ```
+you made it this far I will explain the 3 componets of good WPA hijaking
 
-Now, you're all set to proceed with WPA hijacking. To continue, let's explore how to use Bettercap from this point onwards.
+## WPA Hijacking Components
+
+| Component         | Description                                                                                                             |
+|-------------------|-------------------------------------------------------------------------------------------------------------------------|
+| **Deauthentication** | Deauthentication attacks disrupt the Wi-Fi connection between a client device and the access point by sending deauthentication packets. This can force the client to disconnect and potentially reconnect, enabling the attacker to capture handshake packets. |
+| **Capturing**       | Packet capturing involves intercepting and collecting network data packets, particularly the four-way handshake packets exchanged between a client and the access point during the connection setup. These packets contain the necessary information for a potential password recovery attempt. |
+| **Hashing**         | Hashing refers to the process of taking the captured four-way handshake packets and attempting to crack the Wi-Fi password. Tools like Aircrack-ng and Hashcat are commonly used for this purpose. The goal is to derive the original pre-shared key (PSK) used for WPA/WPA2 security. |
+
+These three components are central to WPA hijacking and are typically executed in a systematic manner to gain unauthorized access to a secured Wi-Fi network.
+
+### Working with Bettercap
+
+
+Now, you're all set to proceed with WPA hijacking. To continue, let's explore how to use Bettercap from this point onwards. Bettercap will only be used for deauthing and captureing packets, ill use Aircrack-ng for hashing
+
 
 we can install bettercap with the command below
 ```bash
+sudo apt update
 sudo apt inatall bettercap
 ```
+since we are downloading 
 
 
 
