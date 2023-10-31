@@ -66,6 +66,14 @@ Note your wireless interface's name (usually starts with "wlan"). If you see you
 
 ```bash
 sudo iwconfig
+```
+
+Now, you're all set to proceed with WPA hijacking. To continue, let's explore how to use Bettercap from this point onwards.
+
+we can install bettercap with the command below
+```bash
+sudo apt inatall bettercap
+```
 
 
 
