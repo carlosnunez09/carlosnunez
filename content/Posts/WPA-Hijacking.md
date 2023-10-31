@@ -71,6 +71,8 @@ you made it this far I will explain the 3 componets of good WPA hijaking
 
 ## WPA Hijacking Components
 
+If you've made it this far, I'll explain the three key components of successful WPA hijacking.
+
 | Component         | Description                                                                                                             |
 |-------------------|-------------------------------------------------------------------------------------------------------------------------|
 | **Deauthentication** | Deauthentication attacks disrupt the Wi-Fi connection between a client device and the access point by sending deauthentication packets. This can force the client to disconnect and potentially reconnect, enabling the attacker to capture handshake packets. |
@@ -79,18 +81,20 @@ you made it this far I will explain the 3 componets of good WPA hijaking
 
 These three components are central to WPA hijacking and are typically executed in a systematic manner to gain unauthorized access to a secured Wi-Fi network.
 
-### Working with Bettercap
+## Working with Bettercap
 
+Now that you understand the components, let's explore how to use Bettercap for deauthentication and packet capturing. We'll use Aircrack-ng for the hashing part.
 
-Now, you're all set to proceed with WPA hijacking. To continue, let's explore how to use Bettercap from this point onwards. Bettercap will only be used for deauthing and captureing packets, ill use Aircrack-ng for hashing
+To install Bettercap, use the following commands:
 
-
-we can install bettercap with the command below
 ```bash
 sudo apt update
-sudo apt inatall bettercap
+sudo apt install bettercap
 ```
-since we are downloading 
+Since we're downloading tools, let's also install Aircrack-ng. It comes preinstalled on Kali Linux, but you can ensure it's up-to-date with the following:
 
-
+```bash
+sudo apt update
+sudo apt install aircrack-ng
+```
 
