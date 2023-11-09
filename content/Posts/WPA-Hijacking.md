@@ -98,3 +98,17 @@ sudo apt update
 sudo apt install aircrack-ng
 ```
 
+To start up bettercap we will use your interface you can use the following command to get you interface:
+
+ ```bash 
+sudo iwconfig
+```
+
+then we will start the bettecap terminal:
+
+ ```bash 
+sudo bettercap -iface <your interface>
+```
+this is will place us in the 
+
+
