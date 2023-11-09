@@ -109,6 +109,6 @@ then we will start the bettecap terminal:
  ```bash 
 sudo bettercap -iface <your interface>
 ```
-this is will place us in the 
+this is will place us in the bettercap terminal
 
 
