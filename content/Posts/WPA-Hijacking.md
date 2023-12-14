@@ -111,4 +111,16 @@ sudo bettercap -iface <your interface>
 ```
 this is will place us in the bettercap terminal
 
+we will set our interface into monitor mode and start scanning in all sopported fequencies:
+
+ ```bash 
+wifi.recon on
+```
+to view the Access Points(APs) and the number of clints on a list we run:
+
+ ```bash 
+set wifi.show 
+```
+
+
 
