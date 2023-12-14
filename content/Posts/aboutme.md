@@ -10,5 +10,5 @@ author: "me"
 searchHidden: false
 disableShare: true
 ---
-my name is Carlos Nunez, Currently enrolled in Shippensburg university; as a computer Scientist
+my name is Carlos Nunez, Currently enrolled in Shippensburg university; as a computer major
 
