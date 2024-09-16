@@ -81,9 +81,9 @@ params:
     - name: twitter
       url: "https://twitter.com/"
     - name: stackoverflow
-      url: "https://stackoverflow.com"
+      url: "https://stackoverflow.com/users/18114507/carlos-nunez"
     - name: github
-      url: "https://github.com/"
+      url: "https://github.com/carlosnunez09"
     - name: Instagram
       url: "https://www.instagram.com/andmecarlos/?hl=en"
 
