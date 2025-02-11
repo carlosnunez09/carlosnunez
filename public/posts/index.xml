@@ -13,34 +13,14 @@
     <language>en</language>
     <lastBuildDate>Fri, 20 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://andmecarlos.com/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>WPA hijacking</title>
+      <title>WPA Highjacking (For Educational Purposes Only)</title>
       <link>https://andmecarlos.com/posts/wpa-hijacking/</link>
       <pubDate>Fri, 20 Oct 2023 00:00:00 +0000</pubDate>
       
       <guid>https://andmecarlos.com/posts/wpa-hijacking/</guid>
-      <description>in this post im going to be exploring and illustarting the process of WPA hijacking</description>
-    </item>
-    
-    <item>
-      <title>Cool Button Example</title>
-      <link>https://andmecarlos.com/posts/test/</link>
-      <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://andmecarlos.com/posts/test/</guid>
-      <description>&lt;!DOCTYPE html&gt;Cool ButtonHover Me</description>
-    </item>
-    
-    <item>
-      <title>Cool writing exmple</title>
-      <link>https://andmecarlos.com/posts/test2/</link>
-      <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://andmecarlos.com/posts/test2/</guid>
-      <description>space
-&lt;!DOCTYPE html&gt;Handwriting AnimationCOOKIE POLICY
-Last updated September 27, 2023
-This Cookie Policy explains how carlos nunez (&#34;Company,&#34; &#34;we,&#34; &#34;us,&#34; and &#34;our&#34;) uses cookies and similar technologies to recognize you when you visit our website at https://andmecarlos.com (&#34;Website&#34;). It explains what these technologies are and why we use them, as well as your rights to control our use of them.
-In some cases we may use cookies to collect personal information, or that becomes personal information if we combine it with other information.</description>
+      <description>In this post im going to be exploring and illustrating the process of WPA hijacking
+Getting Started Before embarking on our journey into the fascinating world of WPA hijacking, there are a few crucial prerequisites to consider. Depending on your preferred setup, you can either install Linux or set up a virtual machine (VM). Although we recommend Kali Linux for the best experience, it&amp;rsquo;s not mandatory.
+Installing Linux If you choose to install Linux, we suggest using Kali Linux 2023.</description>
     </item>
     
     <item>
@@ -61,7 +41,7 @@ In some cases we may use cookies to collect personal information, or that become
       <pubDate>Sun, 24 Sep 2023 00:00:00 +0000</pubDate>
       
       <guid>https://andmecarlos.com/posts/aboutme/</guid>
-      <description>my name is Carlos Nunez, Currently enrolled in Shippensburg university; as a computer Scientist</description>
+      <description>my name is Carlos Nunez, Currently enrolled in Shippensburg university; as a computer major</description>
     </item>
     
   </channel>
