@@ -24,5 +24,7 @@
     <loc>https://andmecarlos.com/search/</loc>
   </url><url>
     <loc>https://andmecarlos.com/tags/</loc>
+  </url><url>
+    <loc>https://andmecarlos.com/posts/test/</loc>
   </url>
 </urlset>
