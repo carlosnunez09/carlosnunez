@@ -61,7 +61,7 @@ params:
     enabled: true # needs to be explicitly set
     title: Carlos Nunez
     subtitle: "Computer Programer"
-    imageUrl: "Profile.jpg"
+    imageUrl: "Profile.HEIC"
     imageWidth: 150
     imageHeight: 150
     imageTitle: Carlos Nunez
