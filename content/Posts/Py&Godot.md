@@ -71,22 +71,18 @@ flowchart LR
   end
     A1 -- Connect via relay --> R1
     B1 -- Connect via relay --> R1
-    R1 -- Forward packets --> A1 & B1
+    R1 -- Forward packets --> A1
+    R1 -- Forward packets --> B1
     A2 -- send input/state --> A1
     B2 -- send input/state --> B1
     A1 -- receive remote state --> A2
     B1 -- receive remote state --> B2
-    W1 L_W1_A1_0@-- Provides peer addresses / relay info --> A1 & B1
+    W1 -- Provides peer addresses / relay info --> A1
+    W1 -- Provides peer addresses / relay info --> B1
 
     classDef peer fill:#f9f,stroke:#333,stroke-width:1px
     classDef relay fill:#bbf,stroke:#333,stroke-width:1px
     classDef wrapper fill:#cfc,stroke:#333,stroke-width:1px
-    style PeerA stroke:none
-    style PeerB stroke:none
-    style Wrapper stroke:#000000,fill:transparent
-    style Relay fill:transparent
-
-    L_W1_A1_0@{ animation: slow } 
-    L_W1_B1_0@{ animation: slow } 
+   
 </div>
 {{< /rawhtml >}}
