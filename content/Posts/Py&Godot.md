@@ -1,5 +1,5 @@
 ---
-title: "Godot and UDP Python"
+title: "Godot and UDP Python In Progress"
 date: 2025-09-15
 showToc: false
 TocOpen: false
