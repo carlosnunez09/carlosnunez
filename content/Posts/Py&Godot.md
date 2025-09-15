@@ -126,12 +126,33 @@ flowchart LR
     stroke: #fff !important;
 }
 
+/* Edge labels - text on lines needs background */
 .dark .mermaid .edgeLabel {
     color: #fff !important;
-    background-color: transparent !important;
+    background-color: #444 !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
 }
 
+.dark .mermaid .edgeLabel span {
+    color: #fff !important;
+}
+
+.dark .mermaid .edgeLabel rect {
+    fill: #444 !important;
+}
+
+/* All text should be white */
 .dark .mermaid .label {
+    color: #fff !important;
+    fill: #fff !important;
+}
+
+.dark .mermaid text {
+    fill: #fff !important;
+}
+
+.dark .mermaid .nodeLabel {
     color: #fff !important;
 }
 
