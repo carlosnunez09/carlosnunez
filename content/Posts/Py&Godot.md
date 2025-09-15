@@ -117,28 +117,43 @@ flowchart LR
 .dark .mermaid .node ellipse,
 .dark .mermaid .node polygon,
 .dark .mermaid .node path {
-    stroke: #f90000ff !important;
+    stroke: #fff !important;
+    fill: transparent !important;
 }
 
 .dark .mermaid .edgePath .path,
 .dark .mermaid .flowchart-link {
-    stroke: #f4d10aff !important;
+    stroke: #fff !important;
 }
 
 .dark .mermaid .edgeLabel {
-    color: #36fa05ff !important;
+    color: #fff !important;
+    background-color: transparent !important;
 }
 
 .dark .mermaid .label {
-    color: #0bf18dff !important;
+    color: #fff !important;
 }
 
 .dark .mermaid .cluster rect {
-    stroke: #0072fcff !important;
+    stroke: #fff !important;
+    fill: transparent !important;
 }
 
 .dark .mermaid .cluster text {
-    fill: #f401a7ff !important;
+    fill: #fff !important;
+}
+
+.dark .mermaid .cluster-label {
+    background-color: transparent !important;
+}
+
+.dark .mermaid g.classGroup rect {
+    fill: transparent !important;
+}
+
+.dark .mermaid .node .label {
+    background-color: transparent !important;
 }
 </style>
 
