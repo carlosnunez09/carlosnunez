@@ -1,4 +1,4 @@
----
+<file name=0 path=/Users/carlosnunez/carlosnunez/content/Posts/Py&Godot.md>---
 title: "Godot and UDP Python"
 date: 2025-09-15
 showToc: false
@@ -90,6 +90,13 @@ flowchart LR
 {{< rawhtml >}}
 <style>
 /* Light mode (default) */
+.mermaid {
+    transform: scale(1.3);
+    transform-origin: top left;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+}
+
 .mermaid .node rect,
 .mermaid .node circle,
 .mermaid .node ellipse,
@@ -105,13 +112,24 @@ flowchart LR
 
 .mermaid .edgeLabel {
     color: #333 !important;
+    font-size: 1.1rem !important;
+    padding: 4px 8px !important;
 }
 
 .mermaid .label {
     color: #333 !important;
+    font-size: 1.2rem !important;
+    font-weight: 600;
 }
 
 /* Dark mode */
+.dark .mermaid {
+    transform: scale(1.3);
+    transform-origin: top left;
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+}
+
 .dark .mermaid .node rect,
 .dark .mermaid .node circle,
 .dark .mermaid .node ellipse,
@@ -130,8 +148,9 @@ flowchart LR
 .dark .mermaid .edgeLabel {
     color: #fff !important;
     background-color: #444 !important;
-    padding: 2px 4px !important;
+    padding: 4px 8px !important;
     border-radius: 3px !important;
+    font-size: 1.1rem !important;
 }
 
 .dark .mermaid .edgeLabel span {
@@ -146,6 +165,8 @@ flowchart LR
 .dark .mermaid .label {
     color: #fff !important;
     fill: #fff !important;
+    font-size: 1.2rem !important;
+    font-weight: 600;
 }
 
 .dark .mermaid text {
@@ -188,7 +209,10 @@ function initMermaid() {
         startOnLoad: true,
         theme: isDark ? 'dark' : 'default',
         flowchart: {
-            curve: 'basis'
+            curve: 'basis',
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            padding: 20
         }
     });
 }
@@ -203,4 +227,4 @@ document.getElementById('theme-toggle')?.addEventListener('click', () => {
     }, 10);
 });
 </script>
-{{< /rawhtml >}}
+{{< /rawhtml >}}</file>
