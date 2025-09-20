@@ -222,22 +222,23 @@ flowchart LR
 
 .diagram-modal-close {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 30px;
+    top: 15px;
+    right: 15px;
+    font-size: 35px;
     font-weight: bold;
     color: #999;
     cursor: pointer;
     background: none;
     border: none;
     padding: 0;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     transition: background 0.2s;
+    z-index: 10000;
 }
 
 .diagram-modal-close:hover {
@@ -250,9 +251,33 @@ flowchart LR
 
 /* Scale up the diagram in modal */
 .diagram-modal .mermaid {
-    transform: scale(1.5);
+    transform: scale(2.5);
     transform-origin: center;
-    margin: 40px;
+    margin: 80px;
+}
+
+/* For very large screens, scale even more */
+@media (min-width: 1920px) {
+    .diagram-modal .mermaid {
+        transform: scale(3);
+        margin: 100px;
+    }
+}
+
+/* For smaller screens, adjust scale */
+@media (max-width: 768px) {
+    .diagram-modal .mermaid {
+        transform: scale(1.8);
+        margin: 40px;
+    }
+}
+
+#modalDiagramContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100%;
+    min-height: 100%;
 }
 </style>
 
