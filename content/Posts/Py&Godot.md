@@ -20,6 +20,7 @@ Godot comes with its own implementation of connectivity using its built-in ENet.
 ## Peer-to-Peer (ENet) — Godot
 
 {{< rawhtml >}}
+<div class="mermaid-container" style="overflow-x: auto; padding: 20px 40px; margin: 20px 0;">
 <div class="mermaid">
 flowchart LR
     subgraph PeerA["Peer A (Godot)"]
@@ -41,6 +42,7 @@ flowchart LR
     style PeerA stroke:none
     style PeerB stroke:none
 </div>
+</div>
 {{< /rawhtml >}}
 
 There are a lot of functions that we can do with this implementation, like very basic games and player games where data is given and received between each other.
@@ -54,6 +56,7 @@ This implementation has many weaknesses:
   - A wrapper service acts as the middleman, assigning peers and providing a connection between them (similar to how matchmaking or relay services work). It's the same but it has extra steps to allow online connectivity
 
 {{< rawhtml >}}
+<div class="mermaid-container" style="overflow-x: auto; padding: 20px 40px; margin: 20px 0;">
 <div class="mermaid">
 flowchart LR
     subgraph PeerA["Peer A (Godot)"]
@@ -84,6 +87,7 @@ flowchart LR
     classDef peer fill:#f9f,stroke:#333,stroke-width:1px
     classDef relay fill:#bbf,stroke:#333,stroke-width:1px
     classDef wrapper fill:#cfc,stroke:#333,stroke-width:1px
+</div>
 </div>
 {{< /rawhtml >}}
 
@@ -177,14 +181,114 @@ flowchart LR
     background-color: transparent !important;
 }
 
+/* Container for diagrams */
+.mermaid-container {
+    cursor: pointer;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 20px 40px;
+    margin: 20px 0;
+}
+
 /* Make diagrams clickable */
 .mermaid {
     cursor: pointer;
     transition: opacity 0.2s;
+    min-width: 100%;
+    overflow: visible !important;
 }
 
-.mermaid:hover {
+.mermaid svg {
+    overflow: visible !important;
+    min-width: 100%;
+}
+
+/* Adjust SVG viewBox for better visibility */
+.mermaid svg[viewBox] {
+    margin: 0 20px !important;
+}
+
+.mermaid:hover,
+.mermaid-container:hover .mermaid {
     opacity: 0.9;
+}
+
+/* Ensure clusters have enough width */
+.mermaid .cluster {
+    min-width: 200px !important;
+    padding: 20px !important;
+}
+
+.mermaid .cluster rect {
+    width: calc(100% + 40px) !important;
+}
+
+/* Give subgraphs more breathing room */
+.mermaid g.cluster {
+    margin: 15px !important;
+}
+
+.mermaid .subgraph {
+    padding: 20px !important;
+}
+
+/* Ensure node labels don't get cut off */
+.mermaid .node {
+    margin: 10px !important;
+}
+
+.mermaid .nodeLabel {
+    padding: 10px !important;
+    white-space: nowrap !important;
+}
+
+/* Edge path padding */
+.mermaid .edgePaths {
+    margin: 0 20px !important;
+}
+
+/* Fix for flowchart subgraphs specifically */
+.mermaid .flowchart-subgraph {
+    min-width: 250px !important;
+    padding: 15px !important;
+}
+
+.mermaid .flowchart-subgraph rect {
+    rx: 3 !important;
+    ry: 3 !important;
+}
+
+/* Ensure text inside clusters is not cut off */
+.mermaid .cluster-label {
+    padding: 5px 15px !important;
+}
+
+/* Subgraph specific fixes */
+.mermaid g[id^="subGraph"] {
+    min-width: 260px !important;
+}
+
+.mermaid g[id^="subGraph"] rect {
+    min-width: 240px !important;
+    x: -20 !important;
+}
+
+.mermaid g[id*="flowchart-subGraph"] rect,
+.mermaid g[id*="flowchart-PeerA"] rect,
+.mermaid g[id*="flowchart-PeerB"] rect,
+.mermaid g[id*="flowchart-Relay"] rect,
+.mermaid g[id*="flowchart-Wrapper"] rect {
+    min-width: 280px !important;
+}
+
+/* Prevent overflow cutting */
+.mermaid {
+    overflow: visible !important;
+    width: 100%;
+}
+
+.mermaid svg {
+    overflow: visible !important;
 }
 
 /* Modal styles */
@@ -253,14 +357,15 @@ flowchart LR
 .diagram-modal .mermaid {
     transform: scale(2.5);
     transform-origin: center;
-    margin: 80px;
+    margin: 100px auto;
+    display: block;
 }
 
 /* For very large screens, scale even more */
 @media (min-width: 1920px) {
     .diagram-modal .mermaid {
         transform: scale(3);
-        margin: 100px;
+        margin: 120px auto;
     }
 }
 
@@ -268,7 +373,7 @@ flowchart LR
 @media (max-width: 768px) {
     .diagram-modal .mermaid {
         transform: scale(1.8);
-        margin: 40px;
+        margin: 60px auto;
     }
 }
 
@@ -278,6 +383,8 @@ flowchart LR
     justify-content: center;
     min-width: 100%;
     min-height: 100%;
+    overflow: visible;
+    padding: 20px;
 }
 </style>
 
@@ -299,28 +406,54 @@ function initMermaid() {
         startOnLoad: true,
         theme: isDark ? 'dark' : 'default',
         flowchart: {
-            curve: 'basis'
+            curve: 'basis',
+            padding: 30,
+            nodeSpacing: 150,
+            rankSpacing: 150,
+            useMaxWidth: false,
+            htmlLabels: true,
+            wrappingWidth: 200
         }
     });
     
-    // After mermaid initializes, add click handlers
+    // After mermaid initializes, add click handlers and fix viewBox
     setTimeout(() => {
+        // Fix viewBox to prevent cutoff
+        document.querySelectorAll('.mermaid svg').forEach(svg => {
+            const viewBox = svg.getAttribute('viewBox');
+            if (viewBox) {
+                const parts = viewBox.split(' ');
+                // Expand viewBox by 50px on each side
+                parts[0] = (parseFloat(parts[0]) - 50).toString();
+                parts[1] = (parseFloat(parts[1]) - 25).toString();
+                parts[2] = (parseFloat(parts[2]) + 100).toString();
+                parts[3] = (parseFloat(parts[3]) + 50).toString();
+                svg.setAttribute('viewBox', parts.join(' '));
+            }
+        });
+        
         addDiagramClickHandlers();
     }, 500);
 }
 
 function addDiagramClickHandlers() {
     const diagrams = document.querySelectorAll('.mermaid');
+    const containers = document.querySelectorAll('.mermaid-container');
     const modal = document.getElementById('diagramModal');
     const modalContainer = document.getElementById('modalDiagramContainer');
     const closeBtn = modal.querySelector('.diagram-modal-close');
     
-    diagrams.forEach((diagram, index) => {
-        diagram.style.cursor = 'pointer';
-        diagram.title = 'Click to enlarge';
+    // Apply click handlers to containers if they exist, otherwise to diagrams directly
+    const clickTargets = containers.length > 0 ? containers : diagrams;
+    
+    clickTargets.forEach((target, index) => {
+        target.style.cursor = 'pointer';
+        target.title = 'Click to enlarge';
         
-        diagram.addEventListener('click', function(e) {
+        target.addEventListener('click', function(e) {
             e.stopPropagation();
+            // Get the actual diagram element
+            const diagram = target.classList.contains('mermaid') ? target : target.querySelector('.mermaid');
             // Clone the diagram
             const clonedDiagram = diagram.cloneNode(true);
             modalContainer.innerHTML = '';
