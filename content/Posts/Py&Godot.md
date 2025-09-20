@@ -1,5 +1,5 @@
 ---
-title: "Godot and UDP Python In Progress"
+title: "Godot and UDP Python"
 date: 2025-09-15
 showToc: false
 TocOpen: false
@@ -176,7 +176,93 @@ flowchart LR
 .dark .mermaid .node .label {
     background-color: transparent !important;
 }
+
+/* Make diagrams clickable */
+.mermaid {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.mermaid:hover {
+    opacity: 0.9;
+}
+
+/* Modal styles */
+.diagram-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    cursor: zoom-out;
+}
+
+.diagram-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diagram-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+    overflow: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.dark .diagram-modal-content {
+    background: #1a1a1a;
+}
+
+.diagram-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.diagram-modal-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.dark .diagram-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Scale up the diagram in modal */
+.diagram-modal .mermaid {
+    transform: scale(1.5);
+    transform-origin: center;
+    margin: 40px;
+}
 </style>
+
+<!-- Modal HTML -->
+<div id="diagramModal" class="diagram-modal">
+    <div class="diagram-modal-content">
+        <button class="diagram-modal-close">&times;</button>
+        <div id="modalDiagramContainer"></div>
+    </div>
+</div>
 
 <script type="module">
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
@@ -189,6 +275,52 @@ function initMermaid() {
         theme: isDark ? 'dark' : 'default',
         flowchart: {
             curve: 'basis'
+        }
+    });
+    
+    // After mermaid initializes, add click handlers
+    setTimeout(() => {
+        addDiagramClickHandlers();
+    }, 500);
+}
+
+function addDiagramClickHandlers() {
+    const diagrams = document.querySelectorAll('.mermaid');
+    const modal = document.getElementById('diagramModal');
+    const modalContainer = document.getElementById('modalDiagramContainer');
+    const closeBtn = modal.querySelector('.diagram-modal-close');
+    
+    diagrams.forEach((diagram, index) => {
+        diagram.style.cursor = 'pointer';
+        diagram.title = 'Click to enlarge';
+        
+        diagram.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Clone the diagram
+            const clonedDiagram = diagram.cloneNode(true);
+            modalContainer.innerHTML = '';
+            modalContainer.appendChild(clonedDiagram);
+            modal.classList.add('active');
+        });
+    });
+    
+    // Close modal when clicking close button
+    closeBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        modal.classList.remove('active');
+    });
+    
+    // Close modal when clicking outside
+    modal?.addEventListener('click', function(e) {
+        if (e.target === modal || e.target === modal.querySelector('.diagram-modal-content')) {
+            modal.classList.remove('active');
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            modal.classList.remove('active');
         }
     });
 }
