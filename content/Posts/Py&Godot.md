@@ -213,7 +213,12 @@ flowchart LR
     height: 100vh;
     overflow: auto;
     background: white;
-    padding: 0;
+    /* Safer bounds with responsive and safe-area padding */
+    padding: clamp(8px, 2.5vw, 24px);
+    padding-left: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-left, 0px));
+    padding-right: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-right, 0px));
+    padding-top: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-bottom, 0px));
     border-radius: 0;
     position: relative;
     box-sizing: border-box;
@@ -266,6 +271,10 @@ flowchart LR
     width: auto;
     height: auto;
 }
+
+/* Normalize any fixed dimensions mermaid may set */
+.diagram-modal .mermaid svg[width] { width: auto !important; }
+.diagram-modal .mermaid svg[height] { height: auto !important; }
 
 #modalDiagramContainer {
     display: flex;
