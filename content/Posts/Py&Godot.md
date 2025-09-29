@@ -48,10 +48,10 @@ There are a lot of functions that we can do with this implementation, like very 
 This implementation has many weaknesses:
 
 - Sometimes restricted by local networks.
-    - Functionality outside of the local network becomes more difficult. For example, we don't want the player to expose their game host across the internet to another peer. It's possible, but not ideal.
+  - Functionality outside of the local network becomes more difficult. For example, we don't want the player to expose their game host across the internet to another peer. It's possible, but not ideal.
 - All of the data will come from Peer A (the host), while the rest of the peers simply join that host.
 - For simpler games, this implementation can be a good idea, but in more complex cases there's a different approach:
-    - A wrapper service acts as the middleman, assigning peers and providing a connection between them (similar to how matchmaking or relay services work). It's the same but it has extra steps to allow online connectivity
+  - A wrapper service acts as the middleman, assigning peers and providing a connection between them (similar to how matchmaking or relay services work). It's the same but it has extra steps to allow online connectivity
 
 {{< rawhtml >}}
 <div class="mermaid">
@@ -177,167 +177,14 @@ flowchart LR
     background-color: transparent !important;
 }
 
-/* Container for diagrams */
-.mermaid-container {
-    cursor: pointer;
-    overflow-x: auto;
-    overflow-y: visible;
-    padding: 30px 60px;
-    margin: 30px -20px;
-    width: calc(100% + 40px);
-}
-
 /* Make diagrams clickable */
 .mermaid {
     cursor: pointer;
     transition: opacity 0.2s;
-    min-width: 100%;
-    overflow: visible !important;
 }
 
-.mermaid svg {
-    overflow: visible !important;
-    min-width: 100%;
-}
-
-/* Adjust SVG viewBox for better visibility */
-.mermaid svg[viewBox] {
-    margin: 0 20px !important;
-}
-
-.mermaid:hover,
-.mermaid-container:hover .mermaid {
+.mermaid:hover {
     opacity: 0.9;
-}
-
-/* Ensure clusters have enough width */
-.mermaid .cluster {
-    min-width: 200px !important;
-    padding: 20px !important;
-}
-
-.mermaid .cluster rect {
-    width: calc(100% + 40px) !important;
-}
-
-/* Specific cluster width fixes - target the actual rendered elements */
-.mermaid .clusters rect,
-.mermaid g.cluster rect,
-.mermaid g[class*="cluster"] rect,
-.mermaid rect.cluster {
-    min-width: 280px !important;
-    stroke-width: 1px !important;
-}
-
-/* Force subgraph containers to be wider */
-.mermaid g[id*="subGraph"],
-.mermaid g[class*="subgraph"],
-.mermaid .subgraph {
-    min-width: 300px !important;
-    display: block !important;
-}
-
-/* Give subgraphs more breathing room */
-.mermaid g.cluster {
-    margin: 15px !important;
-    padding: 20px !important;
-}
-
-.mermaid .subgraph {
-    padding: 25px !important;
-    min-width: 280px !important;
-}
-
-/* Ensure node labels don't get cut off */
-.mermaid .node {
-    margin: 10px !important;
-}
-
-.mermaid .nodeLabel {
-    padding: 10px 15px !important;
-    white-space: nowrap !important;
-}
-
-/* Edge path padding */
-.mermaid .edgePaths {
-    margin: 0 20px !important;
-}
-
-/* Fix for flowchart subgraphs specifically */
-.mermaid .flowchart-subgraph {
-    min-width: 300px !important;
-    padding: 20px !important;
-}
-
-.mermaid .flowchart-subgraph rect {
-    rx: 3 !important;
-    ry: 3 !important;
-}
-
-/* Ensure text inside clusters is not cut off */
-.mermaid .cluster-label {
-    padding: 8px 20px !important;
-    white-space: nowrap !important;
-}
-
-/* Subgraph labels */
-.mermaid .cluster-label span,
-.mermaid g[id*="label"] text,
-.mermaid .nodeLabel {
-    padding-left: 15px !important;
-    padding-right: 15px !important;
-}
-
-/* Subgraph specific fixes */
-.mermaid g[id^="subGraph"],
-.mermaid g[id*="PeerA"],
-.mermaid g[id*="PeerB"],
-.mermaid g[id*="Relay"],
-.mermaid g[id*="Wrapper"] {
-    min-width: 300px !important;
-}
-
-.mermaid g[id^="subGraph"] rect,
-.mermaid g[id*="PeerA"] rect,
-.mermaid g[id*="PeerB"] rect,
-.mermaid g[id*="Relay"] rect,
-.mermaid g[id*="Wrapper"] rect {
-    min-width: 280px !important;
-    x: -30 !important;
-}
-
-.mermaid g[id*="flowchart-subGraph"] rect,
-.mermaid g[id*="flowchart-PeerA"] rect,
-.mermaid g[id*="flowchart-PeerB"] rect,
-.mermaid g[id*="flowchart-Relay"] rect,
-.mermaid g[id*="flowchart-Wrapper"] rect {
-    min-width: 320px !important;
-}
-
-/* Fix cluster boundaries */
-.mermaid .clusters path,
-.mermaid g.cluster path {
-    stroke-width: 1px !important;
-}
-
-/* Ensure clusters don't cut off content */
-.mermaid g[id*="subGraph"],
-.mermaid g[transform] .cluster {
-    transform: translateX(0) !important;
-}
-
-/* Prevent overflow cutting */
-.mermaid {
-    overflow: visible !important;
-    width: 100%;
-    padding: 0 50px !important;
-    box-sizing: content-box !important;
-}
-
-.mermaid svg {
-    overflow: visible !important;
-    padding: 0 !important;
-    margin: 0 !important;
 }
 
 /* Modal styles */
@@ -402,28 +249,21 @@ flowchart LR
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Scale up the diagram in modal */
+/* Responsive enlargement in modal: fit diagram to viewport */
+.diagram-modal-content {
+    width: 95vw;
+    height: 95vh;
+}
+
 .diagram-modal .mermaid {
-    transform: scale(2.5);
-    transform-origin: center;
-    margin: 100px auto;
+    margin: 0;
+    max-width: none;
+}
+
+.diagram-modal .mermaid svg {
     display: block;
-}
-
-/* For very large screens, scale even more */
-@media (min-width: 1920px) {
-    .diagram-modal .mermaid {
-        transform: scale(3);
-        margin: 120px auto;
-    }
-}
-
-/* For smaller screens, adjust scale */
-@media (max-width: 768px) {
-    .diagram-modal .mermaid {
-        transform: scale(1.8);
-        margin: 60px auto;
-    }
+    width: 100%;
+    height: auto;
 }
 
 #modalDiagramContainer {
@@ -432,8 +272,6 @@ flowchart LR
     justify-content: center;
     min-width: 100%;
     min-height: 100%;
-    overflow: visible;
-    padding: 20px;
 }
 </style>
 
@@ -454,19 +292,15 @@ function initMermaid() {
     mermaid.initialize({
         startOnLoad: true,
         theme: isDark ? 'dark' : 'default',
-        flowchart: { 
+        flowchart: {
             curve: 'basis'
         }
     });
     
-    // After mermaid renders, attach click handlers
-    setTimeout(addDiagramClickHandlers, 400);
-}
-
-function removeAllIDs(node) {
-    if (!node || node.nodeType !== 1) return;
-    if (node.hasAttribute && node.hasAttribute('id')) node.removeAttribute('id');
-    node.querySelectorAll && node.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+    // After mermaid initializes, add click handlers
+    setTimeout(() => {
+        addDiagramClickHandlers();
+    }, 500);
 }
 
 function addDiagramClickHandlers() {
@@ -475,102 +309,49 @@ function addDiagramClickHandlers() {
     const modalContainer = document.getElementById('modalDiagramContainer');
     const closeBtn = modal.querySelector('.diagram-modal-close');
     
-    function openModalWithNode(nodeToAppend) {
-        modalContainer.innerHTML = '';
-        modalContainer.appendChild(nodeToAppend);
-        document.body.style.overflow = 'hidden'; // prevent background scroll
-        modal.classList.add('active');
-        closeBtn?.focus();
-    }
-    
-    diagrams.forEach((diagram) => {
-        diagram.style.cursor = 'zoom-in';
+    diagrams.forEach((diagram, index) => {
+        diagram.style.cursor = 'pointer';
         diagram.title = 'Click to enlarge';
         
-        diagram.addEventListener('click', (e) => {
+        diagram.addEventListener('click', function(e) {
             e.stopPropagation();
-            
+            // Clone the diagram
+            const clonedDiagram = diagram.cloneNode(true);
             modalContainer.innerHTML = '';
-            
-            // Prefer cloning the rendered SVG inside the mermaid container
-            const svg = diagram.querySelector('svg');
-            if (svg) {
-                const svgClone = svg.cloneNode(true);
-                // Remove width/height to make it responsive
-                svgClone.removeAttribute('width');
-                svgClone.removeAttribute('height');
-                svgClone.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-                // Remove id attributes to avoid collisions
-                removeAllIDs(svgClone);
-                // ensure style rules don't force transform
-                svgClone.style.transform = 'none';
-                openModalWithNode(svgClone);
-                return;
-            }
-            
-            // Fallback: clone entire mermaid element and ask mermaid to init inside modal
-            const clone = diagram.cloneNode(true);
-            // remove ids
-            removeAllIDs(clone);
-            modalContainer.appendChild(clone);
-            
-            // If mermaid is available, try to re-init rendering for the cloned container
-            if (window.mermaid) {
-                try {
-                    // re-run mermaid init for the cloned element (no-op when already rendered)
-                    mermaid.init(undefined, clone);
-                } catch (err) {
-                    // non-fatal — leave clone as-is
-                    console.warn('mermaid re-init failed for modal clone', err);
-                }
-            }
-            
-            // Ensure responsive SVGs inside the clone are sized
-            const innerSVG = modalContainer.querySelector('svg');
-            if (innerSVG) {
-                innerSVG.removeAttribute('width');
-                innerSVG.removeAttribute('height');
-                innerSVG.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-                removeAllIDs(innerSVG);
-                innerSVG.style.transform = 'none';
-            }
-            
-            // Finally open modal
-            document.body.style.overflow = 'hidden';
+            modalContainer.appendChild(clonedDiagram);
             modal.classList.add('active');
         });
     });
     
-    function closeModal() {
+    // Close modal when clicking close button
+    closeBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
         modal.classList.remove('active');
-        document.body.style.overflow = '';
-        // clear cloned content (free memory)
-        modalContainer.innerHTML = '';
-    }
-    
-    // Close handlers
-    closeBtn?.addEventListener('click', (e) => { 
-        e.stopPropagation(); 
-        closeModal(); 
     });
     
-    modal?.addEventListener('click', (e) => {
-        // only close when clicking the backdrop, not inside the diagram
-        if (e.target === modal) closeModal();
+    // Close modal when clicking outside
+    modal?.addEventListener('click', function(e) {
+        if (e.target === modal || e.target === modal.querySelector('.diagram-modal-content')) {
+            modal.classList.remove('active');
+        }
     });
     
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        }
     });
-    
-    // Optional: on window resize we don't need to do anything because CSS uses max-width/max-height
 }
 
+// Initialize on load
 initMermaid();
 
-// If you have an existing theme toggle that reloads, keep that logic — re-initMermaid after theme change
+// Watch for theme toggle button clicks
 document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    setTimeout(() => location.reload(), 10);
+    setTimeout(() => {
+        location.reload();
+    }, 10);
 });
 </script>
 {{< /rawhtml >}}
