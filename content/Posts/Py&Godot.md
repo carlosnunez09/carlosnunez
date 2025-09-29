@@ -200,7 +200,6 @@ flowchart LR
     cursor: zoom-out;
 }
 
-
 .diagram-modal.active {
     display: flex;
     align-items: center;
@@ -208,20 +207,13 @@ flowchart LR
 }
 
 .diagram-modal-content {
-    width: 100vw;
-    height: 100svh;
-    height: 100vh;
+    max-width: 95vw;
+    max-height: 95vh;
     overflow: auto;
     background: white;
-    /* Safer bounds with responsive and safe-area padding */
-    padding: clamp(8px, 2.5vw, 24px);
-    padding-left: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-left, 0px));
-    padding-right: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-right, 0px));
-    padding-top: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(clamp(8px, 2.5vw, 24px) + env(safe-area-inset-bottom, 0px));
-    border-radius: 0;
+    padding: 20px;
+    border-radius: 8px;
     position: relative;
-    box-sizing: border-box;
 }
 
 .dark .diagram-modal-content {
@@ -257,31 +249,39 @@ flowchart LR
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* Responsive enlargement in modal: fit diagram to viewport */
-
+/* Scale up the diagram in modal (layout-based sizing instead of transform) */
+/* Using SVG width so scrollbars and layout work correctly */
 .diagram-modal .mermaid {
     margin: 0;
-    max-width: none;
+    max-width: none !important;
 }
 
 .diagram-modal .mermaid svg {
-    display: block;
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
+    width: 1600px; /* default enlarged width */
     height: auto;
+    max-width: none; /* allow wider than container; container will scroll */
 }
 
-/* Normalize any fixed dimensions mermaid may set */
-.diagram-modal .mermaid svg[width] { width: auto !important; }
-.diagram-modal .mermaid svg[height] { height: auto !important; }
+/* For very large screens, enlarge even more */
+@media (min-width: 1920px) {
+    .diagram-modal .mermaid svg {
+        width: 2200px;
+    }
+}
+
+/* For smaller screens, reduce enlarged size */
+@media (max-width: 768px) {
+    .diagram-modal .mermaid svg {
+        width: 1200px;
+    }
+}
 
 #modalDiagramContainer {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100%;
+    min-width: 100%;
+    min-height: 100%;
 }
 </style>
 
@@ -344,11 +344,6 @@ function addDiagramClickHandlers() {
         if (e.target === modal) {
             modal.classList.remove('active');
         }
-    });
-
-    // Prevent clicks inside the content from bubbling to the overlay
-    modal.querySelector('.diagram-modal-content')?.addEventListener('click', function(e) {
-        e.stopPropagation();
     });
     
     // Close modal with Escape key
