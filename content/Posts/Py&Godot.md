@@ -207,13 +207,15 @@ flowchart LR
 }
 
 .diagram-modal-content {
-    max-width: 95vw;
-    max-height: 95vh;
+    width: 100vw;
+    height: 100svh;
+    height: 100vh;
     overflow: auto;
     background: white;
-    padding: 20px;
-    border-radius: 8px;
+    padding: 0;
+    border-radius: 0;
     position: relative;
+    box-sizing: border-box;
 }
 
 .dark .diagram-modal-content {
@@ -250,10 +252,6 @@ flowchart LR
 }
 
 /* Responsive enlargement in modal: fit diagram to viewport */
-.diagram-modal-content {
-    width: 95vw;
-    height: 95vh;
-}
 
 .diagram-modal .mermaid {
     margin: 0;
@@ -262,7 +260,9 @@ flowchart LR
 
 .diagram-modal .mermaid svg {
     display: block;
-    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
 }
 
@@ -270,8 +270,8 @@ flowchart LR
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 100%;
-    min-height: 100%;
+    width: 100%;
+    height: 100%;
 }
 </style>
 
@@ -329,11 +329,16 @@ function addDiagramClickHandlers() {
         modal.classList.remove('active');
     });
     
-    // Close modal when clicking outside
+    // Close modal when clicking outside (overlay only)
     modal?.addEventListener('click', function(e) {
-        if (e.target === modal || e.target === modal.querySelector('.diagram-modal-content')) {
+        if (e.target === modal) {
             modal.classList.remove('active');
         }
+    });
+
+    // Prevent clicks inside the content from bubbling to the overlay
+    modal.querySelector('.diagram-modal-content')?.addEventListener('click', function(e) {
+        e.stopPropagation();
     });
     
     // Close modal with Escape key
