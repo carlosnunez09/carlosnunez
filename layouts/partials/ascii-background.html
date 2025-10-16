@@ -1,0 +1,236 @@
+{{- /* ASCII Background Animation Partial */ -}}
+{{- /* Only show on home page to avoid performance impact on other pages */ -}}
+{{- if .IsHome }}
+<style>
+  /* ASCII animation background - only visible on home page */
+  #ascii-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    white-space: pre;
+    line-height: 1;
+    letter-spacing: 1px;
+    font-variant-ligatures: none;
+    z-index: 0; /* Behind all content */
+    pointer-events: none; /* Allow clicks through to content */
+    color: var(--ascii-color, rgba(98, 11, 11, 0.008)); /* More subtle/transparent */
+    font-size: 12px; /* Base font size */
+    font-family: monospace;
+    overflow: hidden;
+  }
+
+  /* Dark mode uses lighter ASCII characters - very subtle */
+  .dark #ascii-bg {
+    --ascii-color: rgba(255, 255, 255, 0.02);
+  }
+
+  /* Light mode uses darker ASCII characters - more visible */
+  body:not(.dark) #ascii-bg {
+    --ascii-color: rgba(0, 0, 0, 0.08);
+  }
+
+  /* Responsive font sizing */
+  @media (max-width: 420px) {
+    #ascii-bg {
+      font-size: 10px;
+    }
+  }
+
+  @media (min-width: 1920px) {
+    #ascii-bg {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<!-- ASCII background container -->
+<div id="ascii-bg" aria-hidden="true"></div>
+
+<script>
+  /**
+   * ASCII Background Animation
+   * Creates an animated ASCII art background with mouse interaction
+   *
+   * Features:
+   * - Fullscreen ASCII grid with radial wave patterns
+   * - Mouse-following circular highlight with distinct characters
+   * - Responsive to window resize
+   * - Performance optimized with single DOM write per frame
+   */
+  (function() {
+    'use strict';
+
+    const asciiEl = document.getElementById('ascii-bg');
+    if (!asciiEl) return; // Exit if element doesn't exist
+
+    // Character palettes
+    // Base palette: subtle background characters for ambient animation
+    const basePalette = [' ', '.', ',', '`', '\'', ':', ';', '-', '_', '~', '^', '"', '*', '+', '=', 'o', 'O', '0', '#', '%', '@'];
+
+    // Mouse palette: distinct characters that appear near cursor
+    const mousePalette = ['@', '#', '$', '%', '&', '█', '▓', '▒'];
+
+    // Grid dimensions
+    let cols = 0;        // Number of columns in ASCII grid
+    let rows = 0;        // Number of rows in ASCII grid
+    let charW = 8;       // Width of each character in pixels
+    let charH = 16;      // Height of each character in pixels
+
+    // Mouse tracking
+    let mouseX = window.innerWidth / 2;   // Current mouse X position
+    let mouseY = window.innerHeight / 2;  // Current mouse Y position
+
+    // Animation state
+    let frame = 0;       // Current animation frame counter
+
+    // ASCII element bounding rectangle (for coordinate calculations)
+    let asciiRect = {
+      left: 0,
+      top: 0,
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
+
+    /**
+     * Measures the actual pixel dimensions of a monospace character
+     * This ensures accurate grid calculations across different screen sizes
+     */
+    function measureChar() {
+      const span = document.createElement('span');
+      span.style.fontFamily = 'monospace';
+      span.style.fontSize = window.getComputedStyle(asciiEl).fontSize || '12px';
+      span.style.padding = '0';
+      span.style.margin = '0';
+      span.style.lineHeight = '1';
+      span.textContent = 'M';
+      span.style.position = 'absolute';
+      span.style.visibility = 'hidden';
+      document.body.appendChild(span);
+
+      const rect = span.getBoundingClientRect();
+      charW = Math.max(6, Math.ceil(rect.width));
+      charH = Math.max(8, Math.ceil(rect.height));
+
+      span.remove();
+    }
+
+    /**
+     * Updates the cached bounding rectangle of the ASCII element
+     * Used for accurate pixel-to-grid coordinate conversion
+     * Since element is position:fixed, left/top are always 0,0 in viewport coords
+     */
+    function updateAsciiRect() {
+      asciiRect.left = 0;
+      asciiRect.top = 0;
+      asciiRect.width = window.innerWidth;
+      asciiRect.height = window.innerHeight;
+    }
+
+    /**
+     * Recalculates grid dimensions on window resize
+     * Ensures the ASCII grid fills the viewport correctly
+     */
+    function resize() {
+      measureChar();
+      updateAsciiRect();
+      cols = Math.max(2, Math.floor(asciiRect.width / charW));
+      rows = Math.max(2, Math.floor(asciiRect.height / charH));
+    }
+
+    // Initial setup
+    resize();
+
+    // Keep grid responsive to window size changes
+    window.addEventListener('resize', resize);
+
+    // Track mouse movement for interactive highlight
+    window.addEventListener('mousemove', function(e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    /**
+     * Main animation loop
+     * Renders the ASCII grid with animated patterns and mouse interaction
+     */
+    function draw() {
+      const out = [];
+
+      // Calculate mouse highlight radius (5% of smaller viewport dimension)
+      const baseRadiusPixels = Math.min(window.innerWidth, window.innerHeight) * 0.05;
+      // Add organic jitter to radius for natural feel
+      const radiusPixels = baseRadiusPixels * (0.85 + Math.random() * 0.3);
+
+      // Build each row of the ASCII grid
+      for (let y = 0; y < rows; y++) {
+        const line = [];
+
+        for (let x = 0; x < cols; x++) {
+          // Normalize coordinates to -1..1 range for base animation
+          const cHalfX = cols / 2;
+          const cHalfY = rows / 2;
+          const nx = (x - cHalfX) / cHalfX;
+          const ny = (y - cHalfY) / cHalfY;
+
+          // Create animated base pattern using radial waves
+          const distCenter = Math.sqrt(nx * nx + ny * ny);
+          const angle = Math.atan2(ny, nx);
+
+          // Combine multiple wave patterns for visual complexity
+          const radialWave = Math.sin(distCenter * 6.0 - frame * 0.06 + angle * 2.0);
+          const swirl = Math.cos(angle * 3.0 + frame * 0.02);
+          const pulse = Math.sin(frame * 0.04) * 0.12;
+          let v = radialWave + swirl * 0.5 + pulse;
+
+          // Calculate pixel position of this character cell
+          const cellCenterX = asciiRect.left + x * charW + charW * 0.5;
+          const cellCenterY = asciiRect.top + y * charH + charH * 0.5;
+
+          // Calculate distance from mouse in pixel space (ensures circular highlight)
+          const dx = cellCenterX - mouseX;
+          const dy = cellCenterY - mouseY;
+          const distMouse = Math.sqrt(dx * dx + dy * dy);
+
+          // Check if this cell is within mouse highlight radius
+          if (distMouse < radiusPixels) {
+            // Cells closer to mouse get denser characters
+            const t = 1 - (distMouse / radiusPixels); // 1 at center, 0 at edge
+
+            // Select character from mouse palette based on distance
+            let idx = Math.floor(t * (mousePalette.length - 1));
+            // Add randomized jitter for organic texture
+            idx += Math.floor((Math.random() - 0.5) * 1.8);
+            idx = Math.max(0, Math.min(mousePalette.length - 1, idx));
+
+            // Occasionally pick completely random character for variety
+            if (Math.random() < 0.12) {
+              line.push(mousePalette[Math.floor(Math.random() * mousePalette.length)]);
+            } else {
+              line.push(mousePalette[idx]);
+            }
+          } else {
+            // Outside mouse radius: use base palette with animated pattern
+            const mapped = (v + 2) / 4; // Map wave value to 0..1 range
+            let idx = Math.floor(mapped * basePalette.length);
+            idx = Math.max(0, Math.min(basePalette.length - 1, idx));
+            line.push(basePalette[idx]);
+          }
+        }
+
+        out.push(line.join(''));
+      }
+
+      // Single DOM write per frame for optimal performance
+      asciiEl.textContent = out.join('\n');
+
+      frame++;
+      requestAnimationFrame(draw);
+    }
+
+    // Start animation
+    draw();
+  })();
+</script>
+{{- end }}

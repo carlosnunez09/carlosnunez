@@ -1,10 +1,10 @@
 ---
 title: "test"
-date: 2025-1-21
+date: 2025-01-21
 
 author: "me"
 tag: "hacking"
-draft: false 
+draft: false
 ---
 
 {{<rawhtml >}} 

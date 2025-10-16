@@ -28,3 +28,9 @@
   from   = "/npmjs/*"
   to     = "/npmjs/"
   status = 200
+
+[dev]
+  command = "hugo server -D"
+  targetPort = 1313
+  publish = "public"
+  autoLaunch = false
