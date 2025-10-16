@@ -2,58 +2,279 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Carlos Nunez</title>
-    <link>https://andmecarlos.com/</link>
+    <link>http://localhost:1313/</link>
     <description>Recent content on Carlos Nunez</description>
     <image>
       <title>Carlos Nunez</title>
-      <url>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
-      <link>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+      <url>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 20 Oct 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://andmecarlos.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 15 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Godot and UDP Python(In progress)</title>
+      <link>http://localhost:1313/posts/pygodot/</link>
+      <pubDate>Mon, 15 Sep 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/pygodot/</guid>
+      <description>&lt;p&gt;Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.&lt;/p&gt;
+&lt;h2 id=&#34;implementations-using-enet&#34;&gt;Implementations using ENet&lt;/h2&gt;
+&lt;p&gt;Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&amp;rsquo;t use. Since it&amp;rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>test</title>
+      <link>http://localhost:1313/posts/test/</link>
+      <pubDate>Tue, 21 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/test/</guid>
+      <description>&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+    &lt;meta charset=&#34;UTF-8&#34;&gt;
+    &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+    &lt;title&gt;Bubble Pop Fun&lt;/title&gt;
+    &lt;style&gt;
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;canvas id=&#34;bubbleCanvas&#34;&gt;&lt;/canvas&gt;
+
+    &lt;script&gt;
+        const canvas = document.getElementById(&#39;bubbleCanvas&#39;);
+        const ctx = canvas.getContext(&#39;2d&#39;);
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const mouse = {
+            x: null,
+            y: null
+        };
+
+        window.addEventListener(&#39;mousemove&#39;, (e) =&gt; {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener(&#39;click&#39;, (e) =&gt; {
+            for (let i = 0; i &lt; 5; i++) {
+                bubbles.push(new Bubble(e.clientX, e.clientY));
+            }
+        });
+
+        class Bubble {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 20 + 10;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * -2 - 1;
+                this.opacity = 1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.opacity -= 0.01;
+                if (this.opacity &lt;= 0) {
+                    this.opacity = 0;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 150, 255, ${this.opacity})`;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        const bubbles = [];
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i &lt; bubbles.length; i++) {
+                bubbles[i].update();
+                bubbles[i].draw();
+
+                if (bubbles[i].opacity &lt;= 0) {
+                    bubbles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener(&#39;resize&#39;, () =&gt; {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</description>
+    </item>
+    
     <item>
       <title>WPA Highjacking (For Educational Purposes Only)</title>
-      <link>https://andmecarlos.com/posts/wpa-hijacking/</link>
+      <link>http://localhost:1313/posts/wpa-hijacking/</link>
       <pubDate>Fri, 20 Oct 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/wpa-hijacking/</guid>
-      <description>In this post im going to be exploring and illustrating the process of WPA hijacking
-Getting Started Before embarking on our journey into the fascinating world of WPA hijacking, there are a few crucial prerequisites to consider. Depending on your preferred setup, you can either install Linux or set up a virtual machine (VM). Although we recommend Kali Linux for the best experience, it&amp;rsquo;s not mandatory.
-Installing Linux If you choose to install Linux, we suggest using Kali Linux 2023.</description>
+      <guid>http://localhost:1313/posts/wpa-hijacking/</guid>
+      <description>&lt;p&gt;In this post im going to be exploring and illustrating the process of WPA hijacking&lt;/p&gt;
+&lt;h2 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h2&gt;
+&lt;p&gt;Before embarking on our journey into the fascinating world of WPA hijacking, there are a few crucial prerequisites to consider. Depending on your preferred setup, you can either install Linux or set up a virtual machine (VM). Although we recommend Kali Linux for the best experience, it&amp;rsquo;s not mandatory.&lt;/p&gt;
+&lt;h3 id=&#34;installing-linux&#34;&gt;Installing Linux&lt;/h3&gt;
+&lt;p&gt;If you choose to install Linux, we suggest using Kali Linux 2023.2, as it provides an optimized environment for our purpose. You can download it from the official Kali Linux website &lt;a href=&#34;https://www.kali.org/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>terms</title>
-      <link>https://andmecarlos.com/posts/terms/</link>
+      <link>http://localhost:1313/posts/terms/</link>
       <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/terms/</guid>
-      <description>&lt;!DOCTYPE html&gt;COOKIE POLICY
-Last updated September 27, 2023
-This Cookie Policy explains how carlos nunez (&#34;Company,&#34; &#34;we,&#34; &#34;us,&#34; and &#34;our&#34;) uses cookies and similar technologies to recognize you when you visit our website at https://andmecarlos.com (&#34;Website&#34;). It explains what these technologies are and why we use them, as well as your rights to control our use of them.
-In some cases we may use cookies to collect personal information, or that becomes personal information if we combine it with other information.</description>
+      <guid>http://localhost:1313/posts/terms/</guid>
+      <description>&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+&lt;style&gt;
+
+  [data-custom-class=&#39;body&#39;], [data-custom-class=&#39;body&#39;] * {
+          background: transparent !important;
+        }
+[data-custom-class=&#39;title&#39;], [data-custom-class=&#39;title&#39;] * {
+          font-family: Arial !important;
+font-size: 26px !important;
+color: #000000 !important;
+        }
+[data-custom-class=&#39;subtitle&#39;], [data-custom-class=&#39;subtitle&#39;] * {
+          font-family: Arial !important;
+color: #595959 !important;
+font-size: 14px !important;
+        }
+[data-custom-class=&#39;heading_1&#39;], [data-custom-class=&#39;heading_1&#39;] * {
+          font-family: Arial !important;
+font-size: 19px !important;
+color: #000000 !important;
+        }
+[data-custom-class=&#39;heading_2&#39;], [data-custom-class=&#39;heading_2&#39;] * {
+          font-family: Arial !important;
+font-size: 17px !important;
+color: #000000 !important;
+        }
+[data-custom-class=&#39;body_text&#39;], [data-custom-class=&#39;body_text&#39;] * {
+          color: #595959 !important;
+font-size: 14px !important;
+font-family: Arial !important;
+        }
+[data-custom-class=&#39;link&#39;], [data-custom-class=&#39;link&#39;] * {
+          color: #3030F1 !important;
+font-size: 14px !important;
+font-family: Arial !important;
+word-break: break-word !important;
+        }
+&lt;/style&gt;
+
+      &lt;div data-custom-class=&#34;body&#34;&gt;
+      &lt;div&gt;&lt;strong&gt;&lt;span style=&#34;font-size: 26px;&#34;&gt;&lt;span data-custom-class=&#34;title&#34;&gt;COOKIE POLICY&lt;/span&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;strong&gt;&lt;span style=&#34;font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;subtitle&#34;&gt;Last updated &lt;bdt class=&#34;question&#34;&gt;September 27, 2023&lt;/bdt&gt;&lt;/span&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;This Cookie Policy explains how &lt;bdt class=&#34;question&#34;&gt;carlos nunez&lt;/bdt&gt; (&#34;&lt;strong&gt;Company&lt;/strong&gt;,&#34; &#34;&lt;strong&gt;we&lt;/strong&gt;,&#34; &#34;&lt;strong&gt;us&lt;/strong&gt;,&#34; and &#34;&lt;strong&gt;our&lt;/strong&gt;&#34;) uses cookies and similar technologies to recognize you when you visit our website at  &lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;color: rgb(0, 58, 250); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;&lt;bdt class=&#34;question&#34;&gt;&lt;a href=&#34;https://andmecarlos.com&#34; target=&#34;_blank&#34; data-custom-class=&#34;link&#34;&gt;https://andmecarlos.com&lt;/a&gt;&lt;/bdt&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt; (&#34;&lt;strong&gt;Website&lt;/strong&gt;&#34;). It explains what these technologies are and why we use them, as well as your rights to control our use of them.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;In some cases we may use cookies to collect personal information, or that becomes personal information if we combine it with other information.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(0, 0, 0); font-size: 15px;&#34;&gt;&lt;strong&gt;&lt;span data-custom-class=&#34;heading_1&#34;&gt;What are cookies?&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;Cookies set by the website owner (in this case, &lt;bdt class=&#34;question&#34;&gt;carlos nunez&lt;/bdt&gt;) are called &#34;first-party cookies.&#34; Cookies set by parties other than the website owner are called &#34;third-party cookies.&#34; Third-party cookies enable third-party features or functionality to be provided on or through the website (e.g., advertising, interactive content, and analytics). The parties that set these third-party cookies can recognize your computer both when it visits the website in question and also when it visits certain other websites.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(0, 0, 0); font-size: 15px;&#34;&gt;&lt;strong&gt;&lt;span data-custom-class=&#34;heading_1&#34;&gt;Why do we use cookies?&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;We use first-&lt;bdt class=&#34;block-component&#34;&gt;&lt;/bdt&gt; and third-&lt;bdt class=&#34;statement-end-if-in-editor&#34;&gt;&lt;/bdt&gt;party cookies for several reasons. Some cookies are required for technical reasons in order for our Website to operate, and we refer to these as &#34;essential&#34; or &#34;strictly necessary&#34; cookies. Other cookies also enable us to track and target the interests of our users to enhance the experience on our Online Properties. &lt;bdt class=&#34;block-component&#34;&gt;&lt;/bdt&gt;Third parties serve cookies through our Website for advertising, analytics, and other purposes. &lt;bdt class=&#34;statement-end-if-in-editor&#34;&gt;&lt;/bdt&gt;This is described in more detail below.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span id=&#34;control&#34; style=&#34;color: rgb(0, 0, 0);&#34;&gt;&lt;strong&gt;&lt;span data-custom-class=&#34;heading_1&#34;&gt;How can I control cookies?&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;You have the right to decide whether to accept or reject cookies. You can exercise your cookie rights by setting your preferences in the Cookie Consent Manager. The Cookie Consent Manager allows you to select which categories of cookies you accept or reject. Essential cookies cannot be rejected as they are strictly necessary to provide you with services.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;The Cookie Consent Manager can be found in the notification banner and on our website. If you choose to reject cookies, you may still use our website though your access to some functionality and areas of our website may be restricted. You may also set or amend your web browser controls to accept or refuse cookies.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;br&gt;&lt;/div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span style=&#34;font-size: 15px; color: rgb(89, 89, 89);&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;The specific types of first- and third-party cookies served through our Website and the purposes they perform are described in the table below (please note that the specific &lt;/span&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;cookies served may vary depending on the specific Online Properties you visit):&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;font-size: 15px;&#34;&gt;&lt;/div&gt;&lt;div&gt;&lt;div style=&#34;line-height: 1.5;&#34;&gt;&lt;span data-custom-class=&#34;heading_2&#34; style=&#34;color: rgb(0, 0, 0);&#34;&gt;&lt;span style=&#34;font-size: 15px;&#34;&gt;&lt;strong&gt;&lt;u&gt;&lt;br&gt;Analytics and customization cookies:&lt;/u&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;p style=&#34;font-size: 15px; line-height: 1.5;&#34;&gt;&lt;span style=&#34;color: rgb(127, 127, 127);&#34;&gt;&lt;span style=&#34;color: rgb(89, 89, 89); font-size: 15px;&#34;&gt;&lt;span data-custom-class=&#34;body_text&#34;&gt;These cookies collect information that is used either in aggregate form to help us understand how our Website is being used or how effective our marketing campaigns are, or to help us customize our Website for you.&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>About me</title>
-      <link>https://andmecarlos.com/posts/aboutme/</link>
+      <title>About Me</title>
+      <link>http://localhost:1313/posts/aboutme/</link>
       <pubDate>Sun, 24 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/aboutme/</guid>
-      <description>my name is Carlos Nunez, Currently enrolled in Shippensburg university; as a computer major</description>
+      <guid>http://localhost:1313/posts/aboutme/</guid>
+      <description>&lt;p&gt;Hi, I’m &lt;strong&gt;Carlos Nunez&lt;/strong&gt;, a Computer Science &amp;amp; Computer Engineering major at Shippensburg University (’27).&lt;br&gt;
+Below is an interactive timeline of my education, work, and skills—click each entry to learn more!&lt;/p&gt;
+
+&lt;style&gt;
+  /* background flocking canvas */
+  #bgCanvas {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none; z-index: -1;
+  }
+  /* timeline container */
+  .timeline {
+    position: relative; max-width: 800px;
+    margin: 2rem auto; padding: 0 1rem;
+  }
+  .timeline::before {
+    content: &#39;&#39;; position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 2px; background: currentColor;
+    opacity: 0.2; transform: translateX(-50%);
+  }
+  /* each entry */
+  .entry {
+    position: relative; width: 50%;
+    padding: 0.5rem 1rem; box-sizing: border-box;
+  }
+  .entry:nth-child(odd)  { left: 0; text-align: right; }
+  .entry:nth-child(even) { left: 50%; }
+  .entry::before {
+    content: &#39;&#39;; position: absolute;
+    top: 1rem; width: 8px; height: 8px;
+    border-radius: 50%; background: currentColor;
+  }
+  .entry:nth-child(odd)::before  { right: -5px; }
+  .entry:nth-child(even)::before { left: -5px; }
+
+  /* header and date */
+  .entry h3 {
+    margin: 0 0 0.2rem; font-size: 1rem;
+    display: inline-block;
+  }
+  .entry time {
+    font-size: 0.8rem; color: #888;
+    display: block; margin-bottom: 0.3rem;
+  }
+  /* always‑visible details */
+  .entry p, .entry ul {
+    margin: 0; padding: 0;
+    font-size: 0.85rem; line-height: 1.3;
+    list-style: none;
+  }
+  .entry ul li {
+    margin-left: 1rem; position: relative;
+  }
+  .entry ul li::before {
+    content: &#39;•&#39;; position: absolute;
+    left: -1rem; font-size: 1rem; line-height: 1;
+  }
+  /* download link styling */
+  .entry a {
+    font-size: 0.85rem; text-decoration: underline;
+    color: currentColor;
+  }
+&lt;/style&gt;
+
+&lt;canvas id=&#34;bgCanvas&#34;&gt;&lt;/canvas&gt;
+
+&lt;div class=&#34;timeline&#34;&gt;
+  &lt;div class=&#34;entry&#34;&gt;
+    &lt;h3&gt;Education&lt;/h3&gt;
+    &lt;time&gt;May 2027&lt;/time&gt;
+    &lt;p&gt;&lt;strong&gt;Shippensburg University of Pennsylvania&lt;/strong&gt;&lt;br&gt;
+    B.S. in Computer Science/Computer Engineering (ABET‑accredited)&lt;/p&gt;</description>
     </item>
     
     
-    
-    <item>
-      <title>test</title>
-      <link>https://andmecarlos.com/posts/test/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://andmecarlos.com/posts/test/</guid>
-      <description> &lt;!DOCTYPE html&gt;Bubble Pop Fun</description>
-    </item>
     
   </channel>
 </rss>
