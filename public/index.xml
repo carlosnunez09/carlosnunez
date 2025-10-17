@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Carlos Nunez</title>
-    <link>http://localhost:1313/</link>
+    <link>https://andmecarlos.com/</link>
     <description>Recent content on Carlos Nunez</description>
     <image>
       <title>Carlos Nunez</title>
-      <url>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
-      <link>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+      <url>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 15 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 15 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://andmecarlos.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Godot and UDP Python(In progress)</title>
-      <link>http://localhost:1313/posts/pygodot/</link>
+      <link>https://andmecarlos.com/posts/pygodot/</link>
       <pubDate>Mon, 15 Sep 2025 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/pygodot/</guid>
+      <guid>https://andmecarlos.com/posts/pygodot/</guid>
       <description>&lt;p&gt;Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.&lt;/p&gt;
 &lt;h2 id=&#34;implementations-using-enet&#34;&gt;Implementations using ENet&lt;/h2&gt;
 &lt;p&gt;Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&amp;rsquo;t use. Since it&amp;rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming.&lt;/p&gt;</description>
@@ -25,10 +25,10 @@
     
     <item>
       <title>test</title>
-      <link>http://localhost:1313/posts/test/</link>
+      <link>https://andmecarlos.com/posts/test/</link>
       <pubDate>Tue, 21 Jan 2025 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/test/</guid>
+      <guid>https://andmecarlos.com/posts/test/</guid>
       <description>&lt;!DOCTYPE html&gt;
 &lt;html lang=&#34;en&#34;&gt;
 &lt;head&gt;
@@ -131,10 +131,10 @@
     
     <item>
       <title>WPA Highjacking (For Educational Purposes Only)</title>
-      <link>http://localhost:1313/posts/wpa-hijacking/</link>
+      <link>https://andmecarlos.com/posts/wpa-hijacking/</link>
       <pubDate>Fri, 20 Oct 2023 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/wpa-hijacking/</guid>
+      <guid>https://andmecarlos.com/posts/wpa-hijacking/</guid>
       <description>&lt;p&gt;In this post im going to be exploring and illustrating the process of WPA hijacking&lt;/p&gt;
 &lt;h2 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h2&gt;
 &lt;p&gt;Before embarking on our journey into the fascinating world of WPA hijacking, there are a few crucial prerequisites to consider. Depending on your preferred setup, you can either install Linux or set up a virtual machine (VM). Although we recommend Kali Linux for the best experience, it&amp;rsquo;s not mandatory.&lt;/p&gt;
@@ -144,10 +144,10 @@
     
     <item>
       <title>terms</title>
-      <link>http://localhost:1313/posts/terms/</link>
+      <link>https://andmecarlos.com/posts/terms/</link>
       <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/terms/</guid>
+      <guid>https://andmecarlos.com/posts/terms/</guid>
       <description>&lt;!DOCTYPE html&gt;
 &lt;html lang=&#34;en&#34;&gt;
 &lt;head&gt;
@@ -195,10 +195,10 @@ word-break: break-word !important;
     
     <item>
       <title>About Me</title>
-      <link>http://localhost:1313/posts/aboutme/</link>
+      <link>https://andmecarlos.com/posts/aboutme/</link>
       <pubDate>Sun, 24 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/aboutme/</guid>
+      <guid>https://andmecarlos.com/posts/aboutme/</guid>
       <description>&lt;p&gt;Hi, I’m &lt;strong&gt;Carlos Nunez&lt;/strong&gt;, a Computer Science &amp;amp; Computer Engineering major at Shippensburg University (’27).&lt;br&gt;
 Below is an interactive timeline of my education, work, and skills—click each entry to learn more!&lt;/p&gt;
 
