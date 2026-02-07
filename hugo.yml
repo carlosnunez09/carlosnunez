@@ -15,6 +15,18 @@ minify:
   disableXML: true
   minifyOutput: true
 
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    noClasses: false
+    # anchorLineNos: true
+    # codeFences: true
+    # guessSyntax: true
+    # lineNos: true
+    # style: monokai
+
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
   title: ExampleSite
@@ -72,6 +84,8 @@ params:
         url: posts
       - name: About Me
         url: "/posts/aboutme"
+      - name: Contact Me
+        url: "/contact/"
 
   # home-info mode
   homeInfoParams:
@@ -79,8 +93,6 @@ params:
     Content: Welcome to my blog
 
   socialIcons:
-    - name: twitter
-      url: "https://twitter.com/"
     - name: stackoverflow
       url: "https://stackoverflow.com/users/18114507/carlos-nunez"
     - name: github
@@ -131,13 +143,3 @@ menu:
       name: ./Search
       url: /Search/
       weight: 30
-# Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
-pygmentsUseClasses: true
-markup:
-  highlight:
-    noClasses: false
-    # anchorLineNos: true
-    # codeFences: true
-    # guessSyntax: true
-    # lineNos: true
-    # style: monokai

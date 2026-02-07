@@ -2,22 +2,353 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Posts on Carlos Nunez</title>
-    <link>https://andmecarlos.com/posts/</link>
+    <link>http://localhost:1313/posts/</link>
     <description>Recent content in Posts on Carlos Nunez</description>
     <image>
       <title>Carlos Nunez</title>
-      <url>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
-      <link>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+      <url>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Mon, 15 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://andmecarlos.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language><atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SorbetBroker</title>
+      <link>http://localhost:1313/posts/sorbetbroker/</link>
+      <pubDate>Sat, 20 Dec 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/sorbetbroker/</guid>
+      <description>&lt;style&gt;
+  /* Remove all previous decorative styles */
+  .post-sorbetbroker-project::before,
+  .post-sorbetbroker-project::after,
+  .sorbet-callout::before,
+  .post-sorbetbroker-project blockquote::before,
+  .post-sorbetbroker-project .post-content::before,
+  .post-sorbetbroker-project .post-content::after,
+  .post-sorbetbroker-project h1.post-title::after {
+    display: none !important;
+    content: none !important;
+  }
+  
+  /* Clean minimal split background */
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #f5429e 50%, #000000 50%);
+    background-attachment: fixed;
+  }
+  
+  /* Optional: Smooth gradient transition */
+  body {
+    background: linear-gradient(to bottom, #f5429e 0%, #f5429e 50%, #000000 50%, #000000 100%);
+  }
+  
+  /* Remove all decorative emojis and icons */
+  .post-sorbetbroker-project ul li::before {
+    content: &#34;•&#34; !important;
+  }
+  
+  .post-sorbetbroker-project ul li::before,
+  .post-sorbetbroker-project ol li::before,
+  .post-sorbetbroker-project pre::before,
+  .post-sorbetbroker-project .btn::before {
+    content: &#34;&#34; !important;
+  }
+  
+  /* Clean content container */
+  .post-sorbetbroker-project .post-content,
+  .post-sorbetbroker-project article,
+  .post-sorbetbroker-project .entry-content {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: #333;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Minimal headers */
+  .post-sorbetbroker-project h1.post-title {
+    background: transparent !important;
+    color: #333;
+    text-align: left;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+    border: none;
+  }
+  
+  .post-sorbetbroker-project h2,
+  .post-sorbetbroker-project h3,
+  .post-sorbetbroker-project h4 {
+    color: #333;
+    padding: 0;
+    margin: 1.5rem 0 1rem 0;
+    background: transparent !important;
+    border: none;
+    border-left: none;
+    font-weight: 600;
+  }
+  
+  /* Clean links */
+  .post-sorbetbroker-project a {
+    color: #f5429e;
+    background: transparent !important;
+    text-decoration: underline;
+    text-decoration-color: rgba(245, 66, 158, 0.3);
+    text-underline-offset: 3px;
+    padding: 0;
+    border-radius: 0;
+  }
+  
+  .post-sorbetbroker-project a:hover {
+    color: #d12d86;
+    text-decoration-color: #f5429e;
+    background: transparent !important;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Clean code blocks */
+  .post-sorbetbroker-project pre {
+    background-color: #f5f5f5 !important;
+    border: 1px solid #e0e0e0;
+    border-left: 3px solid #f5429e;
+    border-radius: 6px;
+    padding: 1rem;
+    color: #333;
+  }
+  
+  .post-sorbetbroker-project code {
+    background-color: #f5f5f5 !important;
+    color: #d12d86;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #e8e8e8;
+  }
+  
+  /* Clean blockquotes */
+  .post-sorbetbroker-project blockquote {
+    background-color: #f9f9f9 !important;
+    border-left: 4px solid #f5429e;
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    font-style: normal;
+  }
+  
+  /* Clean lists */
+  .post-sorbetbroker-project ul,
+  .post-sorbetbroker-project ol {
+    padding-left: 1.5rem;
+  }
+  
+  .post-sorbetbroker-project ul li {
+    padding-left: 0.5rem;
+    margin: 0.5rem 0;
+  }
+  
+  .post-sorbetbroker-project ul li::before {
+    content: &#34;•&#34; !important;
+    color: #f5429e;
+    margin-right: 8px;
+  }
+  
+  .post-sorbetbroker-project ol li {
+    padding-left: 0;
+    margin: 0.5rem 0;
+  }
+  
+  .post-sorbetbroker-project ol li::before {
+    display: none;
+  }
+  
+  /* Clean tables */
+  .post-sorbetbroker-project table {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: none;
+  }
+  
+  .post-sorbetbroker-project table thead {
+    background-color: #f9f9f9 !important;
+    color: #333;
+  }
+  
+  .post-sorbetbroker-project table th {
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .post-sorbetbroker-project table td {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  /* Clean images */
+  .post-sorbetbroker-project img {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: none;
+  }
+  
+  .post-sorbetbroker-project img:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Clean buttons */
+  .post-sorbetbroker-project .btn,
+  .post-sorbetbroker-project button {
+    background-color: #f5429e !important;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
+  }
+  
+  .post-sorbetbroker-project .btn:hover,
+  .post-sorbetbroker-project button:hover {
+    background-color: #d12d86 !important;
+    color: white;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Clean horizontal rule */
+  .post-sorbetbroker-project hr {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 2rem 0;
+  }
+  
+  /* Clean callout boxes */
+  .sorbet-callout {
+    background-color: #f9f9f9 !important;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .post-sorbetbroker-project .post-content {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+  }
+  
+  /* Selection color */
+  ::selection {
+    background-color: rgba(245, 66, 158, 0.2);
+  }
+&lt;/style&gt;
+
+&lt;!-- Remove all decorative background elements --&gt;</description>
+    </item>
+    
+    <item>
+      <title>Cube Kill</title>
+      <link>http://localhost:1313/posts/cubekill/</link>
+      <pubDate>Thu, 27 Nov 2025 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/cubekill/</guid>
+      <description>&lt;div class=&#34;game-callout&#34; role=&#34;note&#34;&gt;
+  &lt;div class=&#34;game-callout__top&#34;&gt;
+    &lt;div class=&#34;game-callout__badge&#34;&gt;🎮 Game&lt;/div&gt;
+    &lt;div class=&#34;game-callout__title&#34;&gt;CubeKill&lt;/div&gt;
+    &lt;div class=&#34;game-callout__desc&#34;&gt;
+      Fast, chaotic, multiplayer vibes — jump in and play in your browser.
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&#34;game-callout__actions&#34;&gt;
+    &lt;a class=&#34;game-callout__btn&#34; href=&#34;https://cubekill.onrender.com&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;
+      ▶ Play my game
+    &lt;/a&gt;
+    &lt;a class=&#34;game-callout__link&#34; href=&#34;https://cubekill.onrender.com&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;
+      cubekill.onrender.com
+    &lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  .game-callout{
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.04);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 18px 0;
+  }
+  .game-callout__badge{
+    display:inline-block;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.14);
+    opacity: .9;
+  }
+  .game-callout__title{
+    margin-top: 10px;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .game-callout__desc{
+    margin-top: 6px;
+    opacity: .85;
+    line-height: 1.45;
+  }
+  .game-callout__actions{
+    display:flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .game-callout__btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.10);
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .game-callout__btn:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,.14);
+    border-color: rgba(255,255,255,.26);
+  }
+  .game-callout__link{
+    opacity: .8;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(255,255,255,.35);
+  }
+  .game-callout__link:hover{
+    opacity: 1;
+  }
+&lt;/style&gt;</description>
+    </item>
+    
     <item>
       <title>Godot and UDP Python(In progress)</title>
-      <link>https://andmecarlos.com/posts/pygodot/</link>
+      <link>http://localhost:1313/posts/pygodot/</link>
       <pubDate>Mon, 15 Sep 2025 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/pygodot/</guid>
+      <guid>http://localhost:1313/posts/pygodot/</guid>
       <description>&lt;p&gt;Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.&lt;/p&gt;
 &lt;h2 id=&#34;implementations-using-enet&#34;&gt;Implementations using ENet&lt;/h2&gt;
 &lt;p&gt;Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&amp;rsquo;t use. Since it&amp;rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming.&lt;/p&gt;</description>
@@ -25,10 +356,10 @@
     
     <item>
       <title>test</title>
-      <link>https://andmecarlos.com/posts/test/</link>
+      <link>http://localhost:1313/posts/test/</link>
       <pubDate>Tue, 21 Jan 2025 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/test/</guid>
+      <guid>http://localhost:1313/posts/test/</guid>
       <description>&lt;!DOCTYPE html&gt;
 &lt;html lang=&#34;en&#34;&gt;
 &lt;head&gt;
@@ -131,10 +462,10 @@
     
     <item>
       <title>WPA Highjacking (For Educational Purposes Only)</title>
-      <link>https://andmecarlos.com/posts/wpa-hijacking/</link>
+      <link>http://localhost:1313/posts/wpa-hijacking/</link>
       <pubDate>Fri, 20 Oct 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/wpa-hijacking/</guid>
+      <guid>http://localhost:1313/posts/wpa-hijacking/</guid>
       <description>&lt;p&gt;In this post im going to be exploring and illustrating the process of WPA hijacking&lt;/p&gt;
 &lt;h2 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h2&gt;
 &lt;p&gt;Before embarking on our journey into the fascinating world of WPA hijacking, there are a few crucial prerequisites to consider. Depending on your preferred setup, you can either install Linux or set up a virtual machine (VM). Although we recommend Kali Linux for the best experience, it&amp;rsquo;s not mandatory.&lt;/p&gt;
@@ -144,10 +475,10 @@
     
     <item>
       <title>terms</title>
-      <link>https://andmecarlos.com/posts/terms/</link>
+      <link>http://localhost:1313/posts/terms/</link>
       <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/terms/</guid>
+      <guid>http://localhost:1313/posts/terms/</guid>
       <description>&lt;!DOCTYPE html&gt;
 &lt;html lang=&#34;en&#34;&gt;
 &lt;head&gt;
@@ -195,10 +526,10 @@ word-break: break-word !important;
     
     <item>
       <title>About Me</title>
-      <link>https://andmecarlos.com/posts/aboutme/</link>
+      <link>http://localhost:1313/posts/aboutme/</link>
       <pubDate>Sun, 24 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>https://andmecarlos.com/posts/aboutme/</guid>
+      <guid>http://localhost:1313/posts/aboutme/</guid>
       <description>&lt;p&gt;Hi, I’m &lt;strong&gt;Carlos Nunez&lt;/strong&gt;, a Computer Science &amp;amp; Computer Engineering major at Shippensburg University (’27).&lt;br&gt;
 Below is an interactive timeline of my education, work, and skills—click each entry to learn more!&lt;/p&gt;
 

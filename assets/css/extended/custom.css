@@ -1,0 +1,158 @@
+/* Custom styling for Contact Me button - make it appear on its own line */
+.profile .buttons {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Make the third button (Contact Me) go to a new row */
+.profile .buttons a.button:nth-child(3) {
+    flex-basis: 100% !important;
+    margin-top: 10px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: fit-content !important;
+    text-align: center;
+}
+
+/* Contact Form Styling */
+.contact-form {
+    max-width: 500px;
+    margin: 2rem auto;
+}
+
+.contact-form p {
+    margin-bottom: 1.2rem;
+}
+
+.contact-form label {
+    font-weight: 500;
+    color: var(--primary);
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    margin-top: 8px;
+    background: var(--code-bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--primary);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form input[type="text"]:focus,
+.contact-form input[type="email"]:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+    color: var(--secondary);
+    opacity: 0.6;
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form button[type="submit"] {
+    background: var(--tertiary);
+    color: var(--primary);
+    border: none;
+    padding: 12px 32px;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.2s ease;
+}
+
+.contact-form button[type="submit"]:hover {
+    background: var(--secondary);
+    color: var(--theme);
+}
+
+.contact-form button[type="submit"]:active {
+    transform: scale(0.96);
+}
+
+/* Confirmation Message Styling - Dark/Light Mode Compatible */
+.confirmation-message {
+    text-align: center;
+    padding: 3rem 2rem;
+    max-width: 500px;
+    margin: 2rem auto;
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.confirmation-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    color: white;
+    animation: scaleIn 0.5s ease;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.confirmation-message h2 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-size: 1.75rem;
+}
+
+.confirmation-message p {
+    color: var(--secondary);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.confirmation-button {
+    display: inline-block;
+    background: var(--tertiary);
+    border-radius: var(--radius);
+    padding: 8px;
+    transition: transform 0.1s ease;
+}
+
+.confirmation-button:hover {
+    background: var(--border);
+}
+
+.confirmation-button:active {
+    transform: scale(0.96);
+}
