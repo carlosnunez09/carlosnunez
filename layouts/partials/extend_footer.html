@@ -1,7 +1,21 @@
 {{- /* Footer custom content area start */ -}}
-{{- /*     Insert any custom code web-analytics, resources, etc. here */ -}}
+{{- /* Insert any custom code web-analytics, resources, etc. here */ -}}
 
 {{- /* Include ASCII background animation on home page */ -}}
 {{- partial "ascii-background.html" . -}}
+
+<script>
+    // Disable scroll on homepage as requested
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+
+        // Prevent scroll wheel
+        window.addEventListener('wheel', e => e.preventDefault(), { passive: false });
+
+        // Prevent touch scroll on mobile
+        window.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+    }
+</script>
 
 {{- /* Footer custom content area end */ -}}
