@@ -66,6 +66,13 @@ ShowBreadCrumbs: false
   window.addEventListener('resize', onResize);
   onResize();
 
+  // Mouse interaction
+  let mouse = { x: -1000, y: -1000 };
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
   // Detect dark mode
   function isDark() {
     return document.body.classList.contains('dark') || 
@@ -116,10 +123,13 @@ ShowBreadCrumbs: false
     }
   }
 
-  // Subtle particle that travels along bezier paths
+  // Subtle particle that travels along bezier paths but reacts to mouse
   class Particle {
     constructor(){
       this.reset();
+      this.vx = 0;
+      this.vy = 0;
+      this.friction = 0.94;
     }
     reset(){
       this.t = 0;
@@ -130,6 +140,8 @@ ShowBreadCrumbs: false
       this.y1 = Math.random() * H;
       this.y2 = Math.random() * H;
       this.y3 = Math.random() * H;
+      this.vx = 0;
+      this.vy = 0;
     }
     // Cubic bezier interpolation
     bezier(t, p0, p1, p2, p3){
@@ -137,18 +149,38 @@ ShowBreadCrumbs: false
       return mt*mt*mt*p0 + 3*mt*mt*t*p1 + 3*mt*t*t*p2 + t*t*t*p3;
     }
     update(){
+      // Normal path movement
       this.t += this.speed;
       if(this.t > 1) this.reset();
+      
+      let targetX = this.bezier(this.t, -20, W*0.33, W*0.66, W+20);
+      let targetY = this.bezier(this.t, this.y0, this.y1, this.y2, this.y3);
+      
+      // Mouse interaction (repel)
+      let dx = targetX - mouse.x;
+      let dy = targetY - mouse.y;
+      let dist = Math.sqrt(dx*dx + dy*dy);
+      let force = 0;
+      
+      if(dist < 150) {
+        force = (150 - dist) / 150;
+        this.vx += (dx / dist) * force * 2;
+        this.vy += (dy / dist) * force * 2;
+      }
+      
+      this.vx *= this.friction;
+      this.vy *= this.friction;
+      
+      this.x = targetX + this.vx * 20;
+      this.y = targetY + this.vy * 20;
     }
     draw(){
       const dark = isDark();
-      const x = this.bezier(this.t, -20, W*0.33, W*0.66, W+20);
-      const y = this.bezier(this.t, this.y0, this.y1, this.y2, this.y3);
       
       // Subtle grayscale particle
       ctx.beginPath();
-      ctx.arc(x, y, this.size, 0, Math.PI * 2);
-      const grad = ctx.createRadialGradient(x, y, 0, x, y, this.size * 2.5);
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 2.5);
       
       if (dark) {
         grad.addColorStop(0, `rgba(255, 255, 255, 0.5)`);
@@ -166,7 +198,7 @@ ShowBreadCrumbs: false
 
   // Fewer curves and particles for subtlety
   const curves = Array.from({length: 8}, () => new BezierCurve());
-  const particles = Array.from({length: 10}, () => new Particle());
+  const particles = Array.from({length: 12}, () => new Particle());
   
   let startTime = performance.now();
   

@@ -52,13 +52,20 @@
 .contact-form textarea:focus {
     outline: none;
     border-color: var(--secondary);
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.1), 0 0 0 1px var(--secondary);
+    transform: translateY(-1px);
 }
 
 .contact-form input::placeholder,
 .contact-form textarea::placeholder {
     color: var(--secondary);
-    opacity: 0.6;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.contact-form input:focus::placeholder,
+.contact-form textarea:focus::placeholder {
+    opacity: 0.3;
 }
 
 .contact-form textarea {
@@ -67,24 +74,29 @@
 }
 
 .contact-form button[type="submit"] {
-    background: var(--tertiary);
-    color: var(--primary);
+    background: linear-gradient(135deg, var(--tertiary), var(--secondary));
+    color: var(--theme);
     border: none;
-    padding: 12px 32px;
+    padding: 14px 32px;
     border-radius: var(--radius);
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.1s ease, background 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 .contact-form button[type="submit"]:hover {
-    background: var(--secondary);
-    color: var(--theme);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1);
 }
 
 .contact-form button[type="submit"]:active {
-    transform: scale(0.96);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Confirmation Message Styling - Dark/Light Mode Compatible */
