@@ -2,22 +2,265 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Carlos Nunez</title>
-    <link>http://localhost:1313/</link>
+    <link>https://andmecarlos.com/</link>
     <description>Recent content on Carlos Nunez</description>
     <image>
       <title>Carlos Nunez</title>
-      <url>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
-      <link>http://localhost:1313/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+      <url>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 27 Nov 2025 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 20 Dec 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://andmecarlos.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SorbetBroker</title>
+      <link>https://andmecarlos.com/posts/sorbetbroker/</link>
+      <pubDate>Sat, 20 Dec 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://andmecarlos.com/posts/sorbetbroker/</guid>
+      <description>&lt;style&gt;
+  /* Remove all previous decorative styles */
+  .post-sorbetbroker-project::before,
+  .post-sorbetbroker-project::after,
+  .sorbet-callout::before,
+  .post-sorbetbroker-project blockquote::before,
+  .post-sorbetbroker-project .post-content::before,
+  .post-sorbetbroker-project .post-content::after,
+  .post-sorbetbroker-project h1.post-title::after {
+    display: none !important;
+    content: none !important;
+  }
+  
+  /* Clean minimal split background */
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #f5429e 50%, #000000 50%);
+    background-attachment: fixed;
+  }
+  
+  /* Optional: Smooth gradient transition */
+  body {
+    background: linear-gradient(to bottom, #f5429e 0%, #f5429e 50%, #000000 50%, #000000 100%);
+  }
+  
+  /* Remove all decorative emojis and icons */
+  .post-sorbetbroker-project ul li::before {
+    content: &#34;•&#34; !important;
+  }
+  
+  .post-sorbetbroker-project ul li::before,
+  .post-sorbetbroker-project ol li::before,
+  .post-sorbetbroker-project pre::before,
+  .post-sorbetbroker-project .btn::before {
+    content: &#34;&#34; !important;
+  }
+  
+  /* Clean content container */
+  .post-sorbetbroker-project .post-content,
+  .post-sorbetbroker-project article,
+  .post-sorbetbroker-project .entry-content {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: #333;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Minimal headers */
+  .post-sorbetbroker-project h1.post-title {
+    background: transparent !important;
+    color: #333;
+    text-align: left;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+    border: none;
+  }
+  
+  .post-sorbetbroker-project h2,
+  .post-sorbetbroker-project h3,
+  .post-sorbetbroker-project h4 {
+    color: #333;
+    padding: 0;
+    margin: 1.5rem 0 1rem 0;
+    background: transparent !important;
+    border: none;
+    border-left: none;
+    font-weight: 600;
+  }
+  
+  /* Clean links */
+  .post-sorbetbroker-project a {
+    color: #f5429e;
+    background: transparent !important;
+    text-decoration: underline;
+    text-decoration-color: rgba(245, 66, 158, 0.3);
+    text-underline-offset: 3px;
+    padding: 0;
+    border-radius: 0;
+  }
+  
+  .post-sorbetbroker-project a:hover {
+    color: #d12d86;
+    text-decoration-color: #f5429e;
+    background: transparent !important;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Clean code blocks */
+  .post-sorbetbroker-project pre {
+    background-color: #f5f5f5 !important;
+    border: 1px solid #e0e0e0;
+    border-left: 3px solid #f5429e;
+    border-radius: 6px;
+    padding: 1rem;
+    color: #333;
+  }
+  
+  .post-sorbetbroker-project code {
+    background-color: #f5f5f5 !important;
+    color: #d12d86;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #e8e8e8;
+  }
+  
+  /* Clean blockquotes */
+  .post-sorbetbroker-project blockquote {
+    background-color: #f9f9f9 !important;
+    border-left: 4px solid #f5429e;
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 0;
+    font-style: normal;
+  }
+  
+  /* Clean lists */
+  .post-sorbetbroker-project ul,
+  .post-sorbetbroker-project ol {
+    padding-left: 1.5rem;
+  }
+  
+  .post-sorbetbroker-project ul li {
+    padding-left: 0.5rem;
+    margin: 0.5rem 0;
+  }
+  
+  .post-sorbetbroker-project ul li::before {
+    content: &#34;•&#34; !important;
+    color: #f5429e;
+    margin-right: 8px;
+  }
+  
+  .post-sorbetbroker-project ol li {
+    padding-left: 0;
+    margin: 0.5rem 0;
+  }
+  
+  .post-sorbetbroker-project ol li::before {
+    display: none;
+  }
+  
+  /* Clean tables */
+  .post-sorbetbroker-project table {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: none;
+  }
+  
+  .post-sorbetbroker-project table thead {
+    background-color: #f9f9f9 !important;
+    color: #333;
+  }
+  
+  .post-sorbetbroker-project table th {
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .post-sorbetbroker-project table td {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  /* Clean images */
+  .post-sorbetbroker-project img {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    box-shadow: none;
+  }
+  
+  .post-sorbetbroker-project img:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Clean buttons */
+  .post-sorbetbroker-project .btn,
+  .post-sorbetbroker-project button {
+    background-color: #f5429e !important;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
+  }
+  
+  .post-sorbetbroker-project .btn:hover,
+  .post-sorbetbroker-project button:hover {
+    background-color: #d12d86 !important;
+    color: white;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Clean horizontal rule */
+  .post-sorbetbroker-project hr {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 2rem 0;
+  }
+  
+  /* Clean callout boxes */
+  .sorbet-callout {
+    background-color: #f9f9f9 !important;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .post-sorbetbroker-project .post-content {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+  }
+  
+  /* Selection color */
+  ::selection {
+    background-color: rgba(245, 66, 158, 0.2);
+  }
+&lt;/style&gt;
+
+&lt;!-- Remove all decorative background elements --&gt;</description>
+    </item>
+    
     <item>
       <title>Cube Kill</title>
-      <link>http://localhost:1313/posts/cubekill/</link>
+      <link>https://andmecarlos.com/posts/cubekill/</link>
       <pubDate>Thu, 27 Nov 2025 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/cubekill/</guid>
+      <guid>https://andmecarlos.com/posts/cubekill/</guid>
       <description>&lt;div class=&#34;game-callout&#34; role=&#34;note&#34;&gt;
   &lt;div class=&#34;game-callout__top&#34;&gt;
     &lt;div class=&#34;game-callout__badge&#34;&gt;🎮 Game&lt;/div&gt;
@@ -103,21 +346,127 @@
     
     <item>
       <title>Godot and UDP Python(In progress)</title>
-      <link>http://localhost:1313/posts/pygodot/</link>
+      <link>https://andmecarlos.com/posts/pygodot/</link>
       <pubDate>Mon, 15 Sep 2025 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/pygodot/</guid>
+      <guid>https://andmecarlos.com/posts/pygodot/</guid>
       <description>&lt;p&gt;Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.&lt;/p&gt;
 &lt;h2 id=&#34;implementations-using-enet&#34;&gt;Implementations using ENet&lt;/h2&gt;
 &lt;p&gt;Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&amp;rsquo;t use. Since it&amp;rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming.&lt;/p&gt;</description>
     </item>
     
     <item>
+      <title>test</title>
+      <link>https://andmecarlos.com/posts/test/</link>
+      <pubDate>Tue, 21 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://andmecarlos.com/posts/test/</guid>
+      <description>&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;en&#34;&gt;
+&lt;head&gt;
+    &lt;meta charset=&#34;UTF-8&#34;&gt;
+    &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1.0&#34;&gt;
+    &lt;title&gt;Bubble Pop Fun&lt;/title&gt;
+    &lt;style&gt;
+        canvas {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;canvas id=&#34;bubbleCanvas&#34;&gt;&lt;/canvas&gt;
+
+    &lt;script&gt;
+        const canvas = document.getElementById(&#39;bubbleCanvas&#39;);
+        const ctx = canvas.getContext(&#39;2d&#39;);
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const mouse = {
+            x: null,
+            y: null
+        };
+
+        window.addEventListener(&#39;mousemove&#39;, (e) =&gt; {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener(&#39;click&#39;, (e) =&gt; {
+            for (let i = 0; i &lt; 5; i++) {
+                bubbles.push(new Bubble(e.clientX, e.clientY));
+            }
+        });
+
+        class Bubble {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 20 + 10;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * -2 - 1;
+                this.opacity = 1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.opacity -= 0.01;
+                if (this.opacity &lt;= 0) {
+                    this.opacity = 0;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 150, 255, ${this.opacity})`;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        const bubbles = [];
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i &lt; bubbles.length; i++) {
+                bubbles[i].update();
+                bubbles[i].draw();
+
+                if (bubbles[i].opacity &lt;= 0) {
+                    bubbles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener(&#39;resize&#39;, () =&gt; {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</description>
+    </item>
+    
+    <item>
       <title>WPA Highjacking (For Educational Purposes Only)</title>
-      <link>http://localhost:1313/posts/wpa-hijacking/</link>
+      <link>https://andmecarlos.com/posts/wpa-hijacking/</link>
       <pubDate>Fri, 20 Oct 2023 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/wpa-hijacking/</guid>
+      <guid>https://andmecarlos.com/posts/wpa-hijacking/</guid>
       <description>&lt;p&gt;In this post im going to be exploring and illustrating the process of WPA hijacking&lt;/p&gt;
 &lt;h2 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h2&gt;
 &lt;p&gt;Before embarking on our journey into the fascinating world of WPA hijacking, there are a few crucial prerequisites to consider. Depending on your preferred setup, you can either install Linux or set up a virtual machine (VM). Although we recommend Kali Linux for the best experience, it&amp;rsquo;s not mandatory.&lt;/p&gt;
@@ -127,10 +476,10 @@
     
     <item>
       <title>terms</title>
-      <link>http://localhost:1313/posts/terms/</link>
+      <link>https://andmecarlos.com/posts/terms/</link>
       <pubDate>Mon, 25 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/terms/</guid>
+      <guid>https://andmecarlos.com/posts/terms/</guid>
       <description>&lt;!DOCTYPE html&gt;
 &lt;html lang=&#34;en&#34;&gt;
 &lt;head&gt;
@@ -178,10 +527,10 @@ word-break: break-word !important;
     
     <item>
       <title>About Me</title>
-      <link>http://localhost:1313/posts/aboutme/</link>
+      <link>https://andmecarlos.com/posts/aboutme/</link>
       <pubDate>Sun, 24 Sep 2023 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/posts/aboutme/</guid>
+      <guid>https://andmecarlos.com/posts/aboutme/</guid>
       <description>&lt;p&gt;Hi, I’m &lt;strong&gt;Carlos Nunez&lt;/strong&gt;, a Computer Science &amp;amp; Computer Engineering major at Shippensburg University (’27).&lt;br&gt;
 Below is an interactive timeline of my education, work, and skills—click each entry to learn more!&lt;/p&gt;
 
@@ -260,15 +609,15 @@ Below is an interactive timeline of my education, work, and skills—click each 
     
     <item>
       <title>Message Sent!</title>
-      <link>http://localhost:1313/contact/thanks/</link>
+      <link>https://andmecarlos.com/contact/thanks/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:1313/contact/thanks/</guid>
+      <guid>https://andmecarlos.com/contact/thanks/</guid>
       <description>&lt;div class=&#34;confirmation-message&#34;&gt;
   &lt;div class=&#34;confirmation-icon&#34;&gt;✓&lt;/div&gt;
   &lt;h2&gt;Thanks for reaching out!&lt;/h2&gt;
   &lt;p&gt;Your message has been sent successfully. I&#39;ll get back to you as soon as possible.&lt;/p&gt;
-  &lt;a href=&#34;http://localhost:1313/&#34; class=&#34;button confirmation-button&#34;&gt;
+  &lt;a href=&#34;https://andmecarlos.com/&#34; class=&#34;button confirmation-button&#34;&gt;
     &lt;span class=&#34;button-inner&#34;&gt;← Back to Home&lt;/span&gt;
   &lt;/a&gt;
 &lt;/div&gt;</description>

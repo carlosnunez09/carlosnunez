@@ -1,0 +1,130 @@
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Godot and UDP Python(In progress) | Carlos Nunez</title><meta name=keywords content><meta name=description content="Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.
+Implementations using ENet
+Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&rsquo;t use. Since it&rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming."><meta name=author content="Carlos Nunez"><link rel=canonical href=https://andmecarlos.com/posts/pygodot/><meta name=google-site-verification content="XYZabc"><meta name=yandex-verification content="XYZabc"><meta name=msvalidate.01 content="XYZabc"><link crossorigin=anonymous href=/assets/css/stylesheet.4d34f92f40fc60bbe5c5af65792e894857f8d641721045c0299ef6f79bff475a.css integrity="sha256-TTT5L0D8YLvlxa9leS6JSFf41kFyEEXAKZ7295v/R1o=" rel="preload stylesheet" as=style><script defer crossorigin=anonymous src=/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG+9vmJ0cTS+ovo0FeA=" onload=hljs.initHighlightingOnLoad()></script><link rel=icon href=https://andmecarlos.com/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://andmecarlos.com/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://andmecarlos.com/favicon-32x32.png><link rel=apple-touch-icon href=https://andmecarlos.com/%3Clink%20/%20abs%20url%3E><link rel=mask-icon href=https://andmecarlos.com/%3Clink%20/%20abs%20url%3E><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://andmecarlos.com/posts/pygodot/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><script async src="https://www.googletagmanager.com/gtag/js?id=G-G5LG8WWJXN"></script><script>var doNotTrack=!1,dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes";if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-G5LG8WWJXN")}</script><meta property="og:title" content="Godot and UDP Python(In progress)"><meta property="og:description" content="Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.
+Implementations using ENet
+Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&rsquo;t use. Since it&rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming."><meta property="og:type" content="article"><meta property="og:url" content="https://andmecarlos.com/posts/pygodot/"><meta property="og:image" content="https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta property="article:section" content="posts"><meta property="article:published_time" content="2025-09-15T00:00:00+00:00"><meta property="article:modified_time" content="2025-09-15T00:00:00+00:00"><meta property="og:site_name" content="ExampleSite"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta name=twitter:title content="Godot and UDP Python(In progress)"><meta name=twitter:description content="Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.
+Implementations using ENet
+Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&rsquo;t use. Since it&rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming."><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://andmecarlos.com/posts/"},{"@type":"ListItem","position":2,"name":"Godot and UDP Python(In progress)","item":"https://andmecarlos.com/posts/pygodot/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Godot and UDP Python(In progress)","name":"Godot and UDP Python(In progress)","description":"Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.\nImplementations using ENet Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn\u0026rsquo;t use. Since it\u0026rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming.\n","keywords":[],"articleBody":"Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.\nImplementations using ENet Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn’t use. Since it’s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming.\nPeer-to-Peer (ENet) — Godot flowchart LR subgraph PeerA[\"Peer A (Godot)\"] A1[\"ENetMultiplayerPeer\"] A2[\"Game Logic\"] end subgraph PeerB[\"Peer B (Godot)\"] B1[\"ENetMultiplayerPeer\"] B2[\"Game Logic\"] end A1 -- ENet: connect to B IP:port --\u003e B1 B1 -- ENet: connect to A IP:port --\u003e A1 A2 -- send input/state --\u003e A1 B2 -- send input/state --\u003e B1 A1 -- receive remote state --\u003e A2 B1 -- receive remote state --\u003e B2 classDef peer fill:#f9f,stroke:#333,stroke-width:1px style PeerA stroke:none style PeerB stroke:none There are a lot of functions that we can do with this implementation, like very basic games and player games where data is given and received between each other.\nThis implementation has many weaknesses:\nSometimes restricted by local networks. Functionality outside of the local network becomes more difficult. For example, we don’t want the player to expose their game host across the internet to another peer. It’s possible, but not ideal. All of the data will come from Peer A (the host), while the rest of the peers simply join that host. For simpler games, this implementation can be a good idea, but in more complex cases there’s a different approach: A wrapper service acts as the middleman, assigning peers and providing a connection between them (similar to how matchmaking or relay services work). It’s the same but it has extra steps to allow online connectivity flowchart LR subgraph PeerA[\"Peer A (Godot)\"] A1[\"ENetMultiplayerPeer\"] A2[\"Game Logic\"] end subgraph PeerB[\"Peer B (Godot)\"] B1[\"ENetMultiplayerPeer\"] B2[\"Game Logic\"] end subgraph Relay[\"Relay Server (acts like VPN)\"] R1[\"Forward traffic between peers\"] end subgraph Wrapper[\"Matchmaking / API Wrapper (e.g., Steam API, lobby system)\"] W1[\"Friend Finder / Session Manager\"] end A1 -- Connect via relay --\u003e R1 B1 -- Connect via relay --\u003e R1 R1 -- Forward packets --\u003e A1 R1 -- Forward packets --\u003e B1 A2 -- send input/state --\u003e A1 B2 -- send input/state --\u003e B1 A1 -- receive remote state --\u003e A2 B1 -- receive remote state --\u003e B2 W1 -- Provides peer addresses / relay info --\u003e A1 W1 -- Provides peer addresses / relay info --\u003e B1 classDef peer fill:#f9f,stroke:#333,stroke-width:1px classDef relay fill:#bbf,stroke:#333,stroke-width:1px classDef wrapper fill:#cfc,stroke:#333,stroke-width:1px × ","wordCount":"435","inLanguage":"en","datePublished":"2025-09-15T00:00:00Z","dateModified":"2025-09-15T00:00:00Z","author":{"@type":"Person","name":"Carlos Nunez"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://andmecarlos.com/posts/pygodot/"},"publisher":{"@type":"Organization","name":"Carlos Nunez","logo":{"@type":"ImageObject","url":"https://andmecarlos.com/favicon.ico"}}}</script></head><body class=dark id=top><script>localStorage.getItem("pref-theme")==="light"&&document.body.classList.remove("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://andmecarlos.com/ accesskey=h title="> $  cd /Home/ (Alt + H)"><img src=https://andmecarlos.com/apple-touch-icon.png alt aria-label=logo height=35>> $ cd /Home/</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button><ul class=lang-switch><li>|</li></ul></div></div><ul id=menu><li><a href=https://andmecarlos.com/categories/ title=./categories><span>./categories</span></a></li><li><a href=https://andmecarlos.com/tags/ title=./tags><span>./tags</span></a></li><li><a href=https://andmecarlos.com/search/ title="./Search (Alt + /)" accesskey=/><span>./Search</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://andmecarlos.com/>Home</a>&nbsp;»&nbsp;<a href=https://andmecarlos.com/posts/>Posts</a></div><h1 class=post-title>Godot and UDP Python(In progress)</h1><div class=post-meta>&lt;span title='2025-09-15 00:00:00 +0000 UTC'>September 15, 2025&lt;/span>&amp;nbsp;·&amp;nbsp;3 min&amp;nbsp;·&amp;nbsp;435 words&amp;nbsp;·&amp;nbsp;Carlos Nunez&nbsp;|&nbsp;<a href=https://github.com/%3cpath_to_repo%3e/content/Posts/Py&amp;Godot.md rel="noopener noreferrer" target=_blank>Suggest Changes</a></div></header><div class=post-content><p>Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.</p><h2 id=implementations-using-enet>Implementations using ENet<a hidden class=anchor aria-hidden=true href=#implementations-using-enet>#</a></h2><p>Godot comes with its own implementation of connectivity using its built-in ENet. It has a lot of good features, like sync data, RPC, and others that I didn&rsquo;t use. Since it&rsquo;s its own system, this means we have to use a Godot executable to act as the server or peer-to-peer implementation. Sometimes using these implementations can be a bit annoying and underwhelming.</p><h2 id=peer-to-peer-enet--godot>Peer-to-Peer (ENet) — Godot<a hidden class=anchor aria-hidden=true href=#peer-to-peer-enet--godot>#</a></h2><div class=mermaid>flowchart LR
+subgraph PeerA["Peer A (Godot)"]
+A1["ENetMultiplayerPeer"]
+A2["Game Logic"]
+end
+subgraph PeerB["Peer B (Godot)"]
+B1["ENetMultiplayerPeer"]
+B2["Game Logic"]
+end
+A1 -- ENet: connect to B IP:port --> B1
+B1 -- ENet: connect to A IP:port --> A1
+A2 -- send input/state --> A1
+B2 -- send input/state --> B1
+A1 -- receive remote state --> A2
+B1 -- receive remote state --> B2
+classDef peer fill:#f9f,stroke:#333,stroke-width:1px
+style PeerA stroke:none
+style PeerB stroke:none</div><p>There are a lot of functions that we can do with this implementation, like very basic games and player games where data is given and received between each other.</p><p>This implementation has many weaknesses:</p><ul><li>Sometimes restricted by local networks.<ul><li>Functionality outside of the local network becomes more difficult. For example, we don&rsquo;t want the player to expose their game host across the internet to another peer. It&rsquo;s possible, but not ideal.</li></ul></li><li>All of the data will come from Peer A (the host), while the rest of the peers simply join that host.</li><li>For simpler games, this implementation can be a good idea, but in more complex cases there&rsquo;s a different approach:<ul><li>A wrapper service acts as the middleman, assigning peers and providing a connection between them (similar to how matchmaking or relay services work). It&rsquo;s the same but it has extra steps to allow online connectivity</li></ul></li></ul><div class=mermaid>flowchart LR
+subgraph PeerA["Peer A (Godot)"]
+A1["ENetMultiplayerPeer"]
+A2["Game Logic"]
+end
+subgraph PeerB["Peer B (Godot)"]
+B1["ENetMultiplayerPeer"]
+B2["Game Logic"]
+end
+subgraph Relay["Relay Server (acts like VPN)"]
+R1["Forward traffic between peers"]
+end
+subgraph Wrapper["Matchmaking / API Wrapper (e.g., Steam API, lobby system)"]
+W1["Friend Finder / Session Manager"]
+end
+A1 -- Connect via relay --> R1
+B1 -- Connect via relay --> R1
+R1 -- Forward packets --> A1
+R1 -- Forward packets --> B1
+A2 -- send input/state --> A1
+B2 -- send input/state --> B1
+A1 -- receive remote state --> A2
+B1 -- receive remote state --> B2
+W1 -- Provides peer addresses / relay info --> A1
+W1 -- Provides peer addresses / relay info --> B1
+classDef peer fill:#f9f,stroke:#333,stroke-width:1px
+classDef relay fill:#bbf,stroke:#333,stroke-width:1px
+classDef wrapper fill:#cfc,stroke:#333,stroke-width:1px</div><style>.mermaid .node rect,.mermaid .node circle,.mermaid .node ellipse,.mermaid .node polygon,.mermaid .node path{stroke:#333!important}.mermaid .edgePath .path,.mermaid .flowchart-link{stroke:#333!important}.mermaid .edgeLabel{color:#333!important}.mermaid .label{color:#333!important}.dark .mermaid .node rect,.dark .mermaid .node circle,.dark .mermaid .node ellipse,.dark .mermaid .node polygon,.dark .mermaid .node path{stroke:#fff!important;fill:transparent!important}.dark .mermaid .edgePath .path,.dark .mermaid .flowchart-link{stroke:#fff!important}.dark .mermaid .edgeLabel{color:#fff!important;background-color:#444!important;padding:2px 4px!important;border-radius:3px!important}.dark .mermaid .edgeLabel span{color:#fff!important}.dark .mermaid .edgeLabel rect{fill:#444!important}.dark .mermaid .label{color:#fff!important;fill:#fff!important}.dark .mermaid text{fill:#fff!important}.dark .mermaid .nodeLabel{color:#fff!important}.dark .mermaid .cluster rect{stroke:#fff!important;fill:transparent!important}.dark .mermaid .cluster text{fill:#fff!important}.dark .mermaid .cluster-label{background-color:initial!important}.dark .mermaid g.classGroup rect{fill:transparent!important}.dark .mermaid .node .label{background-color:initial!important}.mermaid{cursor:pointer;transition:opacity .2s}.mermaid:hover{opacity:.9}.diagram-modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.9);cursor:zoom-out}.diagram-modal.active{display:flex;align-items:center;justify-content:center}.diagram-modal-content{max-width:95vw;max-height:95vh;overflow:auto;background:#fff;padding:20px;border-radius:8px;position:relative}.dark .diagram-modal-content{background:#1a1a1a}.diagram-modal-close{position:absolute;top:15px;right:15px;font-size:35px;font-weight:700;color:#999;cursor:pointer;background:0 0;border:none;padding:0;width:45px;height:45px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s;z-index:10000}.diagram-modal-close:hover{background:rgba(0,0,0,.1)}.dark .diagram-modal-close:hover{background:rgba(255,255,255,.1)}.diagram-modal .mermaid{margin:0;max-width:none!important}.diagram-modal .mermaid svg{width:1600px;height:auto;max-width:none}@media(min-width:1920px){.diagram-modal .mermaid svg{width:2200px}}@media(max-width:768px){.diagram-modal .mermaid svg{width:1200px}}#modalDiagramContainer{display:flex;align-items:center;justify-content:center;min-width:100%;min-height:100%}</style><div id=diagramModal class=diagram-modal><div class=diagram-modal-content><button class=diagram-modal-close>&#215;</button><div id=modalDiagramContainer></div></div></div><script type=module>
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+function initMermaid() {
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: isDark ? 'dark' : 'default',
+        flowchart: {
+            curve: 'basis'
+        }
+    });
+    
+    // After mermaid initializes, add click handlers
+    setTimeout(() => {
+        addDiagramClickHandlers();
+    }, 500);
+}
+
+function addDiagramClickHandlers() {
+    const diagrams = document.querySelectorAll('.mermaid');
+    const modal = document.getElementById('diagramModal');
+    const modalContainer = document.getElementById('modalDiagramContainer');
+    const closeBtn = modal.querySelector('.diagram-modal-close');
+    
+    diagrams.forEach((diagram, index) => {
+        diagram.style.cursor = 'pointer';
+        diagram.title = 'Click to enlarge';
+        
+        diagram.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Clone the diagram
+            const clonedDiagram = diagram.cloneNode(true);
+            modalContainer.innerHTML = '';
+            modalContainer.appendChild(clonedDiagram);
+            modal.classList.add('active');
+        });
+    });
+    
+    // Close modal when clicking close button
+    closeBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        modal.classList.remove('active');
+    });
+    
+    // Close modal when clicking outside (overlay only)
+    modal?.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        }
+    });
+}
+
+// Initialize on load
+initMermaid();
+
+// Watch for theme toggle button clicks
+document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    setTimeout(() => {
+        location.reload();
+    }, 10);
+});
+</script></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2026 <a href=https://andmecarlos.com/>Carlos Nunez</a></span>
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script type=module>
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
