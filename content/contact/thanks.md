@@ -2,6 +2,7 @@
 title: "Message Sent!"
 url: "/contact/thanks/"
 layout: "page"
+hidden: true
 ShowToc: false
 ShowBreadCrumbs: false
 ---

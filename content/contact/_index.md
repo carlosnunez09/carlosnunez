@@ -24,7 +24,6 @@ ShowBreadCrumbs: false
   <p>I'd love to hear from you! Whether you have a question, want to collaborate, or just want to say hello, fill out the form below.</p>
 
   <form name="contact" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="bot-field" class="contact-form">
-    <input type="hidden" name="form-name" value="contact" />
     <p style="display:none;">
       <label>Don't fill this out: <input name="bot-field" /></label>
     </p>
