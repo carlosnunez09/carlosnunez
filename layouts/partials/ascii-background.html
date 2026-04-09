@@ -232,11 +232,11 @@
       HIGHLIGHT_R = Math.max(3, Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.05 / charW));
     }
 
+    // Homepage mouse highlight radius (in grid cells) — recalculated by resize()
+    var HIGHLIGHT_R = 3;
+
     resize();
     window.addEventListener('resize', resize);
-
-    // Homepage mouse highlight radius (in grid cells)
-    var HIGHLIGHT_R = 3;
 
     // --- Draw loop ---
     function draw(t) {
