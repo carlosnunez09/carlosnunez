@@ -95,6 +95,7 @@
     const glitchActive = new Array(GLITCH_SIZE).fill(false);
 
     function scheduleGlitch() {
+      if (document.hidden) { setTimeout(scheduleGlitch, 500); return; }
       var n = Math.floor(Math.random() * 4) + 1;
       for (var i = 0; i < n; i++) {
         (function() {
@@ -228,13 +229,14 @@
       measureChar();
       cols = Math.max(2, Math.ceil(window.innerWidth  / charW) + 1);
       rows = Math.max(2, Math.ceil(window.innerHeight / charH) + 1);
+      HIGHLIGHT_R = Math.max(3, Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.05 / charW));
     }
 
     resize();
     window.addEventListener('resize', resize);
 
     // Homepage mouse highlight radius (in grid cells)
-    var HIGHLIGHT_R = Math.max(3, Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.05 / charW));
+    var HIGHLIGHT_R = 3;
 
     // --- Draw loop ---
     function draw(t) {
