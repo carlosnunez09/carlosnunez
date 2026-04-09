@@ -84,16 +84,15 @@ The homepage features an animated ASCII art background:
 - **Location**: `layouts/partials/ascii-background.html`
 - **Integrated via**: `layouts/partials/extend_footer.html`
 - **Features**:
-  - Fullscreen ASCII grid with radial wave patterns and swirls
-  - Mouse-following circular highlight with distinct characters
+  - Fullscreen ASCII grid with multiple animation modes (organic, glitchy, depth)
+  - Seamless transitions between modes (stochastic dissolve crossfade)
   - Theme-aware: Light mode uses darker characters, dark mode uses lighter
   - Responsive font sizing for different screen sizes
   - Performance optimized with single DOM write per frame
   - Only loads on home page (`.IsHome` conditional)
 - **Character palettes**:
-  - Base: Subtle characters for ambient background animation
-  - Mouse: Bold characters (█, ▓, ▒, @, #, $, %, &) that appear near cursor
-- **Customization**: Edit radius multiplier (currently 0.05 of viewport), animation speed, or character sets in the partial
+  - Distinct character sets for each animation mode (subtle dots, glitch characters, blocks)
+- **Customization**: Edit animation speed, mode durations, or character sets in the partial
 
 ### Custom Layouts
 Custom partials are located in `layouts/partials/`:

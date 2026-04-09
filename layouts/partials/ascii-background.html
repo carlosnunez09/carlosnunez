@@ -33,10 +33,10 @@
 
   /* Per-page opacity: homepage is more visible, inner pages are subtle */
   .dark #ascii-bg {
-    color: {{ if .IsHome }}rgba(255, 255, 255, 0.05){{ else }}rgba(255, 255, 255, 0.02){{ end }};
+    color: {{ if .IsHome }}rgba(255, 255, 255, 0.08){{ else }}rgba(255, 255, 255, 0.04){{ end }};
   }
   body:not(.dark) #ascii-bg {
-    color: {{ if .IsHome }}rgba(0, 0, 0, 0.11){{ else }}rgba(0, 0, 0, 0.04){{ end }};
+    color: {{ if .IsHome }}rgba(0, 0, 0, 0.15){{ else }}rgba(0, 0, 0, 0.08){{ end }};
   }
 
   /* Responsive font sizing */
@@ -68,25 +68,12 @@
     // --- Grid state ---
     let cols = 0, rows = 0, charW = 8, charH = 16;
 
-    // --- Mouse state (normalized 0-1; -1 = no mouse yet) ---
-    let mouseNX = -1, mouseNY = -1, mouseCol = -1, mouseRow = -1;
-    window.addEventListener('mousemove', function(e) {
-      mouseNX = e.clientX / window.innerWidth;
-      mouseNY = e.clientY / window.innerHeight;
-      mouseCol = Math.floor(e.clientX / charW);
-      mouseRow = Math.floor(e.clientY / charH);
-    });
-
     // --- Character palettes ---
     const palettes = {
       organic:  [' ', ' ', '·', '.', '░', '▒', '▓'],
-      reactive: [' ', '·', '░', '▒', '▓', '@', '#', '█'],
       glitchy:  [' ', '·', '|', '/', '\\', '─', '+', '│'],
       depth:    [' ', ' ', '·', '░', '▒', '▓', '█'],
     };
-
-    // Bold chars for homepage mouse highlight
-    const highlightPalette = ['░', '▒', '▓', '@', '#', '$', '%', '&', '█'];
 
     // --- Glitch per-column state (fixed 300-slot ring, indexed by col % 300) ---
     const GLITCH_SIZE = 300;
@@ -122,15 +109,6 @@
       return 0.5 + v * 0.5;
     }
 
-    function modeReactive(col, row, t) {
-      if (mouseNX < 0) return modeOrganic(col, row, t) * 0.4;
-      var dx = col / cols - mouseNX;
-      var dy = row / rows - mouseNY;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      var ripple = Math.sin(dist * 18 - t * 0.004) * 0.5 + 0.5;
-      return ripple * Math.exp(-dist * 3.5);
-    }
-
     function modeGlitchy(col, row, t) {
       var gi = col % GLITCH_SIZE;
       if (glitchActive[gi]) return Math.random();
@@ -143,17 +121,15 @@
 
     function modeDepth(col, row, t) {
       var layers = [
-        { speed: 0.00008, parallax: 0.03, weight: 0.2  },
-        { speed: 0.00025, parallax: 0.07, weight: 0.35 },
-        { speed: 0.0006,  parallax: 0.14, weight: 0.45 },
+        { speed: 0.00008, weight: 0.2  },
+        { speed: 0.00025, weight: 0.35 },
+        { speed: 0.0006,  weight: 0.45 },
       ];
-      var mxOff = mouseNX >= 0 ? mouseNX - 0.5 : 0;
-      var myOff = mouseNY >= 0 ? mouseNY - 0.5 : 0;
       var total = 0;
       for (var i = 0; i < layers.length; i++) {
         var L = layers[i];
-        var lx = (col / cols + mxOff * L.parallax + t * L.speed) % 1;
-        var ly = (row / rows + myOff * L.parallax * 0.5) % 1;
+        var lx = (col / cols + t * L.speed) % 1;
+        var ly = (row / rows) % 1;
         var v = Math.sin(lx * Math.PI * 5) * Math.cos(ly * Math.PI * 4);
         total += (v * 0.5 + 0.5) * L.weight;
       }
@@ -162,7 +138,6 @@
 
     var modeFns = {
       organic:  modeOrganic,
-      reactive: modeReactive,
       glitchy:  modeGlitchy,
       depth:    modeDepth,
     };
@@ -173,7 +148,7 @@
     }
 
     // --- Scheduler ---
-    var modePool = ['organic', 'organic', 'reactive', 'glitchy', 'depth'];
+    var modePool = ['organic', 'organic', 'glitchy', 'depth'];
     var currentMode = 'organic';
     var nextMode = null;
     var blendFactor = 0;
@@ -225,14 +200,10 @@
       span.remove();
     }
 
-    // Homepage mouse highlight radius (in grid cells) — recalculated by resize()
-    var HIGHLIGHT_R = 3;
-
     function resize() {
       measureChar();
       cols = Math.max(2, Math.ceil(window.innerWidth  / charW) + 1);
       rows = Math.max(2, Math.ceil(window.innerHeight / charH) + 1);
-      HIGHLIGHT_R = Math.max(3, Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.05 / charW));
     }
 
     resize();
@@ -258,17 +229,6 @@
             ch = pickChar(fnB(x, y, t), palB);
           } else {
             ch = pickChar(fnA(x, y, t), palA);
-          }
-
-          // Homepage mouse highlight — override with bold chars near cursor
-          if (IS_HOME && mouseCol >= 0) {
-            var dx = x - mouseCol;
-            var dy = y - mouseRow;
-            var dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < HIGHLIGHT_R) {
-              var hlIdx = Math.floor((1 - dist / HIGHLIGHT_R) * highlightPalette.length);
-              ch = highlightPalette[Math.min(hlIdx, highlightPalette.length - 1)];
-            }
           }
 
           line.push(ch);

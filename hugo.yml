@@ -1,10 +1,14 @@
 baseURL: "https://andmecarlos.com/"
 title: Carlos Nunez
+author:
+  name: "Carlos Nunez"
+  email: "me@andmecarlos.com"
 pagination:
   pagerSize: 10
 theme: hugo-PaperMod
 
 enableRobotsTXT: true
+disableKinds: ["RSS"]
 buildDrafts: false
 buildFuture: false
 buildExpired: false

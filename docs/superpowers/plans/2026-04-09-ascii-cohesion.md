@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Unify the site under a single ASCII background aesthetic — all pages, 4 rotating modes (organic-dominant), smooth crossfade, more subtle on inner pages.
+**Goal:** Unify the site under a single ASCII background aesthetic — all pages, 3 rotating modes (organic-dominant), smooth crossfade, more subtle on inner pages.
 
-**Architecture:** One rewritten `layouts/partials/ascii-background.html` loads on every page. A JS mode engine runs 4 animation functions (organic, reactive, glitchy, depth) managed by a weighted scheduler with smoothstep crossfade. Hugo injects per-page opacity and an `IS_HOME` flag to gate homepage-specific features. Other page animations (boids, bezier curves) are removed.
+**Architecture:** One rewritten `layouts/partials/ascii-background.html` loads on every page. A JS mode engine runs 3 animation functions (organic, glitchy, depth) managed by a weighted scheduler with smoothstep crossfade. Hugo injects per-page opacity and an `IS_HOME` flag. Other page animations (boids, bezier curves) are removed.
 
 **Tech Stack:** Hugo templates, vanilla JS (no build step), CSS custom properties.
 
@@ -201,25 +201,12 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
     // --- Grid state ---
     let cols = 0, rows = 0, charW = 8, charH = 16;
 
-    // --- Mouse state (normalized 0-1; -1 = no mouse yet) ---
-    let mouseNX = -1, mouseNY = -1, mouseCol = -1, mouseRow = -1;
-    window.addEventListener('mousemove', function(e) {
-      mouseNX = e.clientX / window.innerWidth;
-      mouseNY = e.clientY / window.innerHeight;
-      mouseCol = Math.floor(e.clientX / charW);
-      mouseRow = Math.floor(e.clientY / charH);
-    });
-
     // --- Character palettes ---
     const palettes = {
       organic:  [' ', ' ', '·', '.', '░', '▒', '▓'],
-      reactive: [' ', '·', '░', '▒', '▓', '@', '#', '█'],
       glitchy:  [' ', '·', '|', '/', '\\', '─', '+', '│'],
       depth:    [' ', ' ', '·', '░', '▒', '▓', '█'],
     };
-
-    // Bold chars for homepage mouse highlight
-    const highlightPalette = ['░', '▒', '▓', '@', '#', '$', '%', '&', '█'];
 
     // --- Glitch per-column state (fixed 300-slot ring, indexed by col % 300) ---
     const GLITCH_SIZE = 300;
@@ -228,6 +215,7 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
     const glitchActive = new Array(GLITCH_SIZE).fill(false);
 
     function scheduleGlitch() {
+      if (document.hidden) { setTimeout(scheduleGlitch, 500); return; }
       var n = Math.floor(Math.random() * 4) + 1;
       for (var i = 0; i < n; i++) {
         (function() {
@@ -254,15 +242,6 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
       return 0.5 + v * 0.5;
     }
 
-    function modeReactive(col, row, t) {
-      if (mouseNX < 0) return modeOrganic(col, row, t) * 0.4;
-      var dx = col / cols - mouseNX;
-      var dy = row / rows - mouseNY;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      var ripple = Math.sin(dist * 18 - t * 0.004) * 0.5 + 0.5;
-      return ripple * Math.exp(-dist * 3.5);
-    }
-
     function modeGlitchy(col, row, t) {
       var gi = col % GLITCH_SIZE;
       if (glitchActive[gi]) return Math.random();
@@ -275,17 +254,15 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
 
     function modeDepth(col, row, t) {
       var layers = [
-        { speed: 0.00008, parallax: 0.03, weight: 0.2  },
-        { speed: 0.00025, parallax: 0.07, weight: 0.35 },
-        { speed: 0.0006,  parallax: 0.14, weight: 0.45 },
+        { speed: 0.00008, weight: 0.2  },
+        { speed: 0.00025, weight: 0.35 },
+        { speed: 0.0006,  weight: 0.45 },
       ];
-      var mxOff = mouseNX >= 0 ? mouseNX - 0.5 : 0;
-      var myOff = mouseNY >= 0 ? mouseNY - 0.5 : 0;
       var total = 0;
       for (var i = 0; i < layers.length; i++) {
         var L = layers[i];
-        var lx = (col / cols + mxOff * L.parallax + t * L.speed) % 1;
-        var ly = (row / rows + myOff * L.parallax * 0.5) % 1;
+        var lx = (col / cols + t * L.speed) % 1;
+        var ly = (row / rows) % 1;
         var v = Math.sin(lx * Math.PI * 5) * Math.cos(ly * Math.PI * 4);
         total += (v * 0.5 + 0.5) * L.weight;
       }
@@ -294,7 +271,6 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
 
     var modeFns = {
       organic:  modeOrganic,
-      reactive: modeReactive,
       glitchy:  modeGlitchy,
       depth:    modeDepth,
     };
@@ -305,7 +281,7 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
     }
 
     // --- Scheduler ---
-    var modePool = ['organic', 'organic', 'reactive', 'glitchy', 'depth'];
+    var modePool = ['organic', 'organic', 'glitchy', 'depth'];
     var currentMode = 'organic';
     var nextMode = null;
     var blendFactor = 0;
@@ -366,9 +342,6 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
     resize();
     window.addEventListener('resize', resize);
 
-    // Homepage mouse highlight radius (in grid cells)
-    var HIGHLIGHT_R = Math.max(3, Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.05 / charW));
-
     // --- Draw loop ---
     function draw(t) {
       updateScheduler(t);
@@ -391,17 +364,6 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
             ch = pickChar(fnA(x, y, t), palA);
           }
 
-          // Homepage mouse highlight — override with bold chars near cursor
-          if (IS_HOME && mouseCol >= 0) {
-            var dx = x - mouseCol;
-            var dy = y - mouseRow;
-            var dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < HIGHLIGHT_R) {
-              var hlIdx = Math.floor((1 - dist / HIGHLIGHT_R) * highlightPalette.length);
-              ch = highlightPalette[Math.min(hlIdx, highlightPalette.length - 1)];
-            }
-          }
-
           line.push(ch);
         }
         out.push(line.join(''));
@@ -414,10 +376,11 @@ Replace everything between `<script>` and `</script>` (keeping those tags) with:
     requestAnimationFrame(draw);
   })();
 ```
+```
 
 **Note:** Since this step replaces the entire script block content, the `IS_HOME` line added in Task 2 Step 3 is automatically replaced — no manual removal needed.
 
-- [ ] **Step 2: Verify all 4 modes and crossfade**
+- [ ] **Step 2: Verify all 3 modes and crossfade**
 
 Run:
 ```bash
@@ -429,9 +392,8 @@ Open `http://localhost:1313/` and watch for ~30–60 seconds.
 Expected:
 - ASCII fills the screen with flowing organic characters (wavy currents)
 - After 8–15 seconds, characters begin dissolving into a new mode (stochastic pixel-flip dissolve over ~4 seconds)
-- Modes cycle through: organic (most common), reactive (field blooms from cursor), glitchy (column cascades, occasional scrambles), depth (parallax layers)
-- Mouse movement on homepage causes bold chars near cursor
-- No mouse highlight on inner pages
+- Modes cycle through: organic (most common), glitchy (column cascades, occasional scrambles), depth (parallax layers)
+- No mouse-following highlight or reactive patterns
 
 - [ ] **Step 3: Verify inner page subtlety**
 
