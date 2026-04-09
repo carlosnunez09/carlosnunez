@@ -1,6 +1,5 @@
 {{- /* ASCII Background Animation Partial */ -}}
-{{- /* Only show on home page to avoid performance impact on other pages */ -}}
-{{- if .IsHome }}
+{{- /* Shown on all pages with per-page opacity */ -}}
 <style>
   /* Ensure html and body don't overflow or offset */
   html, body {
@@ -10,7 +9,7 @@
     max-width: 100vw;
   }
 
-  /* ASCII animation background - only visible on home page */
+  /* ASCII animation background */
   #ascii-bg {
     position: fixed;
     top: 0;
@@ -27,20 +26,17 @@
     font-variant-ligatures: none;
     z-index: 0; /* Behind all content */
     pointer-events: none; /* Allow clicks through to content */
-    color: var(--ascii-color, rgba(98, 11, 11, 0.008)); /* More subtle/transparent */
     font-size: 12px; /* Base font size */
     font-family: monospace;
     overflow: hidden;
   }
 
-  /* Dark mode uses lighter ASCII characters - subtle increase */
+  /* Per-page opacity: homepage is more visible, inner pages are subtle */
   .dark #ascii-bg {
-    --ascii-color: rgba(255, 255, 255, 0.05);
+    color: {{ if .IsHome }}rgba(255, 255, 255, 0.05){{ else }}rgba(255, 255, 255, 0.02){{ end }};
   }
-
-  /* Light mode uses darker ASCII characters - subtle increase */
   body:not(.dark) #ascii-bg {
-    --ascii-color: rgba(0, 0, 0, 0.11);
+    color: {{ if .IsHome }}rgba(0, 0, 0, 0.11){{ else }}rgba(0, 0, 0, 0.04){{ end }};
   }
 
   /* Responsive font sizing */
@@ -72,6 +68,8 @@
    */
   (function() {
     'use strict';
+
+    const IS_HOME = {{ .IsHome }};
 
     const asciiEl = document.getElementById('ascii-bg');
     if (!asciiEl) return; // Exit if element doesn't exist
@@ -233,4 +231,3 @@
     draw();
   })();
 </script>
-{{- end }}
