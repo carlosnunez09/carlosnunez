@@ -17,12 +17,6 @@ Below is an interactive timeline of my education, work, and skills—click each 
 
 {{< rawhtml >}}
 <style>
-  /* background flocking canvas */
-  #bgCanvas {
-    position: fixed; top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none; z-index: -1;
-  }
   /* timeline container */
   .timeline {
     position: relative; max-width: 800px;
@@ -77,8 +71,6 @@ Below is an interactive timeline of my education, work, and skills—click each 
     color: currentColor;
   }
 </style>
-
-<canvas id="bgCanvas"></canvas>
 
 <div class="timeline">
   <div class="entry">
@@ -148,116 +140,4 @@ Below is an interactive timeline of my education, work, and skills—click each 
   </div>
 </div>
 
-<script>
-  // flocking with visually improved boids
-  const c = document.getElementById('bgCanvas'), ctx = c.getContext('2d');
-  let W, H;
-  function onResize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
-  window.addEventListener('resize', onResize);
-  onResize();
-
-  class Boid {
-    constructor(){
-      this.x = Math.random()*W; this.y = Math.random()*H;
-      let a = Math.random()*2*Math.PI;
-      this.vx = Math.cos(a); this.vy = Math.sin(a);
-      this.ax = 0; this.ay = 0;
-      this.s = 6 + Math.random()*2;
-      this.color = `hsl(${Math.floor(Math.random()*60+200)},70%,60%)`;
-    }
-    limit(vec, max) {
-      let mag = Math.hypot(vec.x, vec.y);
-      if(mag > max) { vec.x = vec.x/mag*max; vec.y = vec.y/mag*max; }
-    }
-    applyForce(fx, fy) {
-      this.ax += fx;
-      this.ay += fy;
-    }
-    update(bs){
-      let sep = {x:0, y:0}, ali = {x:0, y:0}, coh = {x:0, y:0};
-      let sepCount=0, aliCount=0, cohCount=0;
-      for(let o of bs){
-        if(o===this) continue;
-        let dx=o.x-this.x, dy=o.y-this.y, d=Math.hypot(dx,dy);
-        // Separation (short range, strong)
-        if(d<28 && d>0.01){
-          sep.x -= (dx/d) / d; sep.y -= (dy/d) / d;
-          sepCount++;
-        }
-        // Alignment (medium range)
-        if(d<60){
-          ali.x += o.vx; ali.y += o.vy;
-          aliCount++;
-        }
-        // Cohesion (longer range)
-        if(d<110){
-          coh.x += o.x; coh.y += o.y;
-          cohCount++;
-        }
-      }
-      // Separation
-      if(sepCount){
-        sep.x/=sepCount; sep.y/=sepCount;
-        this.limit(sep, 0.18);
-        this.applyForce(sep.x*1.8, sep.y*1.8);
-      }
-      // Alignment
-      if(aliCount){
-        ali.x/=aliCount; ali.y/=aliCount;
-        let mag = Math.hypot(ali.x, ali.y);
-        if(mag>0){ ali.x/=mag; ali.y/=mag; }
-        ali.x -= this.vx; ali.y -= this.vy;
-        this.limit(ali, 0.07);
-        this.applyForce(ali.x*1.2, ali.y*1.2);
-      }
-      // Cohesion
-      if(cohCount){
-        coh.x = coh.x/cohCount - this.x;
-        coh.y = coh.y/cohCount - this.y;
-        this.limit(coh, 0.06);
-        this.applyForce(coh.x, coh.y);
-      }
-      // Subtle randomness for natural look
-      if(Math.random()<0.04) this.applyForce((Math.random()-0.5)*0.04, (Math.random()-0.5)*0.04);
-      // Update velocity and position
-      this.vx += this.ax; this.vy += this.ay;
-      this.limit({x:this.vx, y:this.vy}, 2.2);
-      this.x += this.vx; this.y += this.vy;
-      this.ax = 0; this.ay = 0;
-      // Wrap
-      if(this.x< -20) this.x=W+19; if(this.x>W+20) this.x=-19;
-      if(this.y< -20) this.y=H+19; if(this.y>H+20) this.y=-19;
-    }
-    draw(){
-      let ang = Math.atan2(this.vy,this.vx);
-      ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(ang);
-      // Duller color: lower saturation, higher lightness
-      let dullColor = this.color.replace(/(\d+),(\d+)%?,(\d+)%?\)/, (m, h, s, l) => `${h},35%,75%)`);
-      let grad = ctx.createLinearGradient(this.s,0,-this.s,0);
-      grad.addColorStop(0, dullColor);
-      grad.addColorStop(1, 'rgba(255,255,255,0.10)');
-      ctx.beginPath();
-      ctx.moveTo(this.s,0);
-      ctx.lineTo(-this.s,this.s/2);
-      ctx.lineTo(-this.s,-this.s/2);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.globalAlpha = 0.7;
-      ctx.shadowColor = dullColor;
-      ctx.shadowBlur = 6;
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
-      ctx.restore();
-    }
-  }
-  const flock = Array.from({length:48},_=>new Boid());
-  function anim(){
-    // Remove background fill to prevent smearing/trails
-    ctx.clearRect(0,0,W,H);
-    flock.forEach(b=>{ b.update(flock); b.draw(); });
-    requestAnimationFrame(anim);
-  }
-  anim();
-</script>
 {{< /rawhtml >}}
