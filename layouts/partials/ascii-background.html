@@ -57,177 +57,227 @@
 <div id="ascii-bg" aria-hidden="true"></div>
 
 <script>
-  /**
-   * ASCII Background Animation
-   * Creates an animated ASCII art background
-   *
-   * Features:
-   * - Fullscreen ASCII grid with radial wave patterns
-   * - Responsive to window resize
-   * - Performance optimized with single DOM write per frame
-   */
   (function() {
     'use strict';
 
+    const asciiEl = document.getElementById('ascii-bg');
+    if (!asciiEl) return;
+
     const IS_HOME = {{ .IsHome }};
 
-    const asciiEl = document.getElementById('ascii-bg');
-    if (!asciiEl) return; // Exit if element doesn't exist
+    // --- Grid state ---
+    let cols = 0, rows = 0, charW = 8, charH = 16;
 
-    // Get current date dynamically
-    const now = new Date();
-    const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
-    const dateChars = dateStr.split(''); // Split into individual characters
+    // --- Mouse state (normalized 0-1; -1 = no mouse yet) ---
+    let mouseNX = -1, mouseNY = -1, mouseCol = -1, mouseRow = -1;
+    window.addEventListener('mousemove', function(e) {
+      mouseNX = e.clientX / window.innerWidth;
+      mouseNY = e.clientY / window.innerHeight;
+      mouseCol = Math.floor(e.clientX / charW);
+      mouseRow = Math.floor(e.clientY / charH);
+    });
 
-    // Character palette: subtle background characters for ambient animation
-    // Includes "carlos nunez" and today's date for personalization
-    const basePalette = [
-      ' ', ' ', ' ', ' ', '.', '.', '.', ',', ',', '`', '\'', ':', ';', '-', '_', '~', '^', '"',
-      '*', '+', '=', 'o', 'O', '0', '#', '%', '@', '¬', '÷', '×', '±', '≈', '≠',
-      'c', 'a', 'r', 'l', 'o', 's', ' ', 'n', 'u', 'n', 'e', 'z',  // carlos nunez
-      ...dateChars,  // Today's date dynamically
-      '░', '▪', '▫', '•', '·', '∙', '◦', '○', '◉', '⋅', '∴', '∵', '⊕', '⊗', '⊙'
-    ];
+    // --- Character palettes ---
+    const palettes = {
+      organic:  [' ', ' ', '·', '.', '░', '▒', '▓'],
+      reactive: [' ', '·', '░', '▒', '▓', '@', '#', '█'],
+      glitchy:  [' ', '·', '|', '/', '\\', '─', '+', '│'],
+      depth:    [' ', ' ', '·', '░', '▒', '▓', '█'],
+    };
 
-    // Grid dimensions
-    let cols = 0;        // Number of columns in ASCII grid
-    let rows = 0;        // Number of rows in ASCII grid
-    let charW = 8;       // Width of each character in pixels
-    let charH = 16;      // Height of each character in pixels
+    // Bold chars for homepage mouse highlight
+    const highlightPalette = ['░', '▒', '▓', '@', '#', '$', '%', '&', '█'];
 
-    // Animation state
-    let frame = 0;       // Current animation frame counter
+    // --- Glitch per-column state (fixed 300-slot ring, indexed by col % 300) ---
+    const GLITCH_SIZE = 300;
+    const glitchSpeeds = Array.from({length: GLITCH_SIZE}, function() { return 0.3 + Math.random() * 1.7; });
+    const glitchPhases = Array.from({length: GLITCH_SIZE}, function() { return Math.random(); });
+    const glitchActive = new Array(GLITCH_SIZE).fill(false);
 
-    /**
-     * Measures the actual pixel dimensions of a monospace character
-     * This ensures accurate grid calculations across different screen sizes
-     */
+    function scheduleGlitch() {
+      var n = Math.floor(Math.random() * 4) + 1;
+      for (var i = 0; i < n; i++) {
+        (function() {
+          var col = Math.floor(Math.random() * GLITCH_SIZE);
+          glitchActive[col] = true;
+          setTimeout(function() { glitchActive[col] = false; }, 200 + Math.random() * 400);
+        })();
+      }
+      setTimeout(scheduleGlitch, 1500 + Math.random() * 3000);
+    }
+    scheduleGlitch();
+
+    // --- Mode functions ---
+    // Each returns intensity 0-1 for a given grid cell
+
+    function modeOrganic(col, row, t) {
+      var nx = col / cols;
+      var ny = row / rows;
+      var s = t * 0.0003;
+      var v =
+        Math.sin(nx * 6.2 + s * 1.1 + Math.cos(ny * 3.7 + s * 0.7)) * 0.4 +
+        Math.cos(ny * 5.1 - s * 0.9 + Math.sin(nx * 4.3 + s * 0.5)) * 0.35 +
+        Math.sin((nx + ny) * 4.0 + s * 1.3) * 0.25;
+      return 0.5 + v * 0.5;
+    }
+
+    function modeReactive(col, row, t) {
+      if (mouseNX < 0) return modeOrganic(col, row, t) * 0.4;
+      var dx = col / cols - mouseNX;
+      var dy = row / rows - mouseNY;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var ripple = Math.sin(dist * 18 - t * 0.004) * 0.5 + 0.5;
+      return ripple * Math.exp(-dist * 3.5);
+    }
+
+    function modeGlitchy(col, row, t) {
+      var gi = col % GLITCH_SIZE;
+      if (glitchActive[gi]) return Math.random();
+      var speed = glitchSpeeds[gi];
+      var phase = glitchPhases[gi];
+      var scroll = (t * speed * 0.0005 + phase) % 1;
+      var cellVal = (row / rows + scroll) % 1;
+      return cellVal * cellVal;
+    }
+
+    function modeDepth(col, row, t) {
+      var layers = [
+        { speed: 0.00008, parallax: 0.03, weight: 0.2  },
+        { speed: 0.00025, parallax: 0.07, weight: 0.35 },
+        { speed: 0.0006,  parallax: 0.14, weight: 0.45 },
+      ];
+      var mxOff = mouseNX >= 0 ? mouseNX - 0.5 : 0;
+      var myOff = mouseNY >= 0 ? mouseNY - 0.5 : 0;
+      var total = 0;
+      for (var i = 0; i < layers.length; i++) {
+        var L = layers[i];
+        var lx = (col / cols + mxOff * L.parallax + t * L.speed) % 1;
+        var ly = (row / rows + myOff * L.parallax * 0.5) % 1;
+        var v = Math.sin(lx * Math.PI * 5) * Math.cos(ly * Math.PI * 4);
+        total += (v * 0.5 + 0.5) * L.weight;
+      }
+      return total;
+    }
+
+    var modeFns = {
+      organic:  modeOrganic,
+      reactive: modeReactive,
+      glitchy:  modeGlitchy,
+      depth:    modeDepth,
+    };
+
+    function pickChar(intensity, palette) {
+      var i = Math.floor(Math.min(Math.max(intensity, 0), 0.9999) * palette.length);
+      return palette[i];
+    }
+
+    // --- Scheduler ---
+    var modePool = ['organic', 'organic', 'reactive', 'glitchy', 'depth'];
+    var currentMode = 'organic';
+    var nextMode = null;
+    var blendFactor = 0;
+    var modeStartTime = 0;
+    var modeDuration = 8000 + Math.random() * 7000;
+    var transitioning = false;
+    var transitionStart = 0;
+    var TRANSITION_MS = 4000;
+
+    function pickNextMode() {
+      var next;
+      do { next = modePool[Math.floor(Math.random() * modePool.length)]; }
+      while (next === currentMode);
+      return next;
+    }
+
+    function updateScheduler(t) {
+      if (!modeStartTime) modeStartTime = t;
+      if (!transitioning && (t - modeStartTime) > modeDuration) {
+        nextMode = pickNextMode();
+        transitioning = true;
+        transitionStart = t;
+      }
+      if (transitioning) {
+        var p = Math.min((t - transitionStart) / TRANSITION_MS, 1);
+        blendFactor = p * p * (3 - 2 * p); // smoothstep
+        if (p >= 1) {
+          currentMode = nextMode;
+          nextMode = null;
+          blendFactor = 0;
+          transitioning = false;
+          modeStartTime = t;
+          modeDuration = 8000 + Math.random() * 7000;
+        }
+      }
+    }
+
+    // --- Grid measurement ---
     function measureChar() {
-      const span = document.createElement('span');
-      span.style.fontFamily = 'monospace';
-      span.style.fontSize = window.getComputedStyle(asciiEl).fontSize || '12px';
-      span.style.padding = '0';
-      span.style.margin = '0';
-      span.style.lineHeight = '1';
+      var span = document.createElement('span');
+      span.style.cssText = 'font-family:monospace;font-size:' +
+        (window.getComputedStyle(asciiEl).fontSize || '12px') +
+        ';padding:0;margin:0;line-height:1;position:absolute;visibility:hidden';
       span.textContent = 'M';
-      span.style.position = 'absolute';
-      span.style.visibility = 'hidden';
       document.body.appendChild(span);
-
-      const rect = span.getBoundingClientRect();
-      charW = Math.max(6, Math.ceil(rect.width));
-      charH = Math.max(8, Math.ceil(rect.height));
-
+      var r = span.getBoundingClientRect();
+      charW = Math.max(6, Math.ceil(r.width));
+      charH = Math.max(8, Math.ceil(r.height));
       span.remove();
     }
 
-    /**
-     * Recalculates grid dimensions on window resize
-     * Ensures the ASCII grid fills the viewport correctly with overflow to eliminate gaps
-     */
     function resize() {
       measureChar();
-      // Use ceil instead of floor and add 1 to ensure full coverage with overflow
-      cols = Math.max(2, Math.ceil(window.innerWidth / charW) + 1);
+      cols = Math.max(2, Math.ceil(window.innerWidth  / charW) + 1);
       rows = Math.max(2, Math.ceil(window.innerHeight / charH) + 1);
     }
 
-    // Initial setup
     resize();
-
-    // Keep grid responsive to window size changes
     window.addEventListener('resize', resize);
 
-    /**
-     * Main animation loop
-     * Renders the ASCII grid with animated patterns
-     */
-    function draw() {
-      const out = [];
+    // Homepage mouse highlight radius (in grid cells)
+    var HIGHLIGHT_R = Math.max(3, Math.round(Math.min(window.innerWidth, window.innerHeight) * 0.05 / charW));
 
-      // Build each row of the ASCII grid
-      for (let y = 0; y < rows; y++) {
-        const line = [];
+    // --- Draw loop ---
+    function draw(t) {
+      updateScheduler(t);
 
-        for (let x = 0; x < cols; x++) {
-          // Normalize coordinates to -1..1 range for base animation
-          const cHalfX = cols / 2;
-          const cHalfY = rows / 2;
-          const nx = (x - cHalfX) / cHalfX;
-          const ny = (y - cHalfY) / cHalfY;
+      var fnA = modeFns[currentMode];
+      var palA = palettes[currentMode];
+      var fnB = transitioning ? modeFns[nextMode] : null;
+      var palB = transitioning ? palettes[nextMode] : null;
 
-          // Create animated base pattern using radial waves and procedural noise
-          const distCenter = Math.sqrt(nx * nx + ny * ny);
-          const angle = Math.atan2(ny, nx);
+      var out = [];
+      for (var y = 0; y < rows; y++) {
+        var line = [];
+        for (var x = 0; x < cols; x++) {
+          var ch;
 
-          // Multiple wave layers for increased variation
-          const radialWave1 = Math.sin(distCenter * 6.0 - frame * 0.06 + angle * 2.0);
-          const radialWave2 = Math.cos(distCenter * 4.5 + frame * 0.04 - angle * 1.5);
-          const radialWave3 = Math.sin(distCenter * 8.0 - frame * 0.08 + angle * 3.0);
-
-          // Swirl patterns with different speeds
-          const swirl1 = Math.cos(angle * 3.0 + frame * 0.02);
-          const swirl2 = Math.sin(angle * 5.0 - frame * 0.03 + distCenter * 2.0);
-
-          // Pulsing effects
-          const pulse1 = Math.sin(frame * 0.04) * 0.12;
-          const pulse2 = Math.cos(frame * 0.05 + distCenter * 3.0) * 0.15;
-
-          // Procedural noise-like pattern
-          const noise1 = Math.sin(x * 0.3 + frame * 0.02) * Math.cos(y * 0.2 - frame * 0.015);
-          const noise2 = Math.cos(x * 0.15 - frame * 0.025) * Math.sin(y * 0.25 + frame * 0.02);
-
-          // Diagonal wave patterns
-          const diag1 = Math.sin((nx + ny) * 4.0 + frame * 0.03);
-          const diag2 = Math.cos((nx - ny) * 3.5 - frame * 0.025);
-
-          // Random temporal variation
-          const temporal = Math.sin(frame * 0.01) * Math.cos(frame * 0.007);
-
-          // Combine all patterns with varying weights for rich procedural complexity
-          let v = radialWave1 * 0.4 +
-                  radialWave2 * 0.25 +
-                  radialWave3 * 0.15 +
-                  swirl1 * 0.3 +
-                  swirl2 * 0.2 +
-                  pulse1 +
-                  pulse2 +
-                  noise1 * 0.35 +
-                  noise2 * 0.25 +
-                  diag1 * 0.2 +
-                  diag2 * 0.15 +
-                  temporal * 0.1;
-
-          // Map wave value to 0..1 range
-          const mapped = (v + 2) / 4;
-          let idx = Math.floor(mapped * basePalette.length);
-
-          // Add procedural randomness to character selection
-          // Occasionally pick adjacent characters for organic variation
-          if (Math.random() < 0.25) {
-            idx += Math.floor((Math.random() - 0.5) * 3);
+          // Stochastic dissolve crossfade: randomly pick from mode B as blendFactor rises
+          if (fnB && Math.random() < blendFactor) {
+            ch = pickChar(fnB(x, y, t), palB);
+          } else {
+            ch = pickChar(fnA(x, y, t), palA);
           }
 
-          // Randomly select any character for additional chaos
-          if (Math.random() < 0.08) {
-            idx = Math.floor(Math.random() * basePalette.length);
+          // Homepage mouse highlight — override with bold chars near cursor
+          if (IS_HOME && mouseCol >= 0) {
+            var dx = x - mouseCol;
+            var dy = y - mouseRow;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < HIGHLIGHT_R) {
+              var hlIdx = Math.floor((1 - dist / HIGHLIGHT_R) * highlightPalette.length);
+              ch = highlightPalette[Math.min(hlIdx, highlightPalette.length - 1)];
+            }
           }
 
-          idx = Math.max(0, Math.min(basePalette.length - 1, idx));
-          line.push(basePalette[idx]);
+          line.push(ch);
         }
-
         out.push(line.join(''));
       }
 
-      // Single DOM write per frame for optimal performance
       asciiEl.textContent = out.join('\n');
-
-      frame++;
       requestAnimationFrame(draw);
     }
 
-    // Start animation
-    draw();
+    requestAnimationFrame(draw);
   })();
 </script>
