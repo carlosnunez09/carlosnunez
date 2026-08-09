@@ -40,7 +40,7 @@ params:
   # author: ["Me", "You"] # multiple authors
   images: ["<link or path of image for opengraph, twitter-cards>"]
   DateFormat: "January 2, 2006"
-  defaultTheme: dark # dark, light
+  defaultTheme: light # dark, light
   disableThemeToggle: false
 
   ShowReadingTime: true
@@ -69,26 +69,26 @@ params:
     safari_pinned_tab: "<link / abs url>"
 
   label:
-    text: "> $  cd /Home/"
-    icon: /apple-touch-icon.png
+    text: "Carlos Nunez"
+    icon: ""
     iconHeight: 35
 
-  # profile-mode
+  # profile-mode (homepage uses a custom quiet layout)
   profileMode:
     enabled: true # needs to be explicitly set
     title: Carlos Nunez
-    subtitle: "Computer Programer"
-    imageUrl: "profile.jpg"
+    subtitle: "Computer science & engineering"
+    imageUrl: ""
     imageWidth: 150
     imageHeight: 150
     imageTitle: Carlos Nunez
- 
+
     buttons:
       - name: Posts
         url: posts
-      - name: About Me
+      - name: About
         url: "/posts/aboutme"
-      - name: Contact Me
+      - name: Contact
         url: "/contact/"
 
   # home-info mode
@@ -97,9 +97,9 @@ params:
     Content: Welcome to my blog
 
   socialIcons:
-    - name: stackoverflow
+    - name: Stack Overflow
       url: "https://stackoverflow.com/users/18114507/carlos-nunez"
-    - name: github
+    - name: GitHub
       url: "https://github.com/carlosnunez09"
     - name: Instagram
       url: "https://www.instagram.com/andmecarlos/?hl=en"
@@ -135,15 +135,19 @@ params:
     keys: ["title", "permalink", "summary", "content"]
 menu:
   main:
-    - identifier: categories
-      name: ./categories
-      url: /categories/
+    - identifier: posts
+      name: Posts
+      url: /posts/
       weight: 10
-    - identifier: tags
-      name: ./tags
-      url: /tags/
+    - identifier: about
+      name: About
+      url: /posts/aboutme/
       weight: 20
-    - identifier: Search
-      name: ./Search
-      url: /Search/
+    - identifier: contact
+      name: Contact
+      url: /contact/
       weight: 30
+    - identifier: Search
+      name: Search
+      url: /Search/
+      weight: 40
