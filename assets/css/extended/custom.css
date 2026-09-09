@@ -1,20 +1,227 @@
-/* Custom styling for Contact Me button - make it appear on its own line */
-.profile .buttons {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    max-width: 400px;
-    margin: 0 auto;
+/* Keep PaperMod's layout and neutral palette; refine the profile and controls. */
+:root {
+    --profile-accent: #6c6c6c;
+    --ui-border: rgba(30, 30, 30, 0.13);
+    --ui-hover: rgba(30, 30, 30, 0.05);
 }
 
-/* Make the third button (Contact Me) go to a new row */
-.profile .buttons a.button:nth-child(3) {
-    flex-basis: 100% !important;
-    margin-top: 10px !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    max-width: fit-content !important;
-    text-align: center;
+.dark {
+    --profile-accent: #b5b5b5;
+    --ui-border: rgba(218, 218, 219, 0.15);
+    --ui-hover: rgba(218, 218, 219, 0.06);
+}
+
+body { isolation: isolate; }
+
+.header, .main, .footer {
+    position: relative;
+    z-index: 1;
+}
+
+.nav {
+    align-items: center;
+    min-height: 80px;
+}
+
+.logo a {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.6px;
+}
+
+.logo a img { height: 28px; width: 28px; }
+
+.logo-switches { margin-inline-start: 12px; }
+
+button#theme-toggle {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: var(--secondary);
+}
+
+#menu a {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--secondary);
+    transition: color 160ms ease;
+}
+
+#menu a:hover, #menu a:focus-visible { color: var(--primary); }
+
+button#theme-toggle:hover {
+    color: var(--primary);
+    background: var(--ui-hover);
+}
+
+a:focus-visible, button:focus-visible, button#theme-toggle:focus-visible {
+    outline: 2px solid var(--profile-accent);
+    outline-offset: 5px;
+}
+
+body:has(.profile) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+    background: var(--theme);
+}
+
+body:has(.profile) .main {
+    display: grid;
+    place-items: center;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    padding-block: 48px;
+}
+
+.main .profile { min-height: 0; width: 100%; }
+
+.profile_inner { width: 100%; }
+
+.profile img {
+    display: block;
+    width: 132px;
+    height: 132px;
+    margin: 0 auto 24px;
+    object-fit: cover;
+    transform: none;
+    border: 4px solid var(--theme);
+    box-shadow: 0 0 0 1px var(--ui-border);
+}
+
+.profile .profile_inner h1 {
+    padding: 0;
+    margin-bottom: 10px;
+    font-size: clamp(30px, 5vw, 38px);
+    font-weight: 650;
+    letter-spacing: -1.2px;
+    line-height: 1.2;
+}
+
+.profile-subtitle {
+    color: var(--secondary);
+    font-size: 16px;
+}
+
+.profile .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 0 26px;
+}
+
+.profile .social-icons a {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    border-radius: 10px;
+    color: var(--secondary);
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.profile .social-icons a svg { width: 21px; height: 21px; }
+
+.profile .social-icons a:hover {
+    color: var(--primary);
+    background: var(--ui-hover);
+}
+
+.profile .buttons { gap: 12px; }
+
+.profile .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    min-height: 44px;
+    margin: 0;
+    padding: 8px 14px;
+    border: 1px solid var(--ui-border);
+    border-radius: 8px;
+    background: var(--ui-hover);
+    font-size: 14px;
+    font-weight: 500;
+    transition: border-color 160ms ease, background 160ms ease;
+}
+
+.profile .button:hover { border-color: var(--secondary); }
+
+.profile .buttons-contact { margin-top: 12px; }
+
+.profile .buttons-contact .button {
+    min-height: 40px;
+    background: transparent;
+    border-color: transparent;
+    color: var(--secondary);
+    font-size: 13px;
+}
+
+.profile .buttons-contact .button:hover {
+    color: var(--primary);
+    background: var(--ui-hover);
+}
+
+.footer {
+    font-size: 11px;
+    line-height: 1.8;
+    padding-block: 14px;
+}
+
+.footer a { border-bottom-color: var(--ui-border); }
+
+.post-meta-item + .post-meta-item::before {
+    content: " · ";
+    white-space: pre;
+    padding-inline: 4px;
+}
+
+#ascii-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    white-space: pre;
+    font: 500 clamp(10px, 0.8vw, 28px) / 1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-variant-ligatures: none;
+    letter-spacing: 1px;
+    color: var(--secondary);
+    opacity: 0.34;
+    -webkit-mask-image:
+        linear-gradient(transparent, #000 14%, #000 78%, transparent),
+        radial-gradient(ellipse 42% 65% at 50% 48%, transparent 28%, #000 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(transparent, #000 14%, #000 78%, transparent),
+        radial-gradient(ellipse 42% 65% at 50% 48%, transparent 28%, #000 100%);
+    mask-composite: intersect;
+}
+
+@media (max-width: 600px) {
+    .nav { justify-content: center; padding-top: 8px; line-height: 48px; }
+    .logo { justify-content: center; }
+    #menu { justify-content: center; width: 100%; }
+    #menu a { font-size: 12px; }
+    body:has(.profile) .main { padding-block: 32px; }
+    .profile img { width: 120px; height: 120px; margin-bottom: 22px; }
+    .profile .social-icons { padding: 16px 0 22px; }
+    #ascii-bg { opacity: 0.28; }
+    .footer { padding: 12px 16px 4px; }
+    .footer span { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .profile a, #theme-toggle, #menu a { transition: none; }
+    .confirmation-icon { animation: none; }
 }
 
 /* Contact Form Styling */

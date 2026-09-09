@@ -1,0 +1,17 @@
+{{- /* Render metadata as markup instead of concatenating escaped HTML strings. */ -}}
+<span class="post-meta-items">
+    {{- if not .Date.IsZero -}}
+    <time class="post-meta-item" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format (default "January 2, 2006" site.Params.DateFormat) }}</time>
+    {{- end -}}
+    {{- if (.Param "ShowReadingTime") -}}
+    <span class="post-meta-item">{{ i18n "read_time" .ReadingTime | default (printf "%d min" .ReadingTime) }}</span>
+    {{- end -}}
+    {{- if (.Param "ShowWordCount") -}}
+    <span class="post-meta-item">{{ i18n "words" .WordCount | default (printf "%d words" .WordCount) }}</span>
+    {{- end -}}
+    {{- if not (.Param "hideAuthor") -}}
+    {{- with (partial "author.html" .) -}}
+    <span class="post-meta-item">{{ . }}</span>
+    {{- end -}}
+    {{- end -}}
+</span>

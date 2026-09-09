@@ -4,140 +4,92 @@ date: 2023-09-24
 showToc: false
 TocOpen: false
 draft: false
-hidemeta: false
+hidemeta: true
+ShowBreadCrumbs: false
+disableAnchoredHeadings: true
 comments: false
 author: "Carlos Nunez"
 searchHidden: false
 disableShare: true
+summary: "My education, experience, and skills in computer science and computer engineering."
 ---
 
-Hi, I’m **Carlos Nunez**, a Computer Science & Computer Engineering major at Shippensburg University (’27).  
-Below is an interactive timeline of my education, work, and skills—click each entry to learn more!
-
-
 {{< rawhtml >}}
-<style>
-  /* timeline container */
-  .timeline {
-    position: relative; max-width: 800px;
-    margin: 2rem auto; padding: 0 1rem;
-  }
-  .timeline::before {
-    content: ''; position: absolute;
-    left: 50%; top: 0; bottom: 0;
-    width: 2px; background: currentColor;
-    opacity: 0.2; transform: translateX(-50%);
-  }
-  /* each entry */
-  .entry {
-    position: relative; width: 50%;
-    padding: 0.5rem 1rem; box-sizing: border-box;
-  }
-  .entry:nth-child(odd)  { left: 0; text-align: right; }
-  .entry:nth-child(even) { left: 50%; }
-  .entry::before {
-    content: ''; position: absolute;
-    top: 1rem; width: 8px; height: 8px;
-    border-radius: 50%; background: currentColor;
-  }
-  .entry:nth-child(odd)::before  { right: -5px; }
-  .entry:nth-child(even)::before { left: -5px; }
-
-  /* header and date */
-  .entry h3 {
-    margin: 0 0 0.2rem; font-size: 1rem;
-    display: inline-block;
-  }
-  .entry time {
-    font-size: 0.8rem; color: #888;
-    display: block; margin-bottom: 0.3rem;
-  }
-  /* always‑visible details */
-  .entry p, .entry ul {
-    margin: 0; padding: 0;
-    font-size: 0.85rem; line-height: 1.3;
-    list-style: none;
-  }
-  .entry ul li {
-    margin-left: 1rem; position: relative;
-  }
-  .entry ul li::before {
-    content: '•'; position: absolute;
-    left: -1rem; font-size: 1rem; line-height: 1;
-  }
-  /* download link styling */
-  .entry a {
-    font-size: 0.85rem; text-decoration: underline;
-    color: currentColor;
-  }
-</style>
-
-<div class="timeline">
-  <div class="entry">
-    <h3>Education</h3>
-    <time>May 2027</time>
-    <p><strong>Shippensburg University of Pennsylvania</strong><br>
-    B.S. in Computer Science/Computer Engineering (ABET‑accredited)</p>
+<div class="about-page">
+  <div class="about-intro">
+    <p>Hi, I’m <strong>Carlos Nunez</strong>, a Computer Science &amp; Computer Engineering major at Shippensburg University, class of 2027.</p>
+    <a class="about-resume" href="/resume/Carlos_Nunez_Resume.pdf" download>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" />
+      </svg>
+      Download resume <span class="about-filetype">PDF</span>
+    </a>
   </div>
 
-  <div class="entry">
-    <h3>Material Handler</h3>
-    <time>Summer 2025</time>
-    <ul>
-      <li>Managed cart movement for production flow</li>
-      <li>Streamlined logistics for efficiency</li>
+  <section class="about-section" aria-labelledby="about-experience">
+    <h2 id="about-experience">Education &amp; experience</h2>
+    <ol class="about-timeline">
+      <li>
+        <div class="about-date"><time datetime="2027-05">May 2027</time><span>Graduation</span></div>
+        <div class="about-detail">
+          <h3>Shippensburg University of Pennsylvania</h3>
+          <p>B.S. in Computer Science/Computer Engineering</p>
+          <p class="about-note">ABET-accredited</p>
+        </div>
+      </li>
+      <li>
+        <div class="about-date"><span>2023–2025</span><span>Summers</span></div>
+        <div class="about-detail">
+          <h3>Material Handler</h3>
+          <ul class="about-highlights">
+            <li>Managed cart movement for production flow</li>
+            <li>Streamlined logistics for efficiency</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <div class="about-date"><span>2024</span><span>Winter / spring</span></div>
+        <div class="about-detail">
+          <h3>Military Training</h3>
+          <ul class="about-highlights">
+            <li>10 weeks of Basic Combat Training</li>
+            <li>6 weeks and 4 days of Interior Electrician AIT</li>
+          </ul>
+        </div>
+      </li>
+      <li>
+        <div class="about-date"><span>2022</span><span>Summer</span></div>
+        <div class="about-detail">
+          <h3>Storage Manager</h3>
+          <ul class="about-highlights">
+            <li>Led supply-chain and inventory turnover</li>
+            <li>Coordinated client logistics and storage</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="about-section" aria-labelledby="about-skills">
+    <h2 id="about-skills">Skills &amp; certifications</h2>
+    <ul class="about-skill-groups">
+      <li>
+        <h3>Programming</h3>
+        <p>Java · JavaScript · Python · C# · HTML/CSS</p>
+      </li>
+      <li>
+        <h3>Tools &amp; platforms</h3>
+        <p>Kali · Ubuntu · Windows · Unity3D · Blender · MS&nbsp;365</p>
+      </li>
+      <li>
+        <h3>Security &amp; certifications</h3>
+        <p>Pen-testing · EE Certified</p>
+      </li>
+      <li>
+        <h3>Languages</h3>
+        <p>Spanish (native)</p>
+      </li>
     </ul>
-  </div>
-
-  <div class="entry">
-    <h3>Material Handler</h3>
-    <time>Summer 2024</time>
-    <ul>
-      <li>Managed cart movement for production flow</li>
-      <li>Streamlined logistics for efficiency</li>
-    </ul>
-  </div>
-
-  <div class="entry">
-    <h3>Material Handler</h3>
-    <time>Summer 2023</time>
-    <ul>
-      <li>Managed cart movement for production flow</li>
-      <li>Streamlined logistics for efficiency</li>
-    </ul>
-  </div>
-
-  <div class="entry">
-    <h3>Storage Manager</h3>
-    <time>Summer 2022</time>
-    <ul>
-      <li>Led supply‑chain & inventory turnover</li>
-      <li>Coordinated client logistics & storage</li>
-    </ul>
-  </div>
-
-  <div class="entry">
-    <h3>Military Training</h3>
-    <time>Winter/Spring 2024</time>
-    <ul>
-      <li>10 weeks Basic Combat Training</li>
-      <li>6 weeks + 4 days Interior Electrician AIT</li>
-    </ul>
-  </div>
-
-  <div class="entry">
-    <h3>Skills & Certs</h3>
-    <time>Ongoing</time>
-    <p>
-      Java · JavaScript · Python · C# · HTML/CSS · Kali · Ubuntu · Windows · Unity3D · Blender · MS 365 · Pen‑testing · EE Certified · Spanish (Native)
-    </p>
-  </div>
-
-  <div class="entry">
-    <h3>Download Resume</h3>
-    <time>Now</time>
-    <p><a href="/resume/Carlos_Nunez_Resume.pdf" target="_blank">📄 Get PDF</a></p>
-  </div>
+  </section>
 </div>
-
 {{< /rawhtml >}}

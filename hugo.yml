@@ -77,7 +77,7 @@ params:
   profileMode:
     enabled: true # needs to be explicitly set
     title: Carlos Nunez
-    subtitle: "Computer Programer"
+    subtitle: "Computer Programmer"
     imageUrl: "profile.jpg"
     imageWidth: 150
     imageHeight: 150

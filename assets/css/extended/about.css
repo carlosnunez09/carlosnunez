@@ -1,0 +1,187 @@
+/* About Me uses the site's neutral palette and an open, readable timeline. */
+.post-single:has(.about-page) .post-header {
+    margin-bottom: 22px;
+}
+
+.about-page .about-intro > p {
+    max-width: 640px;
+    margin-bottom: 22px;
+    font-size: 18px;
+    line-height: 1.75;
+}
+
+.about-page .about-resume {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--radius);
+    background: var(--ui-hover);
+    box-shadow: none;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 500;
+    transition: border-color 160ms ease;
+}
+
+.about-page .about-resume:hover {
+    border-color: var(--secondary);
+}
+
+.about-filetype {
+    margin-inline-start: 4px;
+    color: var(--secondary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+}
+
+.about-section {
+    margin-top: 38px;
+    padding-top: 28px;
+    border-top: 1px solid var(--ui-border);
+}
+
+.about-page .about-section > h2 {
+    margin: 0 0 28px;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+.about-page .about-timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.about-timeline > li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    column-gap: 44px;
+    padding-bottom: 32px;
+    margin: 0;
+}
+
+.about-timeline > li:last-child {
+    padding-bottom: 0;
+}
+
+.about-timeline > li::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    bottom: -10px;
+    inset-inline-start: 132px;
+    width: 1px;
+    background: var(--ui-border);
+}
+
+.about-timeline > li:last-child::before {
+    content: none;
+}
+
+.about-timeline > li::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    inset-inline-start: 129px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--secondary);
+    border-radius: 50%;
+    background: var(--theme);
+}
+
+.about-date {
+    padding-top: 2px;
+    color: var(--secondary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.about-date > * {
+    display: block;
+}
+
+.about-page .about-detail h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.about-page .about-detail p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.about-page .about-detail .about-note {
+    margin-top: 4px;
+    color: var(--secondary);
+    font-size: 13px;
+}
+
+.about-page .about-highlights {
+    margin: 0;
+    padding-inline-start: 18px;
+    list-style: disc;
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+.about-highlights > li {
+    margin-top: 4px;
+    padding-inline-start: 2px;
+}
+
+.about-highlights > li::marker {
+    color: var(--secondary);
+}
+
+.about-page .about-skill-groups {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 40px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.about-skill-groups > li {
+    margin: 0;
+}
+
+.about-page .about-skill-groups h3 {
+    margin: 0 0 7px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.about-page .about-skill-groups p {
+    margin: 0;
+    color: var(--secondary);
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+    .about-page .about-intro > p { font-size: 17px; }
+    .about-section { margin-top: 30px; padding-top: 24px; }
+    .about-page .about-section > h2 { font-size: 20px; margin-bottom: 24px; }
+    .about-timeline > li { grid-template-columns: minmax(0, 1fr); padding-inline-start: 24px; }
+    .about-timeline > li::before { inset-inline-start: 3px; }
+    .about-timeline > li::after { inset-inline-start: 0; }
+    .about-date { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 6px; }
+    .about-page .about-detail h3 { font-size: 16px; }
+    .about-page .about-skill-groups { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .about-page .about-resume { transition: none; }
+}

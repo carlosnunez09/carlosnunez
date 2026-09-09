@@ -1,115 +1,3 @@
-
-
-<body>
-    <div class="handwriting-container">
-        <div class="handwriting-text"></div>
-    </div>
-    <script>
-        const sentences = [
-    "Hello",
-    "Bonjour",
-    "Hola",
-    "Ciao",
-    "Guten Tag",
-    "Olá",
-    "Konnichiwa",
-    "Namaste",
-    "Salam",
-    "Zdravo",
-    "Aloha",
-    "Hej",
-    "Merhaba",
-    "Saluton",
-    "Kamusta",
-    "Nǐ hǎo",
-    "你好",
-    "Annyeonghaseyo",
-    "Ahoj",
-    "Halo",
-    "Sawubona",
-    "Բdelays",
-    "გამარჯობა",
-    "Γειά σας",
-    "שלום",
-    "नमस्ते",
-    "Привет",
-    "مرحبا",
-    "வணக்கம்",
-    "ಹಲೋ",
-    "สวัสดี",
-    "ਹੈਲੋ",
-    "ជំរាបសួរ"
-];
-const textElement = document.querySelector(".handwriting-text");
-const containerElement = document.querySelector(".handwriting-container");
-
-let currentSentenceIndex = 0;
-
-// Set initial height to match container's height
-textElement.style.height = containerElement.clientHeight + "px";
-
-function writeSentence() {
-    const currentSentence = sentences[currentSentenceIndex];
-    let characterIndex = 0;
-
-    function typeCharacter() {
-        textElement.textContent += currentSentence[characterIndex];
-        characterIndex++;
-
-        if (characterIndex < currentSentence.length) {
-            setTimeout(typeCharacter, 50);
-        } else {
-            setTimeout(deleteSentence, 2000);
-        }
-    }
-
-    typeCharacter();
-}
-
-function deleteSentence() {
-    let text = textElement.textContent;
-    textElement.textContent = text.slice(0, -1);
-
-    if (text.length > 0) {
-        setTimeout(deleteSentence, 30);
-    } else {
-        currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
-        textElement.style.height = containerElement.clientHeight + "px"; // Maintain original container height
-        setTimeout(writeSentence, 500);
-    }
-}
-
-writeSentence();
-    </script>
-
-</form>
-</body>
-
-<style>
-  
-
-
-    .handwriting-text {
-        white-space: nowrap;
-        
-        animation: handwriting 4s steps(60, end) infinite, blink-caret 0.75s step-end infinite;
-        font-size: 24px;
-        padding-left: 0pt;
-        position: relative; /* Add position relative */
-        top: 0; /* Add initial top position */
-        align-items: center;
-        justify-content: center;
-        display: flex; 
-        
-    }
-
-
-
-       
-
-</style>
-
-
 <div class="profile">
     {{- with site.Params.profileMode }}
     <div class="profile_inner">
@@ -135,10 +23,10 @@ writeSentence();
                     {{- $img = $img.Resize "150x150" }}
                 {{- end }}
             {{- end }}
-            <img draggable="false" src="{{ $img.Permalink }}" alt="{{ .imageTitle | default "profile image" }}" title="{{ .imageTitle }}"
+            <img draggable="false" src="{{ $img.RelPermalink }}" alt="{{ .imageTitle | default "profile image" }}" title="{{ .imageTitle }}"
                 height="{{ .imageHeight | default 150 }}" width="{{ .imageWidth | default 150 }}" />
         {{- else }}
-        <img draggable="false" src="{{ .imageUrl | absURL }}" alt="{{ .imageTitle | default "profile image" }}" title="{{ .imageTitle }}"
+        <img draggable="false" src="{{ .imageUrl | relURL }}" alt="{{ .imageTitle | default "profile image" }}" title="{{ .imageTitle }}"
             height="{{ .imageHeight | default 150 }}" width="{{ .imageWidth | default 150 }}" />
         {{- end }}
 
@@ -146,7 +34,7 @@ writeSentence();
 
         {{- end }}
         <h1>{{ .title | default site.Title | markdownify }}</h1>
-        <span>{{ .subtitle | markdownify }}</span>
+        <p class="profile-subtitle">{{ .subtitle | markdownify }}</p>
         {{- partial "social_icons.html" site.Params.socialIcons -}}
 
         {{- with .buttons }}
@@ -169,7 +57,7 @@ writeSentence();
             {{- end }}
         </div>
         <!-- Second row: Contact Me -->
-        <div class="buttons" style="margin-top: 10px;">
+        <div class="buttons buttons-contact">
             {{- range after 2 . }}
             <a class="button" href="{{ trim .url " " }}" rel="noopener" title="{{ .name }}">
                 <span class="button-inner">
