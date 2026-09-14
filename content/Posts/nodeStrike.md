@@ -295,3 +295,282 @@ The implementation and testing schedule spans Summer through Fall 2026:
 
 Stay tuned for follow-up posts where I'll share the live benchmark results, graphs, and lessons learned from building the servers!
 
+{{< rawhtml >}}
+<style>
+/* Light mode (default) */
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path {
+    stroke: #333 !important;
+}
+
+.mermaid .edgePath .path,
+.mermaid .flowchart-link {
+    stroke: #333 !important;
+}
+
+.mermaid .edgeLabel {
+    color: #333 !important;
+}
+
+.mermaid .label {
+    color: #333 !important;
+}
+
+/* Dark mode */
+.dark .mermaid .node rect,
+.dark .mermaid .node circle,
+.dark .mermaid .node ellipse,
+.dark .mermaid .node polygon,
+.dark .mermaid .node path {
+    stroke: #fff !important;
+    fill: transparent !important;
+}
+
+.dark .mermaid .edgePath .path,
+.dark .mermaid .flowchart-link {
+    stroke: #fff !important;
+}
+
+/* Edge labels - text on lines needs background */
+.dark .mermaid .edgeLabel {
+    color: #fff !important;
+    background-color: #444 !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
+}
+
+.dark .mermaid .edgeLabel span {
+    color: #fff !important;
+}
+
+.dark .mermaid .edgeLabel rect {
+    fill: #444 !important;
+}
+
+/* All text should be white */
+.dark .mermaid .label {
+    color: #fff !important;
+    fill: #fff !important;
+}
+
+.dark .mermaid text {
+    fill: #fff !important;
+}
+
+.dark .mermaid .nodeLabel {
+    color: #fff !important;
+}
+
+.dark .mermaid .cluster rect {
+    stroke: #fff !important;
+    fill: transparent !important;
+}
+
+.dark .mermaid .cluster text {
+    fill: #fff !important;
+}
+
+.dark .mermaid .cluster-label {
+    background-color: transparent !important;
+}
+
+.dark .mermaid g.classGroup rect {
+    fill: transparent !important;
+}
+
+.dark .mermaid .node .label {
+    background-color: transparent !important;
+}
+
+/* Make diagrams clickable */
+.mermaid {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.mermaid:hover {
+    opacity: 0.9;
+}
+
+/* Modal styles */
+.diagram-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    cursor: zoom-out;
+}
+
+.diagram-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diagram-modal-content {
+    max-width: 95vw;
+    max-height: 95vh;
+    overflow: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.dark .diagram-modal-content {
+    background: #1a1a1a;
+}
+
+.diagram-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 35px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+    z-index: 10000;
+}
+
+.diagram-modal-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.dark .diagram-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Scale up the diagram in modal (layout-based sizing instead of transform) */
+/* Using SVG width so scrollbars and layout work correctly */
+.diagram-modal .mermaid {
+    margin: 0;
+    max-width: none !important;
+}
+
+.diagram-modal .mermaid svg {
+    width: 1600px; /* default enlarged width */
+    height: auto;
+    max-width: none; /* allow wider than container; container will scroll */
+}
+
+/* For very large screens, enlarge even more */
+@media (min-width: 1920px) {
+    .diagram-modal .mermaid svg {
+        width: 2200px;
+    }
+}
+
+/* For smaller screens, reduce enlarged size */
+@media (max-width: 768px) {
+    .diagram-modal .mermaid svg {
+        width: 1200px;
+    }
+}
+
+#modalDiagramContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100%;
+    min-height: 100%;
+}
+</style>
+
+<!-- Modal HTML -->
+<div id="diagramModal" class="diagram-modal">
+    <div class="diagram-modal-content">
+        <button class="diagram-modal-close">&times;</button>
+        <div id="modalDiagramContainer"></div>
+    </div>
+</div>
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+function initMermaid() {
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: isDark ? 'dark' : 'default',
+        flowchart: {
+            curve: 'basis'
+        }
+    });
+    
+    // After mermaid initializes, add click handlers
+    setTimeout(() => {
+        addDiagramClickHandlers();
+    }, 500);
+}
+
+function addDiagramClickHandlers() {
+    const diagrams = document.querySelectorAll('.mermaid');
+    const modal = document.getElementById('diagramModal');
+    const modalContainer = document.getElementById('modalDiagramContainer');
+    const closeBtn = modal.querySelector('.diagram-modal-close');
+    
+    diagrams.forEach((diagram, index) => {
+        diagram.style.cursor = 'pointer';
+        diagram.title = 'Click to enlarge';
+        
+        diagram.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Clone the diagram
+            const clonedDiagram = diagram.cloneNode(true);
+            modalContainer.innerHTML = '';
+            modalContainer.appendChild(clonedDiagram);
+            modal.classList.add('active');
+        });
+    });
+    
+    // Close modal when clicking close button
+    closeBtn?.addEventListener('click', function(e) {
+        e.stopPropagation();
+        modal.classList.remove('active');
+    });
+    
+    // Close modal when clicking outside (overlay only)
+    modal?.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        }
+    });
+}
+
+// Initialize on load
+initMermaid();
+
+// Watch for theme toggle button clicks
+document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    setTimeout(() => {
+        location.reload();
+    }, 10);
+});
+</script>
+{{< /rawhtml >}}
+
