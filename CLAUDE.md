@@ -61,7 +61,7 @@ disableShare: true
 ```
 
 ### Special Pages
-- About Me: `content/Posts/aboutme.md` - Contains interactive timeline with canvas animations
+- About Me: `content/Posts/aboutme.md` - Education and experience timeline, grouped skills, and a resume download
 - Search: `content/Search.md` - Powered by Fuse.js search
 - Archives: `content/archives.md`
 
@@ -73,26 +73,31 @@ Posts use Mermaid diagrams embedded via `{{< rawhtml >}}` shortcode. Example in 
 - Click-to-enlarge modal functionality
 - Custom styling for diagram visibility in both themes
 
-### Canvas Animations
-The About Me page includes:
-- Flocking boids animation background using HTML5 Canvas
-- Interactive timeline with visual styling
-- Custom JavaScript for animation logic
+### About Me
+The About Me page uses a static timeline with dates beside entries on desktop and above entries on mobile.
+Repeated Material Handler summer roles are grouped, and skills are organized into categories.
+Page-specific styles live in `assets/css/extended/about.css`. Keep the content visible without JavaScript,
+use the site's neutral palette, and hide blog metadata and breadcrumbs on this page.
 
 ### ASCII Background Animation (Home Page)
 The homepage features an animated ASCII art background:
-- **Location**: `layouts/partials/ascii-background.html`
+- **Location**: `layouts/partials/ascii-background.html`, with animation logic in `assets/js/home.js` and styles in `assets/css/extended/custom.css`
 - **Integrated via**: `layouts/partials/extend_footer.html`
 - **Features**:
-  - Fullscreen ASCII grid with multiple animation modes (organic, glitchy, depth)
-  - Seamless transitions between modes (stochastic dissolve crossfade)
-  - Theme-aware: Light mode uses darker characters, dark mode uses lighter
-  - Responsive font sizing for different screen sizes
-  - Performance optimized with single DOM write per frame
+  - Shaded, folded ASCII waves with continuous motion and a measured monospace grid
+  - Full ASCII density palette with directional lighting, no random flicker
+  - Theme-aware colors and viewport masks keep navigation and footer readable
+  - Targets 18 frames per second and pauses in hidden tabs
+  - Respects the browser's reduced-motion preference
   - Only loads on home page (`.IsHome` conditional)
-- **Character palettes**:
-  - Distinct character sets for each animation mode (subtle dots, glitch characters, blocks)
-- **Customization**: Edit animation speed, mode durations, or character sets in the partial
+- **Character palette**: ` .,:;irsXA253hMHGS#9B&@` maps simulated surface lighting to text density
+- **Customization**: Edit the contour field in `assets/js/home.js`; opacity, masking, and spacing live in the extended stylesheet
+
+### Profile Styling
+
+Keep the centered profile open and unframed, with neutral colors from PaperMod.
+The user prefers the ASCII waves with the simple layout and has rejected OS-style window chrome,
+glass panels, and mint accents. Keep greetings and animation buttons removed.
 
 ### Custom Layouts
 Custom partials are located in `layouts/partials/`:
