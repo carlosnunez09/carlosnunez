@@ -295,42 +295,7 @@ The implementation and testing schedule spans Summer through Fall 2026:
 
 Stay tuned for follow-up posts where I'll share the live benchmark results, graphs, and lessons learned from building the servers!
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+{{< rawhtml >}}
 <style>
 /* Light mode (default) */
 .mermaid .node rect,
