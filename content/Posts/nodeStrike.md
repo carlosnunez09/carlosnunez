@@ -295,7 +295,42 @@ The implementation and testing schedule spans Summer through Fall 2026:
 
 Stay tuned for follow-up posts where I'll share the live benchmark results, graphs, and lessons learned from building the servers!
 
-{{< rawhtml >}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <style>
 /* Light mode (default) */
 .mermaid .node rect,
@@ -571,6 +606,30 @@ document.getElementById('theme-toggle')?.addEventListener('click', () => {
         location.reload();
     }, 10);
 });
+</script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous" onload="initKaTeX()"></script>
+<script>
+function initKaTeX() {
+    if (typeof renderMathInElement === 'function') {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false},
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });
+    }
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initKaTeX);
+} else {
+    initKaTeX();
+}
 </script>
 {{< /rawhtml >}}
 
