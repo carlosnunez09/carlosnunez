@@ -1,5 +1,5 @@
 ---
-title: "NodeStrike: Custom C++ UDP Server vs. Godot ENet"
+title: "(Proposal) NodeStrike: Custom C++ UDP Server vs. Godot ENet"
 date: 2026-09-14
 showToc: true
 TocOpen: true
