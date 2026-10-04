@@ -244,6 +244,8 @@ While building NodeStrike, two broad models emerged:
 
 ## TODO
 
+- [ ] add how the nodestrike was made and insight on how it works
+
 - [ ] **Run a 270-client hold test for 20 minutes**, capturing snapshots every 10 seconds to verify stability.
 
     **Description:**
