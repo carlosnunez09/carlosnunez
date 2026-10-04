@@ -1,0 +1,14 @@
+<figure class="interactive-graph" data-metric="{{ .Get "metric" }}" data-source="{{ "/graphs/nodestrike/metrics.json" | relURL }}">
+  <div class="chart-tools" hidden>
+    <button type="button" data-action="trend" aria-pressed="true">Trend: 150–299 clients</button>
+    <button type="button" data-action="full" aria-pressed="false">Full range</button>
+    <button type="button" data-action="in" aria-label="Zoom in">+</button>
+    <button type="button" data-action="out" aria-label="Zoom out">−</button>
+    <button type="button" data-action="reset">Reset view</button>
+    <button type="button" data-action="expand">Enlarge</button>
+  </div>
+  <p class="chart-view-note" hidden aria-live="polite"></p>
+  <div class="chart-canvas" hidden><div class="chart-plot" role="region" aria-label="{{ .Get "alt" }}"></div></div>
+  <a class="chart-fallback" href="{{ .Get "src" | relURL }}"><img src="{{ .Get "src" | relURL }}" alt="{{ .Get "alt" }}" loading="lazy"></a>
+  <figcaption><span class="chart-instructions">Static preview.</span> <a href="{{ .Get "src" | relURL }}" download>Download SVG</a></figcaption>
+</figure>

@@ -1,3 +1,8 @@
+{{- if .HasShortcode "graph" -}}
+  <script defer src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script>
+  {{- $graphs := resources.Get "js/graphs.js" | minify | fingerprint -}}
+  <script defer src="{{ $graphs.RelPermalink }}" integrity="{{ $graphs.Data.Integrity }}"></script>
+{{- end -}}
 {{- if .IsHome -}}
     {{- partial "ascii-background.html" . -}}
 {{- end -}}
