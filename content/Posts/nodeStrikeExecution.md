@@ -11,6 +11,7 @@ searchHidden: false
 disableShare: true
 mermaid: true
 ---
+For graphs, I'm using [Plotly](https://github.com/plotly/plotly.js).
 
 In this post I'll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.
 
