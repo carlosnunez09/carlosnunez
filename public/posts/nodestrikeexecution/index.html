@@ -16,8 +16,8 @@ Godot ships with its own high-level networking layer built on ENet. It covers sy
 <meta name="google-site-verification" content="XYZabc">
 <meta name="yandex-verification" content="XYZabc">
 <meta name="msvalidate.01" content="XYZabc">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.323824e76315490af54e604e3c7bc6672c45b09ff8feb8c9b9b3221ed80ebf0a.css" integrity="sha256-Mjgk52MVSQr1TmBOPHvGZyxFsJ/4/rjJubMiHtgOvwo=" rel="preload stylesheet" as="style">
-<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+<link crossorigin="anonymous" href="/assets/css/stylesheet.9532b70ee5018a0e7917f6e0c5eb4c2018a2066a4ee7e01088d65b1ebbc4995d.css" integrity="sha256-lTK3DuUBig55F/bgxetMIBiiBmpO5&#43;AQiNZbHrvEmV0=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
     onload="hljs.initHighlightingOnLoad();"></script>
 <link rel="icon" href="https://andmecarlos.com/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://andmecarlos.com/favicon-16x16.png">
@@ -341,8 +341,7 @@ flowchart LR
 <p>The downside: each Godot server instance still carries full engine overhead, which limits how many concurrent games a single host can support.</p>
 <h3 id="godot--custom-server-c--go--python-udp">Godot → Custom Server (C++ / Go / Python UDP)<a hidden class="anchor" aria-hidden="true" href="#godot--custom-server-c--go--python-udp">#</a></h3>
 <blockquote>
-<p><strong>This is the core approach for NodeStrike.</strong> Bypassing ENet lets us write only the code we actually need—no scene tree, no physics tick, no engine overhead.</p>
-</blockquote>
+<p><strong>This is the core approach for NodeStrike.</strong> Bypassing ENet lets us write only the code we actually need—no scene tree, no physics tick, no engine overhead.</p></blockquote>
 <p>For reference material on raw UDP: <a href="https://www.geeksforgeeks.org/cpp/udp-server-client-implementation-c/">UDP server–client implementation in C/C++</a></p>
 <p><strong>Why UDP over TCP?</strong></p>
 <ul>
@@ -416,8 +415,7 @@ flowchart LR
 <hr>
 <h2 id="collected-data-and-benchmarks">Collected Data and Benchmarks<a hidden class="anchor" aria-hidden="true" href="#collected-data-and-benchmarks">#</a></h2>
 <blockquote>
-<p><strong>Experiment Configuration:</strong> The graphs below use an expedited run — 1 repetition and 3 seconds per state — rather than the full 3 repetitions × 10 seconds shown in the table. The full configuration is the target for the final paper.</p>
-</blockquote>
+<p><strong>Experiment Configuration:</strong> The graphs below use an expedited run — 1 repetition and 3 seconds per state — rather than the full 3 repetitions × 10 seconds shown in the table. The full configuration is the target for the final paper.</p></blockquote>
 <table>
   <thead>
       <tr>
@@ -573,6 +571,7 @@ Start the server, connect 270 clients, then stop adding clients and keep those s
 </article>
     </main>
     
+    
 <footer class="footer">
     <span>&copy; 2026 <a href="https://andmecarlos.com/">Carlos Nunez</a></span>
     <span>
@@ -585,7 +584,7 @@ Start the server, connect 270 clients, then stop adding clients and keep those s
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
         <path d="M12 6H0l6-6z" />
     </svg>
-</a>
+</a><script defer src="https://cdn.plot.ly/plotly-4.1.1.min.js" charset="utf-8"></script><script defer src="/js/graphs.min.878c82f4564b7b6eab40c4e31f421105e4b5f83b2fdb94647b87c5305f26f884.js" integrity="sha256-h4yC9FZLe26rQMTjH0IRBeS1&#43;Dsv25Rke4fFMF8m&#43;IQ="></script>
 
 <script>
     let menu = document.getElementById('menu')
@@ -615,6 +614,39 @@ Start the server, connect 270 clients, then stop adding clients and keep those s
         });
     });
 
+</script>
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+    function getMermaidTheme() {
+        return document.body.classList.contains('dark') ? 'dark' : 'default';
+    }
+
+    async function renderMermaid() {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: getMermaidTheme(),
+            flowchart: { curve: 'basis' }
+        });
+        await mermaid.run({ querySelector: '.mermaid' });
+    }
+
+    renderMermaid();
+
+    
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        
+        setTimeout(() => {
+            
+            document.querySelectorAll('.mermaid[data-processed]').forEach(el => {
+                el.removeAttribute('data-processed');
+                
+                const src = el.getAttribute('data-mermaid-src');
+                if (src) el.innerHTML = src;
+            });
+            renderMermaid();
+        }, 50);
+    });
 </script>
 <script>
     var mybutton = document.getElementById("top-link");
