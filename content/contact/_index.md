@@ -13,9 +13,12 @@ ShowBreadCrumbs: false
   <h2>Get In Touch</h2>
   <p>I'd love to hear from you! Whether you have a question, want to collaborate, or just want to say hello, fill out the form below.</p>
 
-  <form name="contact" method="POST" action="/contact/thanks/" data-netlify="true" netlify-honeypot="bot-field" class="contact-form">
+  <form name="contact" method="POST" action="https://api.web3forms.com/submit" class="contact-form">
+    <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
+    <input type="hidden" name="redirect" value="https://andmecarlos.com/contact/thanks/" />
+    <input type="hidden" name="subject" value="New message from andmecarlos.com" />
     <p style="display:none;">
-      <label>Don't fill this out: <input name="bot-field" /></label>
+      <label>Don't fill this out: <input name="botcheck" /></label>
     </p>
     <p>
       <label>Your Name<br/>
