@@ -17,6 +17,7 @@ googleAnalytics: G-G5LG8WWJXN
 
 minify:
   disableXML: true
+  disableHTML: true
   minifyOutput: true
 
 markup:

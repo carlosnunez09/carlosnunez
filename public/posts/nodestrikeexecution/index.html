@@ -1,100 +1,692 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>NodeStrike Execution | Carlos Nunez</title>
-<meta name=keywords content><meta name=description content="For graphs, I&rsquo;m using Plotly.
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>NodeStrike Execution | Carlos Nunez</title>
+<meta name="keywords" content="">
+<meta name="description" content="For graphs, I&rsquo;m using Plotly.
 In this post I&rsquo;ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.
 Implementations Using ENet
-Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped."><meta name=author content="Carlos Nunez"><link rel=canonical href=https://andmecarlos.com/posts/nodestrikeexecution/><meta name=google-site-verification content="XYZabc"><meta name=yandex-verification content="XYZabc"><meta name=msvalidate.01 content="XYZabc"><link crossorigin=anonymous href=/assets/css/stylesheet.323824e76315490af54e604e3c7bc6672c45b09ff8feb8c9b9b3221ed80ebf0a.css integrity="sha256-Mjgk52MVSQr1TmBOPHvGZyxFsJ/4/rjJubMiHtgOvwo=" rel="preload stylesheet" as=style><script defer crossorigin=anonymous src=/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG+9vmJ0cTS+ovo0FeA=" onload=hljs.initHighlightingOnLoad()></script><link rel=icon href=https://andmecarlos.com/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://andmecarlos.com/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://andmecarlos.com/favicon-32x32.png><link rel=apple-touch-icon href=https://andmecarlos.com/%3Clink%20/%20abs%20url%3E><link rel=mask-icon href=https://andmecarlos.com/%3Clink%20/%20abs%20url%3E><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://andmecarlos.com/posts/nodestrikeexecution/><noscript><style>#theme-toggle,.top-link{display:none}</style></noscript><script async src="https://www.googletagmanager.com/gtag/js?id=G-G5LG8WWJXN"></script><script>var dnt,doNotTrack=!1;if(!1&&(dnt=navigator.doNotTrack||window.doNotTrack||navigator.msDoNotTrack,doNotTrack=dnt=="1"||dnt=="yes"),!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-G5LG8WWJXN")}</script><meta property="og:title" content="NodeStrike Execution"><meta property="og:description" content="For graphs, I&rsquo;m using Plotly.
+Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped.">
+<meta name="author" content="Carlos Nunez">
+<link rel="canonical" href="https://andmecarlos.com/posts/nodestrikeexecution/">
+<meta name="google-site-verification" content="XYZabc">
+<meta name="yandex-verification" content="XYZabc">
+<meta name="msvalidate.01" content="XYZabc">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.323824e76315490af54e604e3c7bc6672c45b09ff8feb8c9b9b3221ed80ebf0a.css" integrity="sha256-Mjgk52MVSQr1TmBOPHvGZyxFsJ/4/rjJubMiHtgOvwo=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://andmecarlos.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://andmecarlos.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://andmecarlos.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://andmecarlos.com/%3Clink%20/%20abs%20url%3E">
+<link rel="mask-icon" href="https://andmecarlos.com/%3Clink%20/%20abs%20url%3E">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://andmecarlos.com/posts/nodestrikeexecution/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5LG8WWJXN"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-G5LG8WWJXN');
+        }
+      </script><meta property="og:title" content="NodeStrike Execution" />
+<meta property="og:description" content="For graphs, I&rsquo;m using Plotly.
 In this post I&rsquo;ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.
 Implementations Using ENet
-Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped."><meta property="og:type" content="article"><meta property="og:url" content="https://andmecarlos.com/posts/nodestrikeexecution/"><meta property="og:image" content="https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta property="article:section" content="posts"><meta property="article:published_time" content="2026-10-04T00:00:00+00:00"><meta property="article:modified_time" content="2026-10-04T00:00:00+00:00"><meta property="og:site_name" content="ExampleSite"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta name=twitter:title content="NodeStrike Execution"><meta name=twitter:description content="For graphs, I&rsquo;m using Plotly.
+Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://andmecarlos.com/posts/nodestrikeexecution/" /><meta property="og:image" content="https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2026-10-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2026-10-04T00:00:00+00:00" /><meta property="og:site_name" content="ExampleSite" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://andmecarlos.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"/>
+
+<meta name="twitter:title" content="NodeStrike Execution"/>
+<meta name="twitter:description" content="For graphs, I&rsquo;m using Plotly.
 In this post I&rsquo;ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.
 Implementations Using ENet
-Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped."><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://andmecarlos.com/posts/"},{"@type":"ListItem","position":2,"name":"NodeStrike Execution","item":"https://andmecarlos.com/posts/nodestrikeexecution/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"NodeStrike Execution","name":"NodeStrike Execution","description":"For graphs, I\u0026rsquo;m using Plotly.\nIn this post I\u0026rsquo;ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.\nImplementations Using ENet Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it\u0026rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped.\n","keywords":[],"articleBody":"For graphs, I’m using Plotly.\nIn this post I’ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.\nImplementations Using ENet Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it’s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped.\nPeer-to-Peer (ENet — Godot) flowchart LR subgraph PeerA[\"Peer A (Godot)\"] A1[\"ENetMultiplayerPeer\"] A2[\"Game Logic\"] end subgraph PeerB[\"Peer B (Godot)\"] B1[\"ENetMultiplayerPeer\"] B2[\"Game Logic\"] end A1 -- \"ENet: connect to B IP:port\" --\u003e B1 B1 -- \"ENet: connect to A IP:port\" --\u003e A1 A2 -- \"send input/state\" --\u003e A1 B2 -- \"send input/state\" --\u003e B1 A1 -- \"receive remote state\" --\u003e A2 B1 -- \"receive remote state\" --\u003e B2 classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff class A1,B1 godot class A2,B2 logic Direct peer-to-peer works well for simple or local network games, but it has real limits:\nNetwork restrictions — many home routers block unsolicited inbound connections, making direct peer connections unreliable outside local networks. Host authority — all state originates from Peer A, so if the host drops, the session dies. For online play a relay server resolves the routing problem:\nflowchart LR subgraph PeerA[\"Peer A (Godot)\"] A1[\"ENetMultiplayerPeer\"] A2[\"Game Logic\"] end subgraph PeerB[\"Peer B (Godot)\"] B1[\"ENetMultiplayerPeer\"] B2[\"Game Logic\"] end subgraph Relay[\"Relay Server (acts like VPN)\"] R1[\"Forward traffic between peers\"] end subgraph Wrapper[\"Matchmaking / API Wrapper\"] W1[\"Friend Finder / Session Manager\"] end A1 -- \"Connect via relay\" --\u003e R1 B1 -- \"Connect via relay\" --\u003e R1 R1 -- \"Forward packets\" --\u003e A1 R1 -- \"Forward packets\" --\u003e B1 A2 -- \"send input/state\" --\u003e A1 B2 -- \"send input/state\" --\u003e B1 A1 -- \"receive remote state\" --\u003e A2 B1 -- \"receive remote state\" --\u003e B2 W1 -- \"Provides peer addresses / relay info\" --\u003e A1 W1 -- \"Provides peer addresses / relay info\" --\u003e B1 classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff classDef relay fill:#f87171,stroke:#dc2626,color:#fff classDef match fill:#10b981,stroke:#047857,color:#fff class A1,B1 godot class A2,B2 logic class R1 relay class W1 match Peer-to-Server A central authoritative server is a cleaner model for online multiplayer: all clients connect to one endpoint, the server owns state, and any client can join or drop without taking others down.\nGodot Client → Godot Server (ENet) One approach keeps everything inside the Godot ecosystem. A Python HTTP API acts as a matchmaker: when a client asks for a game, the API spins up a headless Godot instance and returns its port.\nflowchart LR Peer[\"Godot Peer (Client)\"] API[\"Python Server (HTTP API)\"] Manager[\"Godot Instance Manager\"] GS[\"Godot Server Instance\"] Peer --\u003e|\"HTTP Request: Get Port\"| API API --\u003e Manager Manager --\u003e|\"Launches Instance\"| GS API --\u003e|\"Returns Port\"| Peer Peer --\u003e|\"Game Connection\"| GS classDef client fill:#3b82f6,stroke:#1d4ed8,color:#fff classDef server fill:#f87171,stroke:#dc2626,color:#fff classDef infra fill:#10b981,stroke:#047857,color:#fff classDef api fill:#facc15,stroke:#ca8a04,color:#000 class Peer client class GS server class Manager infra class API api The downside: each Godot server instance still carries full engine overhead, which limits how many concurrent games a single host can support.\nGodot → Custom Server (C++ / Go / Python UDP) This is the core approach for NodeStrike. Bypassing ENet lets us write only the code we actually need—no scene tree, no physics tick, no engine overhead.\nFor reference material on raw UDP: UDP server–client implementation in C/C++\nWhy UDP over TCP?\nLower latency — no handshake or retransmission delay; stale packets are simply dropped. Higher throughput — less per-packet overhead means more state updates per second. Scalability — a single-threaded UDP loop can handle hundreds of clients without thread-contention or kernel TCP buffers becoming a bottleneck. The NodeStrike Benchmarking Project To rigorously compare a custom C++ UDP server against Godot’s ENet under identical load, NodeStrike was built to scale from a handful of clients up to hundreds. Here is what that work involved.\nPhase 1 — Moving from Azure to GCP Azure’s student quotas, restricted regions, and connection-drop issues made large-scale VM fleets impractical. Switching to Google Cloud Platform (GCP) gave us stable, fast VM provisioning and teardown at the scale required.\nPhase 2 — Automation Scripts Three Python tools drive the whole pipeline:\nScript Role gcp_nodestrike_fleet.py Provisions 1 server VM + 3 client VMs, uploads and compiles code, runs tests, downloads logs, tears everything down. discpatch.py Orchestrates a test campaign—ramps client counts slowly (1 → 10 → 11 → … → 300), holding each state for a set window to find the exact degradation threshold. analyze_granular_results.py Processes millions of data points into CSV files and HTML reports covering CPU, tick rate, ping, and failure events. Phase 3 — Protocol Fixes Before running the large tests, critical issues were found and fixed:\n8-bit player ID overflow — the C++ server used uint8_t IDs, which would wrap around after 255 players. Upgraded to 32-bit IDs and added packet chunking to stay within MTU. Godot ENet payload size — ENet was sending full Dictionary snapshots. Switched to a packed PackedByteArray binary format, dramatically cutting CPU load. C++ ping measurement — the server was reporting 0 ms latency because no round-trip timing existed. Added a ping/pong packet system for accurate latency under load. Phase 4 — 300-Client Results Backend Result C++ UDP ✅ 300 clients, ~19 Hz tick rate, \u003c5% server CPU, 7 ms p95 latency Godot ENet ⚠️ 300 clients connected, but degraded sharply after ~148 clients — p95 latency exceeded 2,000 ms. Server CPU stayed low; the client VMs running headless Godot hit 100% CPU, revealing that ENet is expensive on the client side. Running the Tools After authenticating with gcloud auth login, run a full test campaign with the dispatcher:\npython \".\\southfire server\\discpatch.py\" ` --project tonal-feat-507919-j7 ` --profile granular ` --execute By default this tests both ENet and C++ from 1 up to 300 clients, holding each count for 10 seconds and repeating 3 times. Reports are saved automatically to bench_results_gcp/.\nCollected Data and Benchmarks Experiment Configuration: The graphs below use an expedited run — 1 repetition and 3 seconds per state — rather than the full 3 repetitions × 10 seconds shown in the table. The full configuration is the target for the final paper.\nSetting Value Backends ENet binary snapshots, then C++ UDP Client counts 1, then 10–300 States per backend 292 Repetitions 1 Time per state 3 seconds Total measurements 1,752 Server VM e2-standard-2 Client VMs 3 × e2-standard-2 Zone us-central1-a Join requirement 99% C++ tick requirement 18 Hz Incomplete snapshot limit 1% Raw measurement time 4 hr 52 min Actual time taken 7 hours (Raw data: Google Sheets)\nReceived Rate vs. Target Clients Trend: 150–299 clients Full range + − Reset view Enlarge Static preview. Download SVG Each backend has 292 recorded points: 1 client, then 10–300 in single increments. Values are unsmoothed, including the ENet spike at 300 clients.\nPacket Loss Events vs. Target Clients Trend: 150–299 clients Full range + − Reset view Enlarge Static preview. Download SVG loss_events is a raw event count, not a percentage. C++ records zero loss events at every client count in this dataset. Measurement durations vary, so counts are not normalized per second.\nHow Do Different Games Handle Multiplayer? While building NodeStrike, two broad models emerged:\nReal-time / authoritative-server multiplayer A live copy of the game state runs on a server. Players interact with it in real time; every position and action is authoritative. Time and latency matter — a 200 ms spike is immediately felt. Used by shooters, MOBAs, racing games.\nTurn-based / message-passing multiplayer State is a set of numbers; turns are transmitted as messages. There is no live simulation — only discrete state transitions. Latency is irrelevant. Used by chess, card games, and other async strategy games.\nTODO add how the nodestrike was made and insight on how it works\nRun a 270-client hold test for 20 minutes, capturing snapshots every 10 seconds to verify stability.\nDescription: Start the server, connect 270 clients, then stop adding clients and keep those same clients running for 20 minutes. Record CPU, memory, network use, receive rate, packet loss, and latency every 10 seconds. This checks whether the system remains stable after the initial join spike settles down.\nThis complements the granular ramp test:\nGranular ramp: Measures the cost of joining, spawning, and increasing load while new clients arrive. 270-client hold: Measures whether the server and clients remain stable for 20 minutes after all 270 clients are connected. Data visualization: Ensure clear, high-quality data is given so i can make the graphs in google with a xlsx Note: The monitor already records machine resources every second. For the stability report, aggregate that data into one row every 10 seconds, resulting in 120 clean observations across 20 minutes. Raw one-second files remain saved in case we need to investigate a spike.\nRequired Graphs:\nClient and responding count over time: Confirms whether all 270 stay connected. Latency over time: Plots p50, p95, and p99 RTT every 10 seconds to monitor for degrading performance. Server health over time: Tracks CPU, memory, load, and network throughput. - for me Client VM health over time: Tracks CPU, memory, and network throughput to distinguish server limitations from overloaded test clients. - for me Receive rate and tick rate over time: Shows whether the system maintains its intended update rate or falls behind. Loss/error timeline: Maps tick gaps, incomplete snapshots, disconnects, evictions, and send errors per 10-second window. making sure to run a full valid run with repetion and preoper clint spacing at 10 seconds\n","wordCount":"1574","inLanguage":"en","datePublished":"2026-10-04T00:00:00Z","dateModified":"2026-10-04T00:00:00Z","author":{"@type":"Person","name":"Carlos Nunez"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://andmecarlos.com/posts/nodestrikeexecution/"},"publisher":{"@type":"Organization","name":"Carlos Nunez","logo":{"@type":"ImageObject","url":"https://andmecarlos.com/favicon.ico"}}}</script></head><body class=dark id=top><script>localStorage.getItem("pref-theme")==="light"&&document.body.classList.remove("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://andmecarlos.com/ accesskey=h title="> $  cd /Home/ (Alt + H)"><img src=https://andmecarlos.com/apple-touch-icon.png alt aria-label=logo height=35>> $ cd /Home/</a><div class=logo-switches><button id=theme-toggle accesskey=t title="Toggle color theme (Alt + T)" aria-label="Toggle color theme"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://andmecarlos.com/categories/ title=./categories><span>./categories</span></a></li><li><a href=https://andmecarlos.com/tags/ title=./tags><span>./tags</span></a></li><li><a href=https://andmecarlos.com/search/ title="./Search (Alt + /)" accesskey=/><span>./Search</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=https://andmecarlos.com/>Home</a>&nbsp;»&nbsp;<a href=https://andmecarlos.com/posts/>Posts</a></div><h1 class=post-title>NodeStrike Execution</h1><div class=post-meta><span class=post-meta-items><time class=post-meta-item datetime=2026-10-04>October 4, 2026</time><span class=post-meta-item>8 min</span><span class=post-meta-item>1574 words</span><span class=post-meta-item>Carlos Nunez</span></span>
-&nbsp;|&nbsp;<a href=https://github.com/%3cpath_to_repo%3e/content/Posts/nodeStrikeExecution.md rel="noopener noreferrer" target=_blank>Suggest Changes</a></div></header><div class=toc><details><summary accesskey=c title="(Alt + C)"><span class=details>Table of Contents</span></summary><div class=inner><nav id=TableOfContents><ul><li><a href=#implementations-using-enet>Implementations Using ENet</a><ul><li><a href=#peer-to-peer-enet--godot>Peer-to-Peer (ENet — Godot)</a></li></ul></li><li><a href=#peer-to-server>Peer-to-Server</a><ul><li><a href=#godot-client--godot-server-enet>Godot Client → Godot Server (ENet)</a></li><li><a href=#godot--custom-server-c--go--python-udp>Godot → Custom Server (C++ / Go / Python UDP)</a></li></ul></li><li><a href=#the-nodestrike-benchmarking-project>The NodeStrike Benchmarking Project</a><ul><li><a href=#phase-1--moving-from-azure-to-gcp>Phase 1 — Moving from Azure to GCP</a></li><li><a href=#phase-2--automation-scripts>Phase 2 — Automation Scripts</a></li><li><a href=#phase-3--protocol-fixes>Phase 3 — Protocol Fixes</a></li><li><a href=#phase-4--300-client-results>Phase 4 — 300-Client Results</a></li></ul></li><li><a href=#running-the-tools>Running the Tools</a></li><li><a href=#collected-data-and-benchmarks>Collected Data and Benchmarks</a><ul><li><a href=#received-rate-vs-target-clients>Received Rate vs. Target Clients</a></li><li><a href=#packet-loss-events-vs-target-clients>Packet Loss Events vs. Target Clients</a></li></ul></li><li><a href=#how-do-different-games-handle-multiplayer>How Do Different Games Handle Multiplayer?</a></li><li><a href=#todo>TODO</a></li></ul></nav></div></details></div><div class=post-content><p>For graphs, I&rsquo;m using <a href=https://github.com/plotly/plotly.js>Plotly</a>.</p><p>In this post I&rsquo;ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.</p><h2 id=implementations-using-enet>Implementations Using ENet<a hidden class=anchor aria-hidden=true href=#implementations-using-enet>#</a></h2><p>Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped.</p><h3 id=peer-to-peer-enet--godot>Peer-to-Peer (ENet — Godot)<a hidden class=anchor aria-hidden=true href=#peer-to-peer-enet--godot>#</a></h3><div class=mermaid>flowchart LR
-subgraph PeerA["Peer A (Godot)"]
-A1["ENetMultiplayerPeer"]
-A2["Game Logic"]
-end
-subgraph PeerB["Peer B (Godot)"]
-B1["ENetMultiplayerPeer"]
-B2["Game Logic"]
-end
-A1 -- "ENet: connect to B IP:port" --> B1
-B1 -- "ENet: connect to A IP:port" --> A1
-A2 -- "send input/state" --> A1
-B2 -- "send input/state" --> B1
-A1 -- "receive remote state" --> A2
-B1 -- "receive remote state" --> B2
-classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff
-classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff
-class A1,B1 godot
-class A2,B2 logic</div><p>Direct peer-to-peer works well for simple or local network games, but it has real limits:</p><ul><li><strong>Network restrictions</strong> — many home routers block unsolicited inbound connections, making direct peer connections unreliable outside local networks.</li><li><strong>Host authority</strong> — all state originates from Peer A, so if the host drops, the session dies.</li></ul><p>For online play a relay server resolves the routing problem:</p><div class=mermaid>flowchart LR
-subgraph PeerA["Peer A (Godot)"]
-A1["ENetMultiplayerPeer"]
-A2["Game Logic"]
-end
-subgraph PeerB["Peer B (Godot)"]
-B1["ENetMultiplayerPeer"]
-B2["Game Logic"]
-end
-subgraph Relay["Relay Server (acts like VPN)"]
-R1["Forward traffic between peers"]
-end
-subgraph Wrapper["Matchmaking / API Wrapper"]
-W1["Friend Finder / Session Manager"]
-end
-A1 -- "Connect via relay" --> R1
-B1 -- "Connect via relay" --> R1
-R1 -- "Forward packets" --> A1
-R1 -- "Forward packets" --> B1
-A2 -- "send input/state" --> A1
-B2 -- "send input/state" --> B1
-A1 -- "receive remote state" --> A2
-B1 -- "receive remote state" --> B2
-W1 -- "Provides peer addresses / relay info" --> A1
-W1 -- "Provides peer addresses / relay info" --> B1
-classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff
-classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff
-classDef relay fill:#f87171,stroke:#dc2626,color:#fff
-classDef match fill:#10b981,stroke:#047857,color:#fff
-class A1,B1 godot
-class A2,B2 logic
-class R1 relay
-class W1 match</div><hr><h2 id=peer-to-server>Peer-to-Server<a hidden class=anchor aria-hidden=true href=#peer-to-server>#</a></h2><p>A central authoritative server is a cleaner model for online multiplayer: all clients connect to one endpoint, the server owns state, and any client can join or drop without taking others down.</p><h3 id=godot-client--godot-server-enet>Godot Client → Godot Server (ENet)<a hidden class=anchor aria-hidden=true href=#godot-client--godot-server-enet>#</a></h3><p>One approach keeps everything inside the Godot ecosystem. A Python HTTP API acts as a matchmaker: when a client asks for a game, the API spins up a headless Godot instance and returns its port.</p><div class=mermaid>flowchart LR
-Peer["Godot Peer (Client)"]
-API["Python Server (HTTP API)"]
-Manager["Godot Instance Manager"]
-GS["Godot Server Instance"]
-Peer -->|"HTTP Request: Get Port"| API
-API --> Manager
-Manager -->|"Launches Instance"| GS
-API -->|"Returns Port"| Peer
-Peer -->|"Game Connection"| GS
-classDef client fill:#3b82f6,stroke:#1d4ed8,color:#fff
-classDef server fill:#f87171,stroke:#dc2626,color:#fff
-classDef infra fill:#10b981,stroke:#047857,color:#fff
-classDef api fill:#facc15,stroke:#ca8a04,color:#000
-class Peer client
-class GS server
-class Manager infra
-class API api</div><p>The downside: each Godot server instance still carries full engine overhead, which limits how many concurrent games a single host can support.</p><h3 id=godot--custom-server-c--go--python-udp>Godot → Custom Server (C++ / Go / Python UDP)<a hidden class=anchor aria-hidden=true href=#godot--custom-server-c--go--python-udp>#</a></h3><blockquote><p><strong>This is the core approach for NodeStrike.</strong> Bypassing ENet lets us write only the code we actually need—no scene tree, no physics tick, no engine overhead.</p></blockquote><p>For reference material on raw UDP: <a href=https://www.geeksforgeeks.org/cpp/udp-server-client-implementation-c/>UDP server–client implementation in C/C++</a></p><p><strong>Why UDP over TCP?</strong></p><ul><li><strong>Lower latency</strong> — no handshake or retransmission delay; stale packets are simply dropped.</li><li><strong>Higher throughput</strong> — less per-packet overhead means more state updates per second.</li><li><strong>Scalability</strong> — a single-threaded UDP loop can handle hundreds of clients without thread-contention or kernel TCP buffers becoming a bottleneck.</li></ul><hr><h2 id=the-nodestrike-benchmarking-project>The NodeStrike Benchmarking Project<a hidden class=anchor aria-hidden=true href=#the-nodestrike-benchmarking-project>#</a></h2><p>To rigorously compare a custom C++ UDP server against Godot&rsquo;s ENet under identical load, NodeStrike was built to scale from a handful of clients up to hundreds. Here is what that work involved.</p><h3 id=phase-1--moving-from-azure-to-gcp>Phase 1 — Moving from Azure to GCP<a hidden class=anchor aria-hidden=true href=#phase-1--moving-from-azure-to-gcp>#</a></h3><p>Azure&rsquo;s student quotas, restricted regions, and connection-drop issues made large-scale VM fleets impractical. Switching to Google Cloud Platform (GCP) gave us stable, fast VM provisioning and teardown at the scale required.</p><h3 id=phase-2--automation-scripts>Phase 2 — Automation Scripts<a hidden class=anchor aria-hidden=true href=#phase-2--automation-scripts>#</a></h3><p>Three Python tools drive the whole pipeline:</p><table><thead><tr><th style=text-align:left>Script</th><th style=text-align:left>Role</th></tr></thead><tbody><tr><td style=text-align:left><code>gcp_nodestrike_fleet.py</code></td><td style=text-align:left>Provisions 1 server VM + 3 client VMs, uploads and compiles code, runs tests, downloads logs, tears everything down.</td></tr><tr><td style=text-align:left><code>discpatch.py</code></td><td style=text-align:left>Orchestrates a test campaign—ramps client counts slowly (1 → 10 → 11 → … → 300), holding each state for a set window to find the exact degradation threshold.</td></tr><tr><td style=text-align:left><code>analyze_granular_results.py</code></td><td style=text-align:left>Processes millions of data points into CSV files and HTML reports covering CPU, tick rate, ping, and failure events.</td></tr></tbody></table><h3 id=phase-3--protocol-fixes>Phase 3 — Protocol Fixes<a hidden class=anchor aria-hidden=true href=#phase-3--protocol-fixes>#</a></h3><p>Before running the large tests, critical issues were found and fixed:</p><ul><li><strong>8-bit player ID overflow</strong> — the C++ server used <code>uint8_t</code> IDs, which would wrap around after 255 players. Upgraded to 32-bit IDs and added packet chunking to stay within MTU.</li><li><strong>Godot ENet payload size</strong> — ENet was sending full Dictionary snapshots. Switched to a packed <code>PackedByteArray</code> binary format, dramatically cutting CPU load.</li><li><strong>C++ ping measurement</strong> — the server was reporting 0 ms latency because no round-trip timing existed. Added a ping/pong packet system for accurate latency under load.</li></ul><h3 id=phase-4--300-client-results>Phase 4 — 300-Client Results<a hidden class=anchor aria-hidden=true href=#phase-4--300-client-results>#</a></h3><table><thead><tr><th style=text-align:left>Backend</th><th style=text-align:left>Result</th></tr></thead><tbody><tr><td style=text-align:left><strong>C++ UDP</strong></td><td style=text-align:left>✅ 300 clients, ~19 Hz tick rate, &lt;5% server CPU, 7 ms p95 latency</td></tr><tr><td style=text-align:left><strong>Godot ENet</strong></td><td style=text-align:left>⚠️ 300 clients connected, but degraded sharply after ~148 clients — p95 latency exceeded 2,000 ms. Server CPU stayed low; the client VMs running headless Godot hit 100% CPU, revealing that ENet is expensive on the <em>client</em> side.</td></tr></tbody></table><hr><h2 id=running-the-tools>Running the Tools<a hidden class=anchor aria-hidden=true href=#running-the-tools>#</a></h2><p>After authenticating with <code>gcloud auth login</code>, run a full test campaign with the dispatcher:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=n>python</span> <span class=s2>&#34;.\southfire server\discpatch.py&#34;</span> <span class=p>`</span>
-</span></span><span class=line><span class=cl>  <span class=p>-</span><span class=n>-project</span> <span class=nb>tonal-feat</span><span class=p>-</span><span class=mf>507919</span><span class=n>-j7</span> <span class=p>`</span>
-</span></span><span class=line><span class=cl>  <span class=p>-</span><span class=n>-profile</span> <span class=n>granular</span> <span class=p>`</span>
-</span></span><span class=line><span class=cl>  <span class=p>-</span><span class=n>-execute</span>
-</span></span></code></pre></div><p>By default this tests both ENet and C++ from 1 up to 300 clients, holding each count for 10 seconds and repeating 3 times. Reports are saved automatically to <code>bench_results_gcp/</code>.</p><hr><h2 id=collected-data-and-benchmarks>Collected Data and Benchmarks<a hidden class=anchor aria-hidden=true href=#collected-data-and-benchmarks>#</a></h2><blockquote><p><strong>Experiment Configuration:</strong> The graphs below use an expedited run — 1 repetition and 3 seconds per state — rather than the full 3 repetitions × 10 seconds shown in the table. The full configuration is the target for the final paper.</p></blockquote><table><thead><tr><th>Setting</th><th style=text-align:right>Value</th></tr></thead><tbody><tr><td>Backends</td><td style=text-align:right>ENet binary snapshots, then C++ UDP</td></tr><tr><td>Client counts</td><td style=text-align:right><code>1</code>, then <code>10</code>–<code>300</code></td></tr><tr><td>States per backend</td><td style=text-align:right>292</td></tr><tr><td>Repetitions</td><td style=text-align:right>1</td></tr><tr><td>Time per state</td><td style=text-align:right>3 seconds</td></tr><tr><td>Total measurements</td><td style=text-align:right>1,752</td></tr><tr><td>Server VM</td><td style=text-align:right><code>e2-standard-2</code></td></tr><tr><td>Client VMs</td><td style=text-align:right>3 × <code>e2-standard-2</code></td></tr><tr><td>Zone</td><td style=text-align:right><code>us-central1-a</code></td></tr><tr><td>Join requirement</td><td style=text-align:right>99%</td></tr><tr><td>C++ tick requirement</td><td style=text-align:right>18 Hz</td></tr><tr><td>Incomplete snapshot limit</td><td style=text-align:right>1%</td></tr><tr><td>Raw measurement time</td><td style=text-align:right>4 hr 52 min</td></tr><tr><td>Actual time taken</td><td style=text-align:right>7 hours</td></tr></tbody></table><p><em>(Raw data: <a href="https://docs.google.com/spreadsheets/d/1rQc6ibDetFkvrBfHuUWH_5sg4bLNB1bK8w70V8-WLwM/edit?gid=0#gid=0">Google Sheets</a>)</em></p><h3 id=received-rate-vs-target-clients>Received Rate vs. Target Clients<a hidden class=anchor aria-hidden=true href=#received-rate-vs-target-clients>#</a></h3><figure class=interactive-graph data-metric=receive_per_client_sec data-source=/graphs/nodestrike/metrics.json><div class=chart-tools hidden><button type=button data-action=trend aria-pressed=true>Trend: 150–299 clients</button>
-<button type=button data-action=full aria-pressed=false>Full range</button>
-<button type=button data-action=in aria-label="Zoom in">+</button>
-<button type=button data-action=out aria-label="Zoom out">−</button>
-<button type=button data-action=reset>Reset view</button>
-<button type=button data-action=expand>Enlarge</button></div><p class=chart-view-note hidden aria-live=polite></p><div class=chart-canvas hidden><div class=chart-plot role=region aria-label="ENet and C++ received messages per client per second versus target clients."></div></div><a class=chart-fallback href=/graphs/nodestrike/received-rate-vs-target-clients.svg><img src=/graphs/nodestrike/received-rate-vs-target-clients.svg alt="ENet and C++ received messages per client per second versus target clients." loading=lazy></a><figcaption><span class=chart-instructions>Static preview.</span> <a href=/graphs/nodestrike/received-rate-vs-target-clients.svg download>Download SVG</a></figcaption></figure><p>Each backend has 292 recorded points: 1 client, then 10–300 in single increments. Values are unsmoothed, including the ENet spike at 300 clients.</p><h3 id=packet-loss-events-vs-target-clients>Packet Loss Events vs. Target Clients<a hidden class=anchor aria-hidden=true href=#packet-loss-events-vs-target-clients>#</a></h3><figure class=interactive-graph data-metric=loss_events data-source=/graphs/nodestrike/metrics.json><div class=chart-tools hidden><button type=button data-action=trend aria-pressed=true>Trend: 150–299 clients</button>
-<button type=button data-action=full aria-pressed=false>Full range</button>
-<button type=button data-action=in aria-label="Zoom in">+</button>
-<button type=button data-action=out aria-label="Zoom out">−</button>
-<button type=button data-action=reset>Reset view</button>
-<button type=button data-action=expand>Enlarge</button></div><p class=chart-view-note hidden aria-live=polite></p><div class=chart-canvas hidden><div class=chart-plot role=region aria-label="ENet and C++ recorded packet loss events versus target clients."></div></div><a class=chart-fallback href=/graphs/nodestrike/packet-loss-events-vs-target-clients.svg><img src=/graphs/nodestrike/packet-loss-events-vs-target-clients.svg alt="ENet and C++ recorded packet loss events versus target clients." loading=lazy></a><figcaption><span class=chart-instructions>Static preview.</span> <a href=/graphs/nodestrike/packet-loss-events-vs-target-clients.svg download>Download SVG</a></figcaption></figure><p><code>loss_events</code> is a raw event count, not a percentage. C++ records zero loss events at every client count in this dataset. Measurement durations vary, so counts are not normalized per second.</p><hr><h2 id=how-do-different-games-handle-multiplayer>How Do Different Games Handle Multiplayer?<a hidden class=anchor aria-hidden=true href=#how-do-different-games-handle-multiplayer>#</a></h2><p>While building NodeStrike, two broad models emerged:</p><ol><li><p><strong>Real-time / authoritative-server multiplayer</strong>
-A live copy of the game state runs on a server. Players interact with it in real time; every position and action is authoritative. Time and latency matter — a 200 ms spike is immediately felt. Used by shooters, MOBAs, racing games.</p></li><li><p><strong>Turn-based / message-passing multiplayer</strong>
-State is a set of numbers; turns are transmitted as messages. There is no live simulation — only discrete state transitions. Latency is irrelevant. Used by chess, card games, and other async strategy games.</p></li></ol><h2 id=todo>TODO<a hidden class=anchor aria-hidden=true href=#todo>#</a></h2><ul><li><p><input disabled type=checkbox> add how the nodestrike was made and insight on how it works</p></li><li><p><input disabled type=checkbox> <strong>Run a 270-client hold test for 20 minutes</strong>, capturing snapshots every 10 seconds to verify stability.</p><p><strong>Description:</strong>
-Start the server, connect 270 clients, then stop adding clients and keep those same clients running for 20 minutes. Record CPU, memory, network use, receive rate, packet loss, and latency every 10 seconds. This checks whether the system remains stable after the initial join spike settles down.</p><p>This complements the granular ramp test:</p><ul><li><strong>Granular ramp:</strong> Measures the cost of joining, spawning, and increasing load while new clients arrive.</li><li><strong>270-client hold:</strong> Measures whether the server and clients remain stable for 20 minutes after all 270 clients are connected.</li><li><strong>Data visualization:</strong> Ensure clear, high-quality data is given so i can make the graphs in google with a xlsx</li></ul><p><em>Note: The monitor already records machine resources every second. For the stability report, aggregate that data into one row every 10 seconds, resulting in 120 clean observations across 20 minutes. Raw one-second files remain saved in case we need to investigate a spike.</em></p><p><strong>Required Graphs:</strong></p><ol><li><strong>Client and responding count over time:</strong> Confirms whether all 270 stay connected.</li><li><strong>Latency over time:</strong> Plots p50, p95, and p99 RTT every 10 seconds to monitor for degrading performance.</li><li><strong>Server health over time:</strong> Tracks CPU, memory, load, and network throughput. - for me</li><li><strong>Client VM health over time:</strong> Tracks CPU, memory, and network throughput to distinguish server limitations from overloaded test clients. - for me</li><li><strong>Receive rate and tick rate over time:</strong> Shows whether the system maintains its intended update rate or falls behind.</li><li><strong>Loss/error timeline:</strong> Maps tick gaps, incomplete snapshots, disconnects, evictions, and send errors per 10-second window.</li></ol></li><li><p><input disabled type=checkbox> making sure to run a full valid run with repetion and preoper clint spacing at 10 seconds</p></li></ul></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2026 <a href=https://andmecarlos.com/>Carlos Nunez</a></span>
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="copy";function s(){t.innerHTML="copied!",setTimeout(()=>{t.innerHTML="copy"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
+Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped."/>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://andmecarlos.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "NodeStrike Execution",
+      "item": "https://andmecarlos.com/posts/nodestrikeexecution/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "NodeStrike Execution",
+  "name": "NodeStrike Execution",
+  "description": "For graphs, I\u0026rsquo;m using Plotly.\nIn this post I\u0026rsquo;ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.\nImplementations Using ENet Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it\u0026rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped.\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "For graphs, I’m using Plotly.\nIn this post I’ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.\nImplementations Using ENet Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it’s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped.\nPeer-to-Peer (ENet — Godot) flowchart LR subgraph PeerA[\"Peer A (Godot)\"] A1[\"ENetMultiplayerPeer\"] A2[\"Game Logic\"] end subgraph PeerB[\"Peer B (Godot)\"] B1[\"ENetMultiplayerPeer\"] B2[\"Game Logic\"] end A1 -- \"ENet: connect to B IP:port\" --\u003e B1 B1 -- \"ENet: connect to A IP:port\" --\u003e A1 A2 -- \"send input/state\" --\u003e A1 B2 -- \"send input/state\" --\u003e B1 A1 -- \"receive remote state\" --\u003e A2 B1 -- \"receive remote state\" --\u003e B2 classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff class A1,B1 godot class A2,B2 logic Direct peer-to-peer works well for simple or local network games, but it has real limits:\nNetwork restrictions — many home routers block unsolicited inbound connections, making direct peer connections unreliable outside local networks. Host authority — all state originates from Peer A, so if the host drops, the session dies. For online play a relay server resolves the routing problem:\nflowchart LR subgraph PeerA[\"Peer A (Godot)\"] A1[\"ENetMultiplayerPeer\"] A2[\"Game Logic\"] end subgraph PeerB[\"Peer B (Godot)\"] B1[\"ENetMultiplayerPeer\"] B2[\"Game Logic\"] end subgraph Relay[\"Relay Server (acts like VPN)\"] R1[\"Forward traffic between peers\"] end subgraph Wrapper[\"Matchmaking / API Wrapper\"] W1[\"Friend Finder / Session Manager\"] end A1 -- \"Connect via relay\" --\u003e R1 B1 -- \"Connect via relay\" --\u003e R1 R1 -- \"Forward packets\" --\u003e A1 R1 -- \"Forward packets\" --\u003e B1 A2 -- \"send input/state\" --\u003e A1 B2 -- \"send input/state\" --\u003e B1 A1 -- \"receive remote state\" --\u003e A2 B1 -- \"receive remote state\" --\u003e B2 W1 -- \"Provides peer addresses / relay info\" --\u003e A1 W1 -- \"Provides peer addresses / relay info\" --\u003e B1 classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff classDef relay fill:#f87171,stroke:#dc2626,color:#fff classDef match fill:#10b981,stroke:#047857,color:#fff class A1,B1 godot class A2,B2 logic class R1 relay class W1 match Peer-to-Server A central authoritative server is a cleaner model for online multiplayer: all clients connect to one endpoint, the server owns state, and any client can join or drop without taking others down.\nGodot Client → Godot Server (ENet) One approach keeps everything inside the Godot ecosystem. A Python HTTP API acts as a matchmaker: when a client asks for a game, the API spins up a headless Godot instance and returns its port.\nflowchart LR Peer[\"Godot Peer (Client)\"] API[\"Python Server (HTTP API)\"] Manager[\"Godot Instance Manager\"] GS[\"Godot Server Instance\"] Peer --\u003e|\"HTTP Request: Get Port\"| API API --\u003e Manager Manager --\u003e|\"Launches Instance\"| GS API --\u003e|\"Returns Port\"| Peer Peer --\u003e|\"Game Connection\"| GS classDef client fill:#3b82f6,stroke:#1d4ed8,color:#fff classDef server fill:#f87171,stroke:#dc2626,color:#fff classDef infra fill:#10b981,stroke:#047857,color:#fff classDef api fill:#facc15,stroke:#ca8a04,color:#000 class Peer client class GS server class Manager infra class API api The downside: each Godot server instance still carries full engine overhead, which limits how many concurrent games a single host can support.\nGodot → Custom Server (C++ / Go / Python UDP) This is the core approach for NodeStrike. Bypassing ENet lets us write only the code we actually need—no scene tree, no physics tick, no engine overhead.\nFor reference material on raw UDP: UDP server–client implementation in C/C++\nWhy UDP over TCP?\nLower latency — no handshake or retransmission delay; stale packets are simply dropped. Higher throughput — less per-packet overhead means more state updates per second. Scalability — a single-threaded UDP loop can handle hundreds of clients without thread-contention or kernel TCP buffers becoming a bottleneck. The NodeStrike Benchmarking Project To rigorously compare a custom C++ UDP server against Godot’s ENet under identical load, NodeStrike was built to scale from a handful of clients up to hundreds. Here is what that work involved.\nPhase 1 — Moving from Azure to GCP Azure’s student quotas, restricted regions, and connection-drop issues made large-scale VM fleets impractical. Switching to Google Cloud Platform (GCP) gave us stable, fast VM provisioning and teardown at the scale required.\nPhase 2 — Automation Scripts Three Python tools drive the whole pipeline:\nScript Role gcp_nodestrike_fleet.py Provisions 1 server VM + 3 client VMs, uploads and compiles code, runs tests, downloads logs, tears everything down. discpatch.py Orchestrates a test campaign—ramps client counts slowly (1 → 10 → 11 → … → 300), holding each state for a set window to find the exact degradation threshold. analyze_granular_results.py Processes millions of data points into CSV files and HTML reports covering CPU, tick rate, ping, and failure events. Phase 3 — Protocol Fixes Before running the large tests, critical issues were found and fixed:\n8-bit player ID overflow — the C++ server used uint8_t IDs, which would wrap around after 255 players. Upgraded to 32-bit IDs and added packet chunking to stay within MTU. Godot ENet payload size — ENet was sending full Dictionary snapshots. Switched to a packed PackedByteArray binary format, dramatically cutting CPU load. C++ ping measurement — the server was reporting 0 ms latency because no round-trip timing existed. Added a ping/pong packet system for accurate latency under load. Phase 4 — 300-Client Results Backend Result C++ UDP ✅ 300 clients, ~19 Hz tick rate, \u003c5% server CPU, 7 ms p95 latency Godot ENet ⚠️ 300 clients connected, but degraded sharply after ~148 clients — p95 latency exceeded 2,000 ms. Server CPU stayed low; the client VMs running headless Godot hit 100% CPU, revealing that ENet is expensive on the client side. Running the Tools After authenticating with gcloud auth login, run a full test campaign with the dispatcher:\npython \".\\southfire server\\discpatch.py\" ` --project tonal-feat-507919-j7 ` --profile granular ` --execute By default this tests both ENet and C++ from 1 up to 300 clients, holding each count for 10 seconds and repeating 3 times. Reports are saved automatically to bench_results_gcp/.\nCollected Data and Benchmarks Experiment Configuration: The graphs below use an expedited run — 1 repetition and 3 seconds per state — rather than the full 3 repetitions × 10 seconds shown in the table. The full configuration is the target for the final paper.\nSetting Value Backends ENet binary snapshots, then C++ UDP Client counts 1, then 10–300 States per backend 292 Repetitions 1 Time per state 3 seconds Total measurements 1,752 Server VM e2-standard-2 Client VMs 3 × e2-standard-2 Zone us-central1-a Join requirement 99% C++ tick requirement 18 Hz Incomplete snapshot limit 1% Raw measurement time 4 hr 52 min Actual time taken 7 hours (Raw data: Google Sheets)\nReceived Rate vs. Target Clients Trend: 150–299 clients Full range + − Reset view Enlarge Static preview. Download SVG Each backend has 292 recorded points: 1 client, then 10–300 in single increments. Values are unsmoothed, including the ENet spike at 300 clients.\nPacket Loss Events vs. Target Clients Trend: 150–299 clients Full range + − Reset view Enlarge Static preview. Download SVG loss_events is a raw event count, not a percentage. C++ records zero loss events at every client count in this dataset. Measurement durations vary, so counts are not normalized per second.\nHow Do Different Games Handle Multiplayer? While building NodeStrike, two broad models emerged:\nReal-time / authoritative-server multiplayer A live copy of the game state runs on a server. Players interact with it in real time; every position and action is authoritative. Time and latency matter — a 200 ms spike is immediately felt. Used by shooters, MOBAs, racing games.\nTurn-based / message-passing multiplayer State is a set of numbers; turns are transmitted as messages. There is no live simulation — only discrete state transitions. Latency is irrelevant. Used by chess, card games, and other async strategy games.\nTODO add how the nodestrike was made and insight on how it works\nRun a 270-client hold test for 20 minutes, capturing snapshots every 10 seconds to verify stability.\nDescription: Start the server, connect 270 clients, then stop adding clients and keep those same clients running for 20 minutes. Record CPU, memory, network use, receive rate, packet loss, and latency every 10 seconds. This checks whether the system remains stable after the initial join spike settles down.\nThis complements the granular ramp test:\nGranular ramp: Measures the cost of joining, spawning, and increasing load while new clients arrive. 270-client hold: Measures whether the server and clients remain stable for 20 minutes after all 270 clients are connected. Data visualization: Ensure clear, high-quality data is given so i can make the graphs in google with a xlsx Note: The monitor already records machine resources every second. For the stability report, aggregate that data into one row every 10 seconds, resulting in 120 clean observations across 20 minutes. Raw one-second files remain saved in case we need to investigate a spike.\nRequired Graphs:\nClient and responding count over time: Confirms whether all 270 stay connected. Latency over time: Plots p50, p95, and p99 RTT every 10 seconds to monitor for degrading performance. Server health over time: Tracks CPU, memory, load, and network throughput. - for me Client VM health over time: Tracks CPU, memory, and network throughput to distinguish server limitations from overloaded test clients. - for me Receive rate and tick rate over time: Shows whether the system maintains its intended update rate or falls behind. Loss/error timeline: Maps tick gaps, incomplete snapshots, disconnects, evictions, and send errors per 10-second window. making sure to run a full valid run with repetion and preoper clint spacing at 10 seconds\n",
+  "wordCount" : "1574",
+  "inLanguage": "en",
+  "datePublished": "2026-10-04T00:00:00Z",
+  "dateModified": "2026-10-04T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Carlos Nunez"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://andmecarlos.com/posts/nodestrikeexecution/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Carlos Nunez",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://andmecarlos.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class=" dark" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://andmecarlos.com/" accesskey="h" title="&gt; $  cd /Home/ (Alt + H)">
+                <img src="https://andmecarlos.com/apple-touch-icon.png" alt="" aria-label="logo"
+                    height="35">&gt; $  cd /Home/</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="Toggle color theme (Alt + T)" aria-label="Toggle color theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://andmecarlos.com/categories/" title="./categories">
+                    <span>./categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://andmecarlos.com/tags/" title="./tags">
+                    <span>./tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://andmecarlos.com/search/" title="./Search (Alt &#43; /)" accesskey=/>
+                    <span>./Search</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://andmecarlos.com/">Home</a>&nbsp;»&nbsp;<a href="https://andmecarlos.com/posts/">Posts</a></div>
+    <h1 class="post-title">
+      NodeStrike Execution
+    </h1>
+    <div class="post-meta"><span class="post-meta-items"><time class="post-meta-item" datetime="2026-10-04">October 4, 2026</time><span class="post-meta-item">8 min</span><span class="post-meta-item">1574 words</span><span class="post-meta-item">Carlos Nunez</span></span>
+&nbsp;|&nbsp;<a href="https://github.com/%3cpath_to_repo%3e/content/Posts/nodeStrikeExecution.md" rel="noopener noreferrer" target="_blank">Suggest Changes</a>
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#implementations-using-enet">Implementations Using ENet</a>
+      <ul>
+        <li><a href="#peer-to-peer-enet--godot">Peer-to-Peer (ENet — Godot)</a></li>
+      </ul>
+    </li>
+    <li><a href="#peer-to-server">Peer-to-Server</a>
+      <ul>
+        <li><a href="#godot-client--godot-server-enet">Godot Client → Godot Server (ENet)</a></li>
+        <li><a href="#godot--custom-server-c--go--python-udp">Godot → Custom Server (C++ / Go / Python UDP)</a></li>
+      </ul>
+    </li>
+    <li><a href="#the-nodestrike-benchmarking-project">The NodeStrike Benchmarking Project</a>
+      <ul>
+        <li><a href="#phase-1--moving-from-azure-to-gcp">Phase 1 — Moving from Azure to GCP</a></li>
+        <li><a href="#phase-2--automation-scripts">Phase 2 — Automation Scripts</a></li>
+        <li><a href="#phase-3--protocol-fixes">Phase 3 — Protocol Fixes</a></li>
+        <li><a href="#phase-4--300-client-results">Phase 4 — 300-Client Results</a></li>
+      </ul>
+    </li>
+    <li><a href="#running-the-tools">Running the Tools</a></li>
+    <li><a href="#collected-data-and-benchmarks">Collected Data and Benchmarks</a>
+      <ul>
+        <li><a href="#received-rate-vs-target-clients">Received Rate vs. Target Clients</a></li>
+        <li><a href="#packet-loss-events-vs-target-clients">Packet Loss Events vs. Target Clients</a></li>
+      </ul>
+    </li>
+    <li><a href="#how-do-different-games-handle-multiplayer">How Do Different Games Handle Multiplayer?</a></li>
+    <li><a href="#todo">TODO</a></li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>For graphs, I&rsquo;m using <a href="https://github.com/plotly/plotly.js">Plotly</a>.</p>
+<p>In this post I&rsquo;ll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.</p>
+<h2 id="implementations-using-enet">Implementations Using ENet<a hidden class="anchor" aria-hidden="true" href="#implementations-using-enet">#</a></h2>
+<p>Godot ships with its own high-level networking layer built on ENet. It covers sync data, RPCs, and connection management out of the box. Because it&rsquo;s engine-native, running a server means you need a headless Godot executable—which adds overhead even when graphics and audio are stripped.</p>
+<h3 id="peer-to-peer-enet--godot">Peer-to-Peer (ENet — Godot)<a hidden class="anchor" aria-hidden="true" href="#peer-to-peer-enet--godot">#</a></h3>
+
+<div class="mermaid">
+flowchart LR
+    subgraph PeerA["Peer A (Godot)"]
+        A1["ENetMultiplayerPeer"]
+        A2["Game Logic"]
+    end
+    subgraph PeerB["Peer B (Godot)"]
+        B1["ENetMultiplayerPeer"]
+        B2["Game Logic"]
+    end
+    A1 -- "ENet: connect to B IP:port" --> B1
+    B1 -- "ENet: connect to A IP:port" --> A1
+    A2 -- "send input/state" --> A1
+    B2 -- "send input/state" --> B1
+    A1 -- "receive remote state" --> A2
+    B1 -- "receive remote state" --> B2
+
+    classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff
+    classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff
+
+    class A1,B1 godot
+    class A2,B2 logic
+</div>
+
+<p>Direct peer-to-peer works well for simple or local network games, but it has real limits:</p>
+<ul>
+<li><strong>Network restrictions</strong> — many home routers block unsolicited inbound connections, making direct peer connections unreliable outside local networks.</li>
+<li><strong>Host authority</strong> — all state originates from Peer A, so if the host drops, the session dies.</li>
+</ul>
+<p>For online play a relay server resolves the routing problem:</p>
+
+<div class="mermaid">
+flowchart LR
+    subgraph PeerA["Peer A (Godot)"]
+        A1["ENetMultiplayerPeer"]
+        A2["Game Logic"]
+    end
+    subgraph PeerB["Peer B (Godot)"]
+        B1["ENetMultiplayerPeer"]
+        B2["Game Logic"]
+    end
+    subgraph Relay["Relay Server (acts like VPN)"]
+        R1["Forward traffic between peers"]
+    end
+    subgraph Wrapper["Matchmaking / API Wrapper"]
+        W1["Friend Finder / Session Manager"]
+    end
+    A1 -- "Connect via relay" --> R1
+    B1 -- "Connect via relay" --> R1
+    R1 -- "Forward packets" --> A1
+    R1 -- "Forward packets" --> B1
+    A2 -- "send input/state" --> A1
+    B2 -- "send input/state" --> B1
+    A1 -- "receive remote state" --> A2
+    B1 -- "receive remote state" --> B2
+    W1 -- "Provides peer addresses / relay info" --> A1
+    W1 -- "Provides peer addresses / relay info" --> B1
+
+    classDef godot fill:#8b5cf6,stroke:#6d28d9,color:#fff
+    classDef logic fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef relay fill:#f87171,stroke:#dc2626,color:#fff
+    classDef match fill:#10b981,stroke:#047857,color:#fff
+
+    class A1,B1 godot
+    class A2,B2 logic
+    class R1 relay
+    class W1 match
+</div>
+
+<hr>
+<h2 id="peer-to-server">Peer-to-Server<a hidden class="anchor" aria-hidden="true" href="#peer-to-server">#</a></h2>
+<p>A central authoritative server is a cleaner model for online multiplayer: all clients connect to one endpoint, the server owns state, and any client can join or drop without taking others down.</p>
+<h3 id="godot-client--godot-server-enet">Godot Client → Godot Server (ENet)<a hidden class="anchor" aria-hidden="true" href="#godot-client--godot-server-enet">#</a></h3>
+<p>One approach keeps everything inside the Godot ecosystem. A Python HTTP API acts as a matchmaker: when a client asks for a game, the API spins up a headless Godot instance and returns its port.</p>
+
+<div class="mermaid">
+flowchart LR
+    Peer["Godot Peer (Client)"]
+    API["Python Server (HTTP API)"]
+    Manager["Godot Instance Manager"]
+    GS["Godot Server Instance"]
+
+    Peer -->|"HTTP Request: Get Port"| API
+    API --> Manager
+    Manager -->|"Launches Instance"| GS
+    API -->|"Returns Port"| Peer
+    Peer -->|"Game Connection"| GS
+
+    classDef client fill:#3b82f6,stroke:#1d4ed8,color:#fff
+    classDef server fill:#f87171,stroke:#dc2626,color:#fff
+    classDef infra fill:#10b981,stroke:#047857,color:#fff
+    classDef api fill:#facc15,stroke:#ca8a04,color:#000
+
+    class Peer client
+    class GS server
+    class Manager infra
+    class API api
+</div>
+
+<p>The downside: each Godot server instance still carries full engine overhead, which limits how many concurrent games a single host can support.</p>
+<h3 id="godot--custom-server-c--go--python-udp">Godot → Custom Server (C++ / Go / Python UDP)<a hidden class="anchor" aria-hidden="true" href="#godot--custom-server-c--go--python-udp">#</a></h3>
+<blockquote>
+<p><strong>This is the core approach for NodeStrike.</strong> Bypassing ENet lets us write only the code we actually need—no scene tree, no physics tick, no engine overhead.</p>
+</blockquote>
+<p>For reference material on raw UDP: <a href="https://www.geeksforgeeks.org/cpp/udp-server-client-implementation-c/">UDP server–client implementation in C/C++</a></p>
+<p><strong>Why UDP over TCP?</strong></p>
+<ul>
+<li><strong>Lower latency</strong> — no handshake or retransmission delay; stale packets are simply dropped.</li>
+<li><strong>Higher throughput</strong> — less per-packet overhead means more state updates per second.</li>
+<li><strong>Scalability</strong> — a single-threaded UDP loop can handle hundreds of clients without thread-contention or kernel TCP buffers becoming a bottleneck.</li>
+</ul>
+<hr>
+<h2 id="the-nodestrike-benchmarking-project">The NodeStrike Benchmarking Project<a hidden class="anchor" aria-hidden="true" href="#the-nodestrike-benchmarking-project">#</a></h2>
+<p>To rigorously compare a custom C++ UDP server against Godot&rsquo;s ENet under identical load, NodeStrike was built to scale from a handful of clients up to hundreds. Here is what that work involved.</p>
+<h3 id="phase-1--moving-from-azure-to-gcp">Phase 1 — Moving from Azure to GCP<a hidden class="anchor" aria-hidden="true" href="#phase-1--moving-from-azure-to-gcp">#</a></h3>
+<p>Azure&rsquo;s student quotas, restricted regions, and connection-drop issues made large-scale VM fleets impractical. Switching to Google Cloud Platform (GCP) gave us stable, fast VM provisioning and teardown at the scale required.</p>
+<h3 id="phase-2--automation-scripts">Phase 2 — Automation Scripts<a hidden class="anchor" aria-hidden="true" href="#phase-2--automation-scripts">#</a></h3>
+<p>Three Python tools drive the whole pipeline:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Script</th>
+          <th style="text-align: left">Role</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><code>gcp_nodestrike_fleet.py</code></td>
+          <td style="text-align: left">Provisions 1 server VM + 3 client VMs, uploads and compiles code, runs tests, downloads logs, tears everything down.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>discpatch.py</code></td>
+          <td style="text-align: left">Orchestrates a test campaign—ramps client counts slowly (1 → 10 → 11 → … → 300), holding each state for a set window to find the exact degradation threshold.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>analyze_granular_results.py</code></td>
+          <td style="text-align: left">Processes millions of data points into CSV files and HTML reports covering CPU, tick rate, ping, and failure events.</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="phase-3--protocol-fixes">Phase 3 — Protocol Fixes<a hidden class="anchor" aria-hidden="true" href="#phase-3--protocol-fixes">#</a></h3>
+<p>Before running the large tests, critical issues were found and fixed:</p>
+<ul>
+<li><strong>8-bit player ID overflow</strong> — the C++ server used <code>uint8_t</code> IDs, which would wrap around after 255 players. Upgraded to 32-bit IDs and added packet chunking to stay within MTU.</li>
+<li><strong>Godot ENet payload size</strong> — ENet was sending full Dictionary snapshots. Switched to a packed <code>PackedByteArray</code> binary format, dramatically cutting CPU load.</li>
+<li><strong>C++ ping measurement</strong> — the server was reporting 0 ms latency because no round-trip timing existed. Added a ping/pong packet system for accurate latency under load.</li>
+</ul>
+<h3 id="phase-4--300-client-results">Phase 4 — 300-Client Results<a hidden class="anchor" aria-hidden="true" href="#phase-4--300-client-results">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Backend</th>
+          <th style="text-align: left">Result</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>C++ UDP</strong></td>
+          <td style="text-align: left">✅ 300 clients, ~19 Hz tick rate, &lt;5% server CPU, 7 ms p95 latency</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>Godot ENet</strong></td>
+          <td style="text-align: left">⚠️ 300 clients connected, but degraded sharply after ~148 clients — p95 latency exceeded 2,000 ms. Server CPU stayed low; the client VMs running headless Godot hit 100% CPU, revealing that ENet is expensive on the <em>client</em> side.</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="running-the-tools">Running the Tools<a hidden class="anchor" aria-hidden="true" href="#running-the-tools">#</a></h2>
+<p>After authenticating with <code>gcloud auth login</code>, run a full test campaign with the dispatcher:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">python</span> <span class="s2">&#34;.\southfire server\discpatch.py&#34;</span> <span class="p">`</span>
+</span></span><span class="line"><span class="cl">  <span class="p">-</span><span class="n">-project</span> <span class="nb">tonal-feat</span><span class="p">-</span><span class="mf">507919</span><span class="n">-j7</span> <span class="p">`</span>
+</span></span><span class="line"><span class="cl">  <span class="p">-</span><span class="n">-profile</span> <span class="n">granular</span> <span class="p">`</span>
+</span></span><span class="line"><span class="cl">  <span class="p">-</span><span class="n">-execute</span>
+</span></span></code></pre></div><p>By default this tests both ENet and C++ from 1 up to 300 clients, holding each count for 10 seconds and repeating 3 times. Reports are saved automatically to <code>bench_results_gcp/</code>.</p>
+<hr>
+<h2 id="collected-data-and-benchmarks">Collected Data and Benchmarks<a hidden class="anchor" aria-hidden="true" href="#collected-data-and-benchmarks">#</a></h2>
+<blockquote>
+<p><strong>Experiment Configuration:</strong> The graphs below use an expedited run — 1 repetition and 3 seconds per state — rather than the full 3 repetitions × 10 seconds shown in the table. The full configuration is the target for the final paper.</p>
+</blockquote>
+<table>
+  <thead>
+      <tr>
+          <th>Setting</th>
+          <th style="text-align: right">Value</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Backends</td>
+          <td style="text-align: right">ENet binary snapshots, then C++ UDP</td>
+      </tr>
+      <tr>
+          <td>Client counts</td>
+          <td style="text-align: right"><code>1</code>, then <code>10</code>–<code>300</code></td>
+      </tr>
+      <tr>
+          <td>States per backend</td>
+          <td style="text-align: right">292</td>
+      </tr>
+      <tr>
+          <td>Repetitions</td>
+          <td style="text-align: right">1</td>
+      </tr>
+      <tr>
+          <td>Time per state</td>
+          <td style="text-align: right">3 seconds</td>
+      </tr>
+      <tr>
+          <td>Total measurements</td>
+          <td style="text-align: right">1,752</td>
+      </tr>
+      <tr>
+          <td>Server VM</td>
+          <td style="text-align: right"><code>e2-standard-2</code></td>
+      </tr>
+      <tr>
+          <td>Client VMs</td>
+          <td style="text-align: right">3 × <code>e2-standard-2</code></td>
+      </tr>
+      <tr>
+          <td>Zone</td>
+          <td style="text-align: right"><code>us-central1-a</code></td>
+      </tr>
+      <tr>
+          <td>Join requirement</td>
+          <td style="text-align: right">99%</td>
+      </tr>
+      <tr>
+          <td>C++ tick requirement</td>
+          <td style="text-align: right">18 Hz</td>
+      </tr>
+      <tr>
+          <td>Incomplete snapshot limit</td>
+          <td style="text-align: right">1%</td>
+      </tr>
+      <tr>
+          <td>Raw measurement time</td>
+          <td style="text-align: right">4 hr 52 min</td>
+      </tr>
+      <tr>
+          <td>Actual time taken</td>
+          <td style="text-align: right">7 hours</td>
+      </tr>
+  </tbody>
+</table>
+<p><em>(Raw data: <a href="https://docs.google.com/spreadsheets/d/1rQc6ibDetFkvrBfHuUWH_5sg4bLNB1bK8w70V8-WLwM/edit?gid=0#gid=0">Google Sheets</a>)</em></p>
+<h3 id="received-rate-vs-target-clients">Received Rate vs. Target Clients<a hidden class="anchor" aria-hidden="true" href="#received-rate-vs-target-clients">#</a></h3>
+<figure class="interactive-graph" data-metric="receive_per_client_sec" data-source="/graphs/nodestrike/metrics.json">
+  <div class="chart-tools" hidden>
+    <button type="button" data-action="trend" aria-pressed="true">Trend: 150–299 clients</button>
+    <button type="button" data-action="full" aria-pressed="false">Full range</button>
+    <button type="button" data-action="in" aria-label="Zoom in">+</button>
+    <button type="button" data-action="out" aria-label="Zoom out">−</button>
+    <button type="button" data-action="reset">Reset view</button>
+    <button type="button" data-action="expand">Enlarge</button>
+  </div>
+  <p class="chart-view-note" hidden aria-live="polite"></p>
+  <div class="chart-canvas" hidden><div class="chart-plot" role="region" aria-label="ENet and C&#43;&#43; received messages per client per second versus target clients."></div></div>
+  <a class="chart-fallback" href="/graphs/nodestrike/received-rate-vs-target-clients.svg"><img src="/graphs/nodestrike/received-rate-vs-target-clients.svg" alt="ENet and C&#43;&#43; received messages per client per second versus target clients." loading="lazy"></a>
+  <figcaption><span class="chart-instructions">Static preview.</span> <a href="/graphs/nodestrike/received-rate-vs-target-clients.svg" download>Download SVG</a></figcaption>
+</figure>
+
+<p>Each backend has 292 recorded points: 1 client, then 10–300 in single increments. Values are unsmoothed, including the ENet spike at 300 clients.</p>
+<h3 id="packet-loss-events-vs-target-clients">Packet Loss Events vs. Target Clients<a hidden class="anchor" aria-hidden="true" href="#packet-loss-events-vs-target-clients">#</a></h3>
+<figure class="interactive-graph" data-metric="loss_events" data-source="/graphs/nodestrike/metrics.json">
+  <div class="chart-tools" hidden>
+    <button type="button" data-action="trend" aria-pressed="true">Trend: 150–299 clients</button>
+    <button type="button" data-action="full" aria-pressed="false">Full range</button>
+    <button type="button" data-action="in" aria-label="Zoom in">+</button>
+    <button type="button" data-action="out" aria-label="Zoom out">−</button>
+    <button type="button" data-action="reset">Reset view</button>
+    <button type="button" data-action="expand">Enlarge</button>
+  </div>
+  <p class="chart-view-note" hidden aria-live="polite"></p>
+  <div class="chart-canvas" hidden><div class="chart-plot" role="region" aria-label="ENet and C&#43;&#43; recorded packet loss events versus target clients."></div></div>
+  <a class="chart-fallback" href="/graphs/nodestrike/packet-loss-events-vs-target-clients.svg"><img src="/graphs/nodestrike/packet-loss-events-vs-target-clients.svg" alt="ENet and C&#43;&#43; recorded packet loss events versus target clients." loading="lazy"></a>
+  <figcaption><span class="chart-instructions">Static preview.</span> <a href="/graphs/nodestrike/packet-loss-events-vs-target-clients.svg" download>Download SVG</a></figcaption>
+</figure>
+
+<p><code>loss_events</code> is a raw event count, not a percentage. C++ records zero loss events at every client count in this dataset. Measurement durations vary, so counts are not normalized per second.</p>
+<hr>
+<h2 id="how-do-different-games-handle-multiplayer">How Do Different Games Handle Multiplayer?<a hidden class="anchor" aria-hidden="true" href="#how-do-different-games-handle-multiplayer">#</a></h2>
+<p>While building NodeStrike, two broad models emerged:</p>
+<ol>
+<li>
+<p><strong>Real-time / authoritative-server multiplayer</strong>
+A live copy of the game state runs on a server. Players interact with it in real time; every position and action is authoritative. Time and latency matter — a 200 ms spike is immediately felt. Used by shooters, MOBAs, racing games.</p>
+</li>
+<li>
+<p><strong>Turn-based / message-passing multiplayer</strong>
+State is a set of numbers; turns are transmitted as messages. There is no live simulation — only discrete state transitions. Latency is irrelevant. Used by chess, card games, and other async strategy games.</p>
+</li>
+</ol>
+<h2 id="todo">TODO<a hidden class="anchor" aria-hidden="true" href="#todo">#</a></h2>
+<ul>
+<li>
+<p><input disabled="" type="checkbox"> add how the nodestrike was made and insight on how it works</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> <strong>Run a 270-client hold test for 20 minutes</strong>, capturing snapshots every 10 seconds to verify stability.</p>
+<p><strong>Description:</strong>
+Start the server, connect 270 clients, then stop adding clients and keep those same clients running for 20 minutes. Record CPU, memory, network use, receive rate, packet loss, and latency every 10 seconds. This checks whether the system remains stable after the initial join spike settles down.</p>
+<p>This complements the granular ramp test:</p>
+<ul>
+<li><strong>Granular ramp:</strong> Measures the cost of joining, spawning, and increasing load while new clients arrive.</li>
+<li><strong>270-client hold:</strong> Measures whether the server and clients remain stable for 20 minutes after all 270 clients are connected.</li>
+<li><strong>Data visualization:</strong> Ensure clear, high-quality data is given so i can make the graphs in google with a xlsx</li>
+</ul>
+<p><em>Note: The monitor already records machine resources every second. For the stability report, aggregate that data into one row every 10 seconds, resulting in 120 clean observations across 20 minutes. Raw one-second files remain saved in case we need to investigate a spike.</em></p>
+<p><strong>Required Graphs:</strong></p>
+<ol>
+<li><strong>Client and responding count over time:</strong> Confirms whether all 270 stay connected.</li>
+<li><strong>Latency over time:</strong> Plots p50, p95, and p99 RTT every 10 seconds to monitor for degrading performance.</li>
+<li><strong>Server health over time:</strong> Tracks CPU, memory, load, and network throughput. - for me</li>
+<li><strong>Client VM health over time:</strong> Tracks CPU, memory, and network throughput to distinguish server limitations from overloaded test clients. - for me</li>
+<li><strong>Receive rate and tick rate over time:</strong> Shows whether the system maintains its intended update rate or falls behind.</li>
+<li><strong>Loss/error timeline:</strong> Maps tick gaps, incomplete snapshots, disconnects, evictions, and send errors per 10-second window.</li>
+</ol>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> making sure to run a full valid run  with repetion and preoper clint spacing at 10 seconds</p>
+</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2026 <a href="https://andmecarlos.com/">Carlos Nunez</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>
