@@ -1,11 +1,14 @@
 HUGO := .tools/hugo/hugo
 
-.PHONY: setup dev build
+.PHONY: setup dev preview build
 setup:
 	sh scripts/setup.sh
 
-dev:
-	$(HUGO) server -D --destination .tools/dev
+dev: setup
+	$(HUGO) server -D --cacheDir "$(CURDIR)/.tools/cache" --destination .tools/dev
 
-build:
-	$(HUGO) --gc --minify --destination .tools/build
+preview: setup
+	$(HUGO) server --environment production --gc --minify --disableLiveReload --cacheDir "$(CURDIR)/.tools/cache" --destination .tools/preview
+
+build: setup
+	$(HUGO) --environment production --gc --minify --cacheDir "$(CURDIR)/.tools/cache" --destination .tools/build

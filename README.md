@@ -9,6 +9,16 @@ Personal portfolio and blog at https://andmecarlos.com/, built with Hugo and Pap
 
 ## Local development
 
+On Windows, from PowerShell in the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/hugo.ps1 dev
+```
+
+This installs or uses the pinned Hugo in `.tools/hugo/hugo.exe`. The old
+`hugo.exe` in the repository root is version 0.119.0; do not use it for this site.
+Use `build` instead of `dev` to generate `.tools/build`.
+
 On macOS or Linux, with `make`, `curl`, and `tar` installed:
 
 ```sh
@@ -20,6 +30,29 @@ Open http://localhost:1313. Stop the server with Ctrl+C.
 Setup installs the Hugo version pinned in `netlify.toml` into `.tools/hugo`.
 The PaperMod theme is included in this repository; no submodule setup is needed.
 Node.js and Netlify CLI are not required for local development.
+
+### Compare with production
+
+Development mode includes drafts. To preview with production settings and no drafts:
+
+```sh
+make preview
+```
+
+On Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/hugo.ps1 preview
+```
+
+Open http://localhost:1313. Local preview URLs use localhost. For production URLs,
+use `make build` or the Windows `build` task. All local tasks keep their cache
+and generated pages under `.tools/`.
+
+Matching Git commits alone does not establish that Cloudflare is serving the same
+build. Check the latest successful production deployment's commit, production
+branch (`master`), build command, and `HUGO_VERSION` in the Pages dashboard.
+For direct uploads, check which generated directory was uploaded.
 
 ## Build
 
@@ -42,7 +75,7 @@ In the Pages project's build settings, use:
 | Build output directory | `public` |
 | Root directory | Leave blank (repository root) |
 
-Set the environment variable `HUGO_VERSION` to `0.139.4` for both production
+Set the environment variable `HUGO_VERSION` to `0.147.7` for both production
 and preview builds. This is the version verified locally. Cloudflare's Hugo
 version must be configured separately from `netlify.toml`.
 
