@@ -12,6 +12,7 @@ author: "Carlos Nunez"
 searchHidden: false
 disableShare: true
 summary: "My education, experience, and skills in computer science and computer engineering."
+hiddenInPostList: true
 ---
 
 {{< rawhtml >}}

@@ -1,6 +1,7 @@
 ---
 title: "WPA Highjacking (For Educational Purposes Only)"
 date: 2023-10-20
+description: "A walkthrough of WPA hijacking setup and tools for educational purposes."
 
 author: "me"
 tag: "hacking"

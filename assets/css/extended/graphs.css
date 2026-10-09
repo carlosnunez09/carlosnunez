@@ -8,7 +8,7 @@
 .chart-view-note { color: var(--secondary); font-size: 14px; margin: 0 0 12px; }
 .chart-tools button[aria-pressed="true"] { background: var(--primary); color: var(--theme); border-color: var(--primary); }
 .chart-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.chart-tools button { color: var(--primary); background: var(--entry); padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font: inherit; font-size: 14px; cursor: pointer; }
+.chart-tools button { color: var(--primary); background: var(--entry); min-height: 44px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font: inherit; font-size: 14px; cursor: pointer; }
 .chart-tools button:hover { border-color: var(--secondary); }
 .chart-tools button:focus-visible { outline: 2px solid #589bdf; outline-offset: 3px; }
 .interactive-graph figcaption { color: var(--secondary); font-size: 13px; line-height: 1.7; margin-top: 12px; }

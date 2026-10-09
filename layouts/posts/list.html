@@ -1,0 +1,33 @@
+{{- define "main" }}
+<section class="posts-index" aria-labelledby="posts-title">
+  <header class="page-header posts-index__header">
+    {{- partial "breadcrumbs.html" . }}
+    <h1 id="posts-title">{{ .Title }}</h1>
+    <p class="posts-index__intro">Projects and notes on games, networking, and security.</p>
+  </header>
+
+  {{- $posts := where .RegularPages "Params.hiddenInPostList" "ne" true }}
+  {{- $paginator := .Paginate $posts }}
+  <div class="posts-index__list">
+    {{- range $paginator.Pages }}
+    <article class="post-row">
+      <div class="post-row__date">
+        <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+      </div>
+      <div class="post-row__body">
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{- with .Description }}<p class="post-row__description">{{ . }}</p>{{ end }}
+        <p class="post-row__reading-time">{{ .ReadingTime }} min read</p>
+      </div>
+    </article>
+    {{- end }}
+  </div>
+
+  {{- if gt $paginator.TotalPages 1 }}
+  <nav class="pagination posts-index__pagination" aria-label="Posts pages">
+    {{- if $paginator.HasPrev }}<a class="prev" href="{{ $paginator.Prev.URL }}">Previous</a>{{ end }}
+    {{- if $paginator.HasNext }}<a class="next" href="{{ $paginator.Next.URL }}">Next</a>{{ end }}
+  </nav>
+  {{- end }}
+</section>
+{{- end }}

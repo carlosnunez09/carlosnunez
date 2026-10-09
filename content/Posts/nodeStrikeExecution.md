@@ -1,6 +1,7 @@
 ---
 title: "NodeStrike Execution"
 date: 2026-10-04
+description: "How a custom UDP server compares with Godot ENet in a 300-client NodeStrike benchmark."
 showToc: true
 TocOpen: false
 draft: false
@@ -11,8 +12,6 @@ searchHidden: false
 disableShare: true
 mermaid: true
 ---
-For graphs, I'm using [Plotly](https://github.com/plotly/plotly.js).
-
 In this post I'll walk through how NodeStrike uses a custom UDP implementation to power online multiplayer in Godot—and why that matters.
 
 ## Implementations Using ENet
@@ -22,6 +21,7 @@ Godot ships with its own high-level networking layer built on ENet. It covers sy
 ### Peer-to-Peer (ENet — Godot)
 
 {{< rawhtml >}}
+<figure class="article-figure">
 <div class="mermaid">
 flowchart LR
     subgraph PeerA["Peer A (Godot)"]
@@ -45,6 +45,8 @@ flowchart LR
     class A1,B1 godot
     class A2,B2 logic
 </div>
+<figcaption>Direct ENet connection between two Godot peers.</figcaption>
+</figure>
 {{< /rawhtml >}}
 
 Direct peer-to-peer works well for simple or local network games, but it has real limits:
@@ -55,6 +57,7 @@ Direct peer-to-peer works well for simple or local network games, but it has rea
 For online play a relay server resolves the routing problem:
 
 {{< rawhtml >}}
+<figure class="article-figure">
 <div class="mermaid">
 flowchart LR
     subgraph PeerA["Peer A (Godot)"]
@@ -92,6 +95,8 @@ flowchart LR
     class R1 relay
     class W1 match
 </div>
+<figcaption>Peers exchange game state through a relay after matchmaking.</figcaption>
+</figure>
 {{< /rawhtml >}}
 
 ---
@@ -105,6 +110,7 @@ A central authoritative server is a cleaner model for online multiplayer: all cl
 One approach keeps everything inside the Godot ecosystem. A Python HTTP API acts as a matchmaker: when a client asks for a game, the API spins up a headless Godot instance and returns its port.
 
 {{< rawhtml >}}
+<figure class="article-figure">
 <div class="mermaid">
 flowchart LR
     Peer["Godot Peer (Client)"]
@@ -128,6 +134,8 @@ flowchart LR
     class Manager infra
     class API api
 </div>
+<figcaption>A Python API starts a headless Godot server and returns its port to the client.</figcaption>
+</figure>
 {{< /rawhtml >}}
 
 The downside: each Godot server instance still carries full engine overhead, which limits how many concurrent games a single host can support.
@@ -197,6 +205,8 @@ By default this tests both ENet and C++ from 1 up to 300 clients, holding each c
 
 ## Collected Data and Benchmarks
 
+The interactive charts below use [Plotly](https://github.com/plotly/plotly.js).
+
 > **Experiment Configuration:** The graphs below use an expedited run — 1 repetition and 3 seconds per state — rather than the full 3 repetitions × 10 seconds shown in the table. The full configuration is the target for the final paper.
 
 | Setting | Value |
@@ -241,35 +251,5 @@ While building NodeStrike, two broad models emerged:
 
 2. **Turn-based / message-passing multiplayer**
    State is a set of numbers; turns are transmitted as messages. There is no live simulation — only discrete state transitions. Latency is irrelevant. Used by chess, card games, and other async strategy games.
-
-
-## TODO
-
-- [ ] add how the nodestrike was made and insight on how it works
-
-- [ ] **Run a 270-client hold test for 20 minutes**, capturing snapshots every 10 seconds to verify stability.
-
-    **Description:**
-    Start the server, connect 270 clients, then stop adding clients and keep those same clients running for 20 minutes. Record CPU, memory, network use, receive rate, packet loss, and latency every 10 seconds. This checks whether the system remains stable after the initial join spike settles down.
-
-    This complements the granular ramp test:
-    - **Granular ramp:** Measures the cost of joining, spawning, and increasing load while new clients arrive.
-    - **270-client hold:** Measures whether the server and clients remain stable for 20 minutes after all 270 clients are connected.
-    - **Data visualization:** Ensure clear, high-quality data is given so i can make the graphs in google with a xlsx
-
-    *Note: The monitor already records machine resources every second. For the stability report, aggregate that data into one row every 10 seconds, resulting in 120 clean observations across 20 minutes. Raw one-second files remain saved in case we need to investigate a spike.*
-
-    **Required Graphs:**
-    1. **Client and responding count over time:** Confirms whether all 270 stay connected.
-    2. **Latency over time:** Plots p50, p95, and p99 RTT every 10 seconds to monitor for degrading performance.
-    3. **Server health over time:** Tracks CPU, memory, load, and network throughput. - for me 
-    4. **Client VM health over time:** Tracks CPU, memory, and network throughput to distinguish server limitations from overloaded test clients. - for me 
-    5. **Receive rate and tick rate over time:** Shows whether the system maintains its intended update rate or falls behind.
-    6. **Loss/error timeline:** Maps tick gaps, incomplete snapshots, disconnects, evictions, and send errors per 10-second window.
-
-
-- [ ] making sure to run a full valid run  with repetion and preoper clint spacing at 10 seconds
-
-
 
 

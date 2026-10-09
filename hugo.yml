@@ -9,6 +9,8 @@ theme: hugo-PaperMod
 
 enableRobotsTXT: true
 disableKinds: ["RSS"]
+outputs:
+  home: ["HTML", "JSON"]
 buildDrafts: false
 buildFuture: false
 buildExpired: false
@@ -34,12 +36,12 @@ markup:
 
 params:
   env: production # to enable google analytics, opengraph, twitter-cards and schema.
-  title: ExampleSite
-  description: "ExampleSite description"
+  title: Carlos Nunez
+  description: "Projects and notes from Carlos Nunez, a computer science and computer engineering student."
   keywords: [Blog, Portfolio, PaperMod]
   author: Carlos Nunez
   # author: ["Me", "You"] # multiple authors
-  images: ["<link or path of image for opengraph, twitter-cards>"]
+  images: ["/profile.jpg"]
   DateFormat: "January 2, 2006"
   defaultTheme: dark # dark, light
   disableThemeToggle: false
@@ -119,7 +121,7 @@ params:
     hiddenInSingle: true # hide on single page
 
   editPost:
-    URL: "https://github.com/<path_to_repo>/content"
+    URL: "https://github.com/carlosnunez09/carlosnunez/blob/master/content"
     Text: "Suggest Changes" # edit text
     appendFilePath: true # to append file path to Edit link
 

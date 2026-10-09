@@ -1,6 +1,7 @@
 ---
 title: terms
 date: 2023-09-25
+hiddenInPostList: true
 ---
 
 

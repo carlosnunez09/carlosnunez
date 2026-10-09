@@ -124,6 +124,15 @@
         {{- $currentPage := . }}
         <ul id="menu">
             {{- range site.Menus.main }}
+            {{- $show := true }}
+            {{- if in (slice "categories" "tags") .Identifier }}
+                {{- with site.GetPage (printf "/%s" .Identifier) }}
+                    {{- $show = gt (len .Data.Terms) 0 }}
+                {{- else }}
+                    {{- $show = false }}
+                {{- end }}
+            {{- end }}
+            {{- if $show }}
             {{- $menu_item_url := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL) ) | absLangURL }}
             {{- $page_url:= $currentPage.Permalink | absLangURL }}
             {{- $is_search := eq (site.GetPage .KeyName).Layout `search` }}
@@ -145,6 +154,7 @@
                     {{- end }}
                 </a>
             </li>
+            {{- end }}
             {{- end }}
         </ul>
     </nav>

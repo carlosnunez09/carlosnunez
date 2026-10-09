@@ -3,12 +3,16 @@
     --profile-accent: #6c6c6c;
     --ui-border: rgba(30, 30, 30, 0.13);
     --ui-hover: rgba(30, 30, 30, 0.05);
+    --profile-button-border: #949494;
+    --input-placeholder: #6c6c6c;
 }
 
 .dark {
     --profile-accent: #b5b5b5;
     --ui-border: rgba(218, 218, 219, 0.15);
     --ui-hover: rgba(218, 218, 219, 0.06);
+    --profile-button-border: #808184;
+    --input-placeholder: #aaabad;
 }
 
 body { isolation: isolate; }
@@ -37,8 +41,8 @@ body { isolation: isolate; }
 button#theme-toggle {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: 1px solid transparent;
     border-radius: 50%;
     color: var(--secondary);
@@ -119,8 +123,8 @@ body:has(.profile) .main {
 .profile .social-icons a {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     margin: 0;
     border-radius: 10px;
     color: var(--secondary);
@@ -144,7 +148,7 @@ body:has(.profile) .main {
     min-height: 44px;
     margin: 0;
     padding: 8px 14px;
-    border: 1px solid var(--ui-border);
+    border: 1px solid var(--profile-button-border);
     border-radius: 8px;
     background: var(--ui-hover);
     font-size: 14px;
@@ -157,7 +161,7 @@ body:has(.profile) .main {
 .profile .buttons-contact { margin-top: 12px; }
 
 .profile .buttons-contact .button {
-    min-height: 40px;
+    min-height: 44px;
     background: transparent;
     border-color: transparent;
     color: var(--secondary);
@@ -177,6 +181,11 @@ body:has(.profile) .main {
 
 .footer a { border-bottom-color: var(--ui-border); }
 
+.terms-empty { color: var(--secondary); }
+.terms-empty a { color: var(--primary); text-decoration: underline; }
+
+#searchStatus { margin-top: 16px; color: var(--secondary); }
+
 .post-meta-item + .post-meta-item::before {
     content: " · ";
     white-space: pre;
@@ -184,6 +193,7 @@ body:has(.profile) .main {
 }
 
 #ascii-bg {
+    --ascii-content-mask: radial-gradient(ellipse 44% 50% at 50% 55%, transparent 72%, #000 100%);
     position: fixed;
     inset: 0;
     z-index: 0;
@@ -198,11 +208,11 @@ body:has(.profile) .main {
     opacity: 0.34;
     -webkit-mask-image:
         linear-gradient(transparent, #000 14%, #000 78%, transparent),
-        radial-gradient(ellipse 42% 65% at 50% 48%, transparent 28%, #000 100%);
+        var(--ascii-content-mask);
     -webkit-mask-composite: source-in;
     mask-image:
         linear-gradient(transparent, #000 14%, #000 78%, transparent),
-        radial-gradient(ellipse 42% 65% at 50% 48%, transparent 28%, #000 100%);
+        var(--ascii-content-mask);
     mask-composite: intersect;
 }
 
@@ -214,7 +224,10 @@ body:has(.profile) .main {
     body:has(.profile) .main { padding-block: 32px; }
     .profile img { width: 120px; height: 120px; margin-bottom: 22px; }
     .profile .social-icons { padding: 16px 0 22px; }
-    #ascii-bg { opacity: 0.28; }
+    #ascii-bg {
+        --ascii-content-mask: radial-gradient(ellipse 72% 48% at 50% 58%, transparent 72%, #000 100%);
+        opacity: 0.28;
+    }
     .footer { padding: 12px 16px 4px; }
     .footer span { display: block; }
 }
@@ -264,8 +277,8 @@ body:has(.profile) .main {
 
 .contact-form input::placeholder,
 .contact-form textarea::placeholder {
-    color: var(--secondary);
-    opacity: 0.6;
+    color: var(--input-placeholder);
+    opacity: 1;
 }
 
 .contact-form textarea {

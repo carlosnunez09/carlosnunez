@@ -61,30 +61,31 @@
         return document.body.classList.contains('dark') ? 'dark' : 'default';
     }
 
-    async function renderMermaid() {
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: getMermaidTheme(),
-            flowchart: { curve: 'basis' }
+    const diagrams = [...document.querySelectorAll('.mermaid')];
+    diagrams.forEach(diagram => {
+        diagram.dataset.mermaidSource = diagram.textContent.trim();
+    });
+
+    let renderTask = Promise.resolve();
+    function renderMermaid() {
+        renderTask = renderTask.catch(() => {}).then(async () => {
+            diagrams.forEach(diagram => {
+                diagram.textContent = diagram.dataset.mermaidSource;
+                diagram.removeAttribute('data-processed');
+            });
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: getMermaidTheme(),
+                flowchart: { curve: 'basis' }
+            });
+            await mermaid.run({ querySelector: '.mermaid' });
         });
-        await mermaid.run({ querySelector: '.mermaid' });
     }
 
     renderMermaid();
 
-    // Re-render diagrams when the theme toggle is clicked
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
-        // Wait a tick for the dark class to be applied/removed
-        setTimeout(() => {
-            // Remove already-rendered SVGs so mermaid re-processes them
-            document.querySelectorAll('.mermaid[data-processed]').forEach(el => {
-                el.removeAttribute('data-processed');
-                // Restore original source from data attribute if present
-                const src = el.getAttribute('data-mermaid-src');
-                if (src) el.innerHTML = src;
-            });
-            renderMermaid();
-        }, 50);
+        renderMermaid();
     });
 </script>
 {{- end }}

@@ -1,0 +1,74 @@
+{{- define "main" }}
+{{- $editorial := not .Params.hiddenInPostList }}
+<article class="post-single{{ if $editorial }} editorial-post{{ end }}">
+  <header class="post-header">
+    {{- partial "breadcrumbs.html" . }}
+    <h1 class="post-title">{{ .Title }}{{ if .Draft }} <sup class="entry-isdraft">[draft]</sup>{{ end }}</h1>
+    {{- with .Description }}<p class="post-description">{{ . }}</p>{{ end }}
+    {{- if not (.Param "hideMeta") }}
+    {{- if $editorial }}
+    <div class="post-meta editorial-post__meta">
+      {{- if not .Date.IsZero }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format (default "January 2, 2006" site.Params.DateFormat) }}</time>{{ end }}
+      {{- if (.Param "ShowReadingTime") }}<span>{{ .ReadingTime }} min read</span>{{ end }}
+    </div>
+    {{- with site.Params.editPost }}
+    <a class="editorial-post__edit" href="{{ strings.TrimSuffix "/" .URL }}/{{ $.File.Path }}" rel="noopener noreferrer" target="_blank">{{ .Text | default "Suggest Changes" }}</a>
+    {{- end }}
+    {{- else }}
+    <div class="post-meta">
+      {{- partial "post_meta.html" . -}}
+      {{- partial "translation_list.html" . -}}
+      {{- partial "edit_post.html" . -}}
+      {{- partial "post_canonical.html" . -}}
+    </div>
+    {{- end }}
+    {{- end }}
+  </header>
+
+  {{- $isHidden := .Params.cover.hidden | default site.Params.cover.hiddenInSingle | default site.Params.cover.hidden }}
+  {{- partial "cover.html" (dict "cxt" . "IsHome" false "isHidden" $isHidden) }}
+
+  {{- if $editorial }}
+  <div class="editorial-post__layout">
+    {{- if (.Param "ShowToc") }}{{ partial "toc.html" . }}{{ end }}
+    {{- if .Content }}
+    <div class="post-content">
+      {{- if not (.Param "disableAnchoredHeadings") }}
+      {{- partial "anchored_headings.html" .Content -}}
+      {{- else }}{{ .Content }}{{ end }}
+    </div>
+    {{- end }}
+  </div>
+  {{- else }}
+  {{- if (.Param "ShowToc") }}{{ partial "toc.html" . }}{{ end }}
+  {{- if .Content }}
+  <div class="post-content">
+    {{- if not (.Param "disableAnchoredHeadings") }}
+    {{- partial "anchored_headings.html" .Content -}}
+    {{- else }}{{ .Content }}{{ end }}
+  </div>
+  {{- end }}
+  {{- end }}
+
+  <footer class="post-footer">
+    {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+    <ul class="post-tags">
+      {{- range ($.GetTerms $tags) }}<li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>{{ end }}
+    </ul>
+    {{- if (.Param "ShowPostNavLinks") }}{{ partial "post_nav_links.html" . }}{{ end }}
+    {{- if (and site.Params.ShowShareButtons (ne .Params.disableShare true)) }}{{ partial "share_icons.html" . }}{{ end }}
+  </footer>
+  {{- if (.Param "comments") }}{{ partial "comments.html" . }}{{ end }}
+</article>
+{{- if and $editorial (.Param "ShowToc") }}
+<script>
+  const articleToc = document.querySelector('.editorial-post .toc details');
+  const wideArticle = window.matchMedia('(min-width: 1100px)');
+  function placeArticleToc() {
+    if (articleToc) articleToc.open = wideArticle.matches;
+  }
+  placeArticleToc();
+  wideArticle.addEventListener('change', placeArticleToc);
+</script>
+{{- end }}
+{{- end }}

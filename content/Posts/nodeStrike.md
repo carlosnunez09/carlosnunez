@@ -1,6 +1,7 @@
 ﻿---
 title: "(Proposal) NodeStrike: Custom C++ UDP Server vs. Godot ENet"
 date: 2026-09-14
+description: "A plan to compare Godot's built-in ENet networking with a custom C++ UDP server for NodeStrike."
 showToc: true
 TocOpen: true
 draft: false

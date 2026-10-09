@@ -1,6 +1,7 @@
 ---
 title: "Cube Kill"
 date: 2025-11-27
+description: "Play CubeKill, a multiplayer game that runs in your browser."
 showToc: false
 TocOpen: false
 draft: false

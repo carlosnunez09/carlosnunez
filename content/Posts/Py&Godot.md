@@ -1,6 +1,7 @@
 ---
 title: "Godot and UDP Python(In progress)"
 date: 2025-09-15
+description: "An in-progress look at custom UDP networking for multiplayer games in Godot."
 showToc: false
 TocOpen: false
 draft: false
@@ -9,6 +10,7 @@ comments: false
 author: "Carlos Nunez"
 searchHidden: false
 disableShare: true
+mermaid: true
 ---
 
 Hi, in this post I will be discussing Godot and how we can use our own UDP implementation to make online/multiplayer games.
