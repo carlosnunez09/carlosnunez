@@ -22,6 +22,7 @@ Use `build` instead of `dev` to generate `.tools/build`.
 On macOS or Linux, with `make`, `curl`, and `tar` installed:
 
 ```sh
+npm install
 make setup
 make dev
 ```
@@ -29,7 +30,7 @@ make dev
 Open http://localhost:1313. Stop the server with Ctrl+C.
 Setup installs the Hugo version pinned in `netlify.toml` into `.tools/hugo`.
 The PaperMod theme is included in this repository; no submodule setup is needed.
-Node.js and Netlify CLI are not required for local development.
+Node.js is required to install the ASCII background dependency. Netlify CLI is not required for local development.
 
 ### Compare with production
 

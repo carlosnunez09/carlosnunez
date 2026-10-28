@@ -1,4 +1,4 @@
-{{- /* Shaded ASCII waves, rendered as text on a measured character grid. */ -}}
+{{- /* Decorative ASCII waves behind the homepage profile. */ -}}
 <div id="ascii-bg" aria-hidden="true"></div>
-{{- $script := resources.Get "js/home.js" | minify | fingerprint -}}
+{{- $script := resources.Get "js/home.js" | js.Build (dict "minify" true) | fingerprint -}}
 <script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>

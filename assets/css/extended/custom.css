@@ -193,27 +193,15 @@ body:has(.profile) .main {
 }
 
 #ascii-bg {
-    --ascii-content-mask: radial-gradient(ellipse 44% 50% at 50% 55%, transparent 72%, #000 100%);
+    --ascii-ink: var(--secondary);
     position: fixed;
     inset: 0;
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
-    user-select: none;
-    white-space: pre;
-    font: 500 clamp(10px, 0.8vw, 28px) / 1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-variant-ligatures: none;
-    letter-spacing: 1px;
-    color: var(--secondary);
-    opacity: 0.34;
-    -webkit-mask-image:
-        linear-gradient(transparent, #000 14%, #000 78%, transparent),
-        var(--ascii-content-mask);
-    -webkit-mask-composite: source-in;
-    mask-image:
-        linear-gradient(transparent, #000 14%, #000 78%, transparent),
-        var(--ascii-content-mask);
-    mask-composite: intersect;
+    opacity: 0.45;
+    mask-image: linear-gradient(transparent, #000 14%, #000 78%, transparent);
+    -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 78%, transparent);
 }
 
 @media (max-width: 600px) {
@@ -225,8 +213,7 @@ body:has(.profile) .main {
     .profile img { width: 120px; height: 120px; margin-bottom: 22px; }
     .profile .social-icons { padding: 16px 0 22px; }
     #ascii-bg {
-        --ascii-content-mask: radial-gradient(ellipse 72% 48% at 50% 58%, transparent 72%, #000 100%);
-        opacity: 0.28;
+        opacity: 0.4;
     }
     .footer { padding: 12px 16px 4px; }
     .footer span { display: block; }
