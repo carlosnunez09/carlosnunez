@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "asciify-engine": "^4.32.8"
+    "asciify-engine": "4.32.8"
+  },
+  "scripts": {
+    "postinstall": "node scripts/patch-asciify-ocean.cjs"
   }
 }

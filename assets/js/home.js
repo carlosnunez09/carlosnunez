@@ -1,22 +1,41 @@
-import { background, swell } from 'asciify-engine/kit';
+// The install step adds gentle spacing to Asciify's ocean simulation.
+import { ocean } from 'asciify-engine/kit';
 
-const field = document.getElementById('ascii-bg');
-const profile = document.querySelector('.profile_inner');
+const oceanHost = document.getElementById('ascii-ocean');
 
-if (field && profile) {
-    const scene = background(field, {
-        preset: swell,
-        mark: 'glyph',
-        charset: ' .,:;irsXA253hMHGS#9B&@',
-        ink: '--ascii-ink',
-        clear: profile,
-        cursor: false,
-        speed: 0.45,
-        cellSize: 11,
+if (oceanHost) {
+    const sea = ocean(oceanHost, {
+        creatures: [
+            { kind: 'shark', size: 0.64 },
+            { kind: 'shark', size: 0.5 },
+            { kind: 'shark', size: 0.39 },
+            { kind: 'hammerhead', size: 0.61 },
+            { kind: 'manta', size: 0.64 },
+            { kind: 'manta', size: 0.43 },
+            { kind: 'jellyfish', size: 0.57, count: 2 },
+            { kind: 'fish', size: 0.79, count: 4 },
+            { kind: 'fish', size: 0.54, count: 5 },
+            { kind: 'school', size: 0.71, count: 22 },
+            { kind: 'school', size: 0.71, count: 16 },
+        ],
+        ink: '--secondary',
+        tint: false,
+        accents: false,
+        speed: 0.75,
+        depth: 0.3,
+        interactive: false,
+        ripples: false,
+        edges: 'turn',
+        look: {
+            cellSize: 12,
+            maxPixelRatio: 1.25,
+            shuffle: 0,
+            hover: 'none',
+            clear: false,
+        },
     });
 
-    // A page restored from the back-forward cache still owns its field.
     window.addEventListener('pagehide', (event) => {
-        if (!event.persisted) scene.destroy();
+        if (!event.persisted) sea.destroy();
     });
 }

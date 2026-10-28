@@ -6,6 +6,11 @@
 {{- if .IsHome -}}
     {{- partial "ascii-background.html" . -}}
 {{- end -}}
+{{- if .Params.asciiKoi -}}
+  <div id="about-koi" class="about-koi" aria-hidden="true" hidden><div id="koi-ocean"></div></div>
+  {{- $koi := resources.Get "js/about-koi.js" | js.Build (dict "minify" true) | fingerprint -}}
+  <script defer src="{{ $koi.RelPermalink }}" integrity="{{ $koi.Data.Integrity }}"></script>
+{{- end -}}
 {{- if or .Params.math site.Params.math -}}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>

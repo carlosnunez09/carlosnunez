@@ -1,4 +1,4 @@
-{{- /* Decorative ASCII waves behind the homepage profile. */ -}}
-<div id="ascii-bg" aria-hidden="true"></div>
+{{- /* Decorative ASCII ocean behind the homepage profile. */ -}}
+<div id="ascii-ocean" aria-hidden="true"></div>
 {{- $script := resources.Get "js/home.js" | js.Build (dict "minify" true) | fingerprint -}}
 <script src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}" defer></script>

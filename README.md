@@ -30,7 +30,7 @@ make dev
 Open http://localhost:1313. Stop the server with Ctrl+C.
 Setup installs the Hugo version pinned in `netlify.toml` into `.tools/hugo`.
 The PaperMod theme is included in this repository; no submodule setup is needed.
-Node.js is required to install the ASCII background dependency. Netlify CLI is not required for local development.
+Node.js is required to install the ASCII background dependency. Installation also applies the local fish-spacing and koi-marking adjustments to the pinned Asciify version; review `scripts/patch-asciify-ocean.cjs` when upgrading it. Netlify CLI is not required for local development.
 
 ### Compare with production
 

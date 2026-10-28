@@ -15,7 +15,19 @@
     --input-placeholder: #aaabad;
 }
 
+/* Only reserve a scrollbar when the page actually needs one. */
+html { overflow-y: auto; }
+
 body { isolation: isolate; }
+
+/* The ocean extends past the viewport so creatures turn outside the frame. */
+#ascii-ocean {
+    position: fixed;
+    inset: -20vh -20vw;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
 
 .header, .main, .footer {
     position: relative;
@@ -86,7 +98,16 @@ body:has(.profile) .main {
 
 .main .profile { min-height: 0; width: 100%; }
 
-.profile_inner { width: 100%; }
+.profile_inner { width: 100%; position: relative; isolation: isolate; }
+
+.profile_inner::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -32px -48px;
+    pointer-events: none;
+    background: radial-gradient(ellipse, var(--theme) 20%, transparent 65%);
+}
 
 .profile img {
     display: block;
@@ -192,18 +213,6 @@ body:has(.profile) .main {
     padding-inline: 4px;
 }
 
-#ascii-bg {
-    --ascii-ink: var(--secondary);
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    pointer-events: none;
-    opacity: 0.45;
-    mask-image: linear-gradient(transparent, #000 14%, #000 78%, transparent);
-    -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 78%, transparent);
-}
-
 @media (max-width: 600px) {
     .nav { justify-content: center; padding-top: 8px; line-height: 48px; }
     .logo { justify-content: center; }
@@ -212,9 +221,6 @@ body:has(.profile) .main {
     body:has(.profile) .main { padding-block: 32px; }
     .profile img { width: 120px; height: 120px; margin-bottom: 22px; }
     .profile .social-icons { padding: 16px 0 22px; }
-    #ascii-bg {
-        opacity: 0.4;
-    }
     .footer { padding: 12px 16px 4px; }
     .footer span { display: block; }
 }
